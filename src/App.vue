@@ -8,20 +8,20 @@
         </Transition>
       </RouterView>
     </main>
-    <AppFooter v-if="showFooter" />
+    <AppFooter v-if="showFooter($route)" />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppNavbar from './components/layout/AppNavbar.vue'
 import AppFooter from './components/layout/AppFooter.vue'
 
-const { locale } = useI18n()
-const showFooter = computed(() => {
-  return $route.path !== '/login'
-})
+const { locale } = useI18n();
+
+const showFooter = (route) => {
+  return route.path !== '/login' && route.path !== '/register'
+}
 </script>
 
 <style>
