@@ -9,4 +9,5 @@ export default defineConfig({
     port: 5173,
     allowedHosts: ['c31e-2001-e68-542f-a222-bcb4-595e-7df8-1501.ngrok-free.app']
   },
+  base: '/SonShip-2026/',
 })
