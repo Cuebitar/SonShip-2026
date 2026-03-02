@@ -18,23 +18,25 @@
           <div class="card p-6 space-y-4">
             <div>
               <p class="input-label">📅 {{ t('register.date') }}</p>
-              <p class="font-body text-tertiary">April 10–12, 2026</p>
+              <p class="font-body text-tertiary">August 28–31, 2026</p>
             </div>
             <div class="divider" />
             <div>
               <p class="input-label">📍 {{ t('register.venue') }}</p>
-              <p class="font-body text-tertiary">Nature Retreat Centre, Selangor, Malaysia</p>
+              <p class="font-body text-tertiary">Radiant Retreat Site B</p>
             </div>
             <div class="divider" />
             <div>
               <p class="input-label">💰 {{ t('register.fee') }}</p>
-              <p class="font-body text-primary font-bold text-xl">RM 180</p>
+              <p class="font-body text-primary font-bold text-xl">RM 200 ({{ t('register.early_bird') }}, before 31th May)</p>
+              <p class="font-body text-primary font-bold text-xl">RM 230 ({{ t('register.normal') }}, before 30th June)</p>
+              <p class="font-body text-primary font-bold text-xl">RM 280 ({{ t('register.super_late_bird') }}, from 1st July)</p>
               <p class="font-body text-xs text-tertiary/50 mt-1">{{ t('register.fee_note') }}</p>
             </div>
             <div class="divider" />
             <div class="card bg-primary/10 border-primary/30 p-4">
               <p class="font-body text-sm text-primary">
-                ⚠️ Registration closes when 60 spots are filled. Register early to secure your place!
+                ⚠️ Registration closes when 70 spots are filled. Register early to secure your place!
               </p>
             </div>
           </div>
@@ -61,6 +63,11 @@
               <label class="input-label">{{ t('register.important_info') }}</label>
               <textarea v-model="form.importantInfo" rows="3" class="input resize-none" placeholder="Any allergies, medical conditions, dietary needs..."></textarea>
             </div>
+
+            <div class="divider" />
+            <h4 class="font-heading font-bold text-tertiary">Emergency Contact</h4>
+
+            
 
             <div class="divider" />
             <h4 class="font-heading font-bold text-tertiary">Additional Questions</h4>

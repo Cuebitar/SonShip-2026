@@ -6,7 +6,7 @@
         <div>
           <div class="flex items-center gap-2 mb-3">
             <span class="text-2xl">🔥</span>
-            <Logo size="2xl" />
+            <Logo class="text-xl md:text-2xl " />
           </div>
           <p class="font-body text-sm text-tertiary/60 leading-relaxed max-w-xs">
             {{ t('home.hero_subtitle') }}
@@ -15,7 +15,7 @@
 
         <!-- Quick Links -->
         <div>
-          <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+          <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">{{ t('footer.quick_links') }}</h4>
           <ul class="space-y-2">
             <li v-for="link in quickLinks" :key="link.to">
               <RouterLink :to="link.to" class="font-body text-sm text-tertiary/60 hover:text-primary transition-colors">
@@ -27,9 +27,9 @@
 
         <!-- Camp Info -->
         <div>
-          <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">Camp Info</h4>
+          <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">{{ t('footer.camp_info') }}</h4>
           <ul class="space-y-2 font-body text-sm text-tertiary/60">
-            <li class="flex items-center gap-2"><span>📅</span> April 10–12, 2026</li>
+            <li class="flex items-center gap-2"><span>📅</span> August 28–31, 2026</li>
             <li class="flex items-center gap-2"><span>📍</span> Nature Retreat Centre, Malaysia</li>
             <li class="flex items-center gap-2"><span>✉️</span> hello@sonship.camp</li>
           </ul>
@@ -38,9 +38,9 @@
 
       <div class="divider" />
 
-      <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-body text-tertiary/40">
+      <div class="flex flex-col items-center justify-between gap-3 text-xs font-body text-tertiary/40">
         <p>© 2026 SonShip Camp. Made with ❤️ for the Kingdom.</p>
-        <p>reconnecting...</p>
+        <p>{{ t('home.hero_tagline') }}</p>
       </div>
     </div>
   </footer>
@@ -55,7 +55,6 @@ const { t } = useI18n()
 const quickLinks = [
   { to: '/', label: 'nav.home' },
   { to: '/about', label: 'nav.about' },
-  { to: '/activities', label: 'nav.activities' },
   { to: '/register', label: 'nav.register' },
   { to: '/login', label: 'nav.login' },
 ]

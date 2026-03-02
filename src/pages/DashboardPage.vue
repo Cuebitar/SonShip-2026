@@ -19,7 +19,7 @@
           <div class="space-y-3">
             <div class="bg-primary/10 rounded-xl p-4 border border-primary/20">
               <p class="font-heading font-bold text-tertiary mb-1">SonShip Camp 2026</p>
-              <p class="text-xs font-body text-tertiary/60">📅 April 10–12, 2026</p>
+              <p class="text-xs font-body text-tertiary/60">📅 August 28–31, 2026</p>
               <p class="text-xs font-body text-tertiary/60">📍 Nature Retreat Centre, Selangor</p>
             </div>
             <RouterLink to="/schedule" class="btn-ghost btn-sm w-full justify-center">View Schedule</RouterLink>
@@ -151,9 +151,9 @@ function tryReveal() {
 }
 
 const announcements = [
-  { id: 1, title: '🎒 Packing list has been sent to your email!', date: 'Mar 15, 2026' },
-  { id: 2, title: '📋 Pre-camp form due by April 1', date: 'Mar 10, 2026' },
-  { id: 3, title: '🚌 Bus pickup details — check your group chat', date: 'Mar 5, 2026' },
+  { id: 1, title: '🎒 Packing list has been sent to your email!', date: 'Aug 10, 2026' },
+  { id: 2, title: '📋 Pre-camp form due by August 15', date: 'Aug 1, 2026' },
+  { id: 3, title: '🚌 Bus pickup details — check your group chat', date: 'July 25, 2026' },
 ]
 
 const quickLinks = [

@@ -118,7 +118,6 @@ const dropdownRef = ref(null)
 const publicLinks = [
   { to: '/', label: 'nav.home' },
   { to: '/about', label: 'nav.about' },
-  { to: '/activities', label: 'nav.activities' },
   { to: '/register', label: 'nav.register' },
 ]
 

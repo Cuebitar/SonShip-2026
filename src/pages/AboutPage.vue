@@ -77,16 +77,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Certifications -->
-    <section class="py-16 bg-dark">
-      <div class="container-inner">
-        <h2 class="section-title text-center mb-10">{{ t('about.cert_title') }}</h2>
-        <div class="flex flex-wrap gap-4 justify-center">
-          <div v-for="cert in certs" :key="cert" class="badge-primary text-sm px-5 py-2 rounded-full">{{ cert }}</div>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -105,7 +95,7 @@ const timeline = [
   { year: '2018', title: 'The Spark', desc: 'SonShip began with 30 young people and a big dream.' },
   { year: '2019', title: 'Growing Flames', desc: 'Doubled in size, introduced small groups and worship nights.' },
   { year: '2020', title: 'Digital Pivot', desc: 'Moved online during the pandemic — God still showed up.' },
-  { year: '2021', title: 'Reconnecting', desc: 'First hybrid camp. The theme "Reconnect" was born.' },
+  { year: '2021', title: t('home.hero_tagline'), desc: 'First hybrid camp. The theme "Reconnect" was born.' },
   { year: '2022', title: 'Back with Fire', desc: 'Fully in-person with 120 campers — the best year yet.' },
   { year: '2023', title: 'Expanding', desc: 'Partnered with 5 churches across Malaysia.' },
   { year: '2025', title: 'Identity', desc: 'Camp theme: Who are you as a son/daughter of God?' },

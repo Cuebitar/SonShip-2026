@@ -1,5 +1,5 @@
 <template>
-    <div class="font-heading font-black tracking-tight" :class="sizeClass">
+    <div class="font-heading font-black tracking-tight" :class="props.class">
         <span class="font-['Times_New_Roman',serif] text-primary italic">son</span><span class="text-tertiary">ship.</span>
     </div>
 </template>
@@ -8,7 +8,7 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-    size: {
+    class: {
         type: String,
         default: 'xl'
     }

@@ -18,11 +18,12 @@ export default {
         accent: '#ff9a3c',
       },
       fontFamily: {
-        heading: ['"Be Vietnam Pro"', 'Inter', 'sans-serif'],
+        heading: ['"Be Vietnam Pro"', '"QingNiaoHuaGuang"', 'Inter', 'sans-serif'],
         body: ['Nunito', 'sans-serif'],
-        script: ['"Biro Script"', 'cursive'],
+        script: ['"Biro Script"', '"AaManYuShouXieTi"', 'cursive'],
         zh: ['"QingNiaoHuaGuang"', 'sans-serif'],
-        'zh-body': ['AaManYuShouXieTi', 'sans-serif'],
+        'zh-body': ['"AaManYuShouXieTi"', 'sans-serif'],
+        'zh-script': ['"AaManYuShouXieTi"', 'sans-serif'],
         serif: ['"Times New Roman"', 'serif'],
       },
       borderRadius: {
