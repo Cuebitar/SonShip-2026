@@ -11,14 +11,14 @@
 
       <div class="relative z-10 container-inner text-center px-4">
         <!-- Flame brandmark -->
-        <div class="text-7xl mb-6 animate-float inline-block">🔥</div>
+        <img class="mb-6 animate-float inline-block w-40 h-40" :src="Firelight"></img>
 
         <!-- Main title -->
         <Logo size="9xl" />
 
         <!-- Tagline -->
         <p class="font-script text-accent text-2xl md:text-3xl mb-6 animate-fade-in" style="animation-delay:0.2s">
-          🔥 reconnecting...
+          <img class="inline-block w-10 h-10" :src="Firelight"></img> Reconnecting...
         </p>
 
         <p class="font-body text-tertiary/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 animate-slide-up" style="animation-delay:0.4s">
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 animate-bounce">
           <ChevronDown class="w-6 h-6 text-primary/60" />
         </div>
       </div>
@@ -116,7 +116,8 @@
     <section class="py-20 bg-secondary/30">
       <div class="container-inner">
         <div class="rounded-3xl overflow-hidden relative bg-gradient-hero min-h-64 flex items-center justify-center p-10">
-          <div class="absolute inset-0 opacity-20 text-[12rem] flex items-center justify-center select-none">🔥</div>
+          <div class="absolute inset-0 opacity-20 flex items-center justify-center select-none">
+          </div>
           <div class="relative text-center">
             <p class="font-script text-primary text-3xl md:text-5xl mb-4">{{ t('home.gallery_title') }}</p>
             <p class="font-body text-tertiary/70 mb-6">This could be you — join us this April!</p>
@@ -149,7 +150,7 @@ import { useI18n } from 'vue-i18n'
 import { useActivitiesStore } from '../stores/activities'
 import { ArrowRight, ChevronDown, Calendar, MapPin, Users } from 'lucide-vue-next'
 import Logo from '../components/Logo.vue'
-
+import Firelight from '../assets/firelight.svg'
 const { t } = useI18n()
 const activitiesStore = useActivitiesStore()
 

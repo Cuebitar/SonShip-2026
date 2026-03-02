@@ -4,7 +4,7 @@
     <div class="container-inner h-full flex items-center justify-between">
       <!-- Logo -->
       <RouterLink to="/" class="flex items-center gap-2 group">
-        <span class="text-2xl select-none">🔥</span>
+        <img :src="Firelight" class="w-8 h-8"></img>
         <Logo size="xl" />
       </RouterLink>
 
@@ -104,6 +104,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth'
 import { setLocale } from '../../i18n'
 import Logo from '../Logo.vue'
+import Firelight from '../../assets/firelight.svg'
 import { ChevronDown, Menu, X, LogOut, LayoutDashboard, User, Users, Gamepad2, MessageCircle, Mail, Calendar, Image } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
