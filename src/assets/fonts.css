@@ -1,0 +1,128 @@
+/* ============================================
+   SONSHIP — Font Face Declarations
+   ============================================ */
+
+/* Be Vietnam Pro */
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-ThinItalic.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Be Vietnam Pro';
+    src: url('/fonts/Be_Vietnam_Pro/BeVietnamPro-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Nunito (Variable) */
+@font-face {
+    font-family: 'Nunito';
+    src: url('/fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nunito';
+    src: url('/fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Biro Script (Quote / Emotional) */
+@font-face {
+    font-family: 'Biro Script';
+    src: url('/fonts/biro_script/Biro_Script_reduced.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 青鸟华光简美黑 — Chinese Primary */
+@font-face {
+    font-family: 'QingNiaoHuaGuang';
+    src: url('/fonts/QingNiaoHuaGuangJianMeiHei/QingNiaoHuaGuangJianMeiHei-2.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Aa漫语手写体 — Chinese Quote/Emotional */
+@font-face {
+    font-family: 'AaManYuShouXieTi';
+    src: url('/fonts/AaManYuShouXieTi（JianFan）/AaManYuShouXieTi（JianFan）-2.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
