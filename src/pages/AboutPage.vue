@@ -42,28 +42,6 @@
       </div>
     </section>
 
-    <!-- Timeline -->
-    <section class="py-20 bg-dark">
-      <div class="container-inner">
-        <h2 class="section-title text-center mb-14">{{ t('about.timeline_title') }}</h2>
-        <div class="relative max-w-2xl mx-auto">
-          <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-accent to-transparent"></div>
-          <div v-for="(item, i) in timeline" :key="i"
-            class="relative pl-12 md:pl-0 mb-10"
-            :class="i % 2 === 0 ? 'md:pr-[calc(50%+2rem)] md:text-right' : 'md:pl-[calc(50%+2rem)]'">
-            <div class="absolute left-0 md:left-1/2 top-1 -translate-x-1/2 w-9 h-9 rounded-full bg-primary flex items-center justify-center text-secondary font-heading font-black text-sm shadow-warm z-10">
-              {{ item.year.slice(-2) }}
-            </div>
-            <div class="card p-5">
-              <div class="font-heading font-bold text-primary text-sm mb-1">{{ item.year }}</div>
-              <div class="font-heading font-semibold text-tertiary mb-1">{{ item.title }}</div>
-              <div class="font-body text-sm text-tertiary/60">{{ item.desc }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Team -->
     <section class="py-20 bg-secondary/20">
       <div class="container-inner">
@@ -91,16 +69,6 @@ const stats = [
   { value: '12', label: 'Small Groups' },
 ]
 
-const timeline = [
-  { year: '2018', title: 'The Spark', desc: 'SonShip began with 30 young people and a big dream.' },
-  { year: '2019', title: 'Growing Flames', desc: 'Doubled in size, introduced small groups and worship nights.' },
-  { year: '2020', title: 'Digital Pivot', desc: 'Moved online during the pandemic — God still showed up.' },
-  { year: '2021', title: t('home.hero_tagline'), desc: 'First hybrid camp. The theme "Reconnect" was born.' },
-  { year: '2022', title: 'Back with Fire', desc: 'Fully in-person with 120 campers — the best year yet.' },
-  { year: '2023', title: 'Expanding', desc: 'Partnered with 5 churches across Malaysia.' },
-  { year: '2025', title: 'Identity', desc: 'Camp theme: Who are you as a son/daughter of God?' },
-  { year: '2026', title: 'This Year!', desc: 'SonShip 2026 — join us as we go deeper.' },
-]
 
 const team = [
   { name: 'Pastor Jason', role: 'Camp Director', emoji: '👨‍💼' },
