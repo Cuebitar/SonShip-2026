@@ -4,7 +4,7 @@ import zh from './zh'
 
 export const i18n = createI18n({
     legacy: false,
-    locale: localStorage.getItem('sonship-locale') || 'en',
+    locale: localStorage.getItem('sonship-locale') || 'zh',
     fallbackLocale: 'en',
     messages: { en, zh },
 })

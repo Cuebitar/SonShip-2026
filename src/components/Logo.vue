@@ -1,6 +1,6 @@
 <template>
     <div class="font-heading font-black tracking-tight" :class="props.class">
-        <span class="font-['Times_New_Roman',serif] text-primary italic">son</span><span class="text-tertiary">ship.</span>
+        <span class="font-['Times_New_Roman',serif] text-primary italic">son</span><span class="text-tertiary drop-shadow-[0_4px_3px_rgba(0,0,0,0.5)]">ship.</span>
     </div>
 </template>
 
