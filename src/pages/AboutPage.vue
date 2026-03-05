@@ -64,23 +64,23 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const stats = [
-  { value: '500+', label: 'Lives Touched' },
-  { value: '8', label: 'Years Running' },
-  { value: '3', label: 'Days of Camp' },
-  { value: '12', label: 'Small Groups' },
+  { value: '100+', label: 'Lives Touched' },
+  { value: '2019', label: 'Running Since' },
+  { value: '4', label: 'Days of Camp' },
+  { value: '6', label: 'Small Groups' },
 ]
 
 
 const team = [
-  { name: 'Pastor Elson', role: 'Camp Consultant', emoji: '💼' },
-  { name: 'Hao', role: 'Superior Camp Coordinator', emoji: '👨' },
-  { name: 'Jolin', role: 'Camp Coordinator who assists with every details', emoji: '📄' },
-  { name: 'Alvin', role: 'Camp Coordinator who does all the physical work', emoji: '🏃' },
-  { name: 'Ruth L.', role: 'Worship Lead', emoji: '🎤' },
-  { name: 'Shawn L.', role: 'Activities Head', emoji: '🏆' },
-  { name: 'Jonathan L.', role: 'Game Head', emoji: '🎮' },
-  { name: 'Florance T.', role: 'Tech & Media', emoji: '🎬' },
-  { name: 'Jack', role: '3M', emoji: '🔉' },
+  { name: t('names.elson'), role: 'Camp Consultant', emoji: '💼' },
+  { name: t('names.hao'), role: 'Superior Camp Coordinator', emoji: '👨' },
+  { name: t('names.jolin'), role: 'Camp Coordinator who assists with every details', emoji: '📄' },
+  { name: t('names.alvin'), role: 'Camp Coordinator who does all the physical work', emoji: '🏃' },
+  { name: t('names.ruth'), role: 'Worship Lead', emoji: '🎤' },
+  { name: t('names.shawn'), role: 'Activities Head', emoji: '🏆' },
+  { name: t('names.jonathan'), role: 'Game Head', emoji: '🎮' },
+  { name: t('names.florance'), role: 'Tech & Media', emoji: '🎬' },
+  { name: t('names.jack'), role: '3M', emoji: '🔉' },
 ]
 
 

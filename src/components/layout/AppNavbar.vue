@@ -21,18 +21,18 @@
       <div class="hidden md:flex items-center gap-3">
         <!-- Lang Toggle -->
         <button @click="toggleLang"
-          class="btn-ghost btn-sm font-heading text-xs px-3 py-1.5">
+          class="btn-ghost btn-sm font-heading text-xs px-3 py-1.5 rounded-md">
           {{ locale === 'en' ? '中文' : 'EN' }}
         </button>
 
         <!-- Guest buttons -->
-        <template v-if="!auth.isLoggedIn">
-          <RouterLink to="/register" class="btn-ghost btn-sm">{{ t('nav.register') }}</RouterLink>
-          <RouterLink to="/login" class="btn-primary btn-sm">{{ t('nav.login') }}</RouterLink>
+        <template v-if="!auth.isLoggedIn && isCamp">
+          <RouterLink to="/register" class="btn-ghost btn-sm rounded-md">{{ t('nav.register') }}</RouterLink>
+          <RouterLink to="/login" class="btn-primary btn-sm rounded-md">{{ t('nav.login') }}</RouterLink>
         </template>
 
         <!-- User avatar -->
-        <template v-else>
+        <template v-else-if="auth.isLoggedIn">
           <div class="relative" ref="dropdownRef">
             <button @click="showDropdown = !showDropdown"
               class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 transition-all">
@@ -83,12 +83,12 @@
           <button @click="toggleLang" class="btn-ghost btn-sm flex-1">
             {{ locale === 'en' ? '中文' : 'EN' }}
           </button>
-          <template v-if="!auth.isLoggedIn">
+          <template v-if="!auth.isLoggedIn && isCamp">
             <RouterLink to="/login" @click="mobileOpen = false" class="btn-primary btn-sm flex-1 text-center">
               {{ t('nav.login') }}
             </RouterLink>
           </template>
-          <template v-else>
+          <template v-else-if="auth.isLoggedIn">
             <button @click="handleLogout" class="btn-danger btn-sm flex-1">{{ t('nav.logout') }}</button>
           </template>
         </div>
@@ -127,6 +127,11 @@ const authLinks = [
   { to: '/gallery', label: 'nav.gallery' },
 ]
 
+const isCamp = computed(() => {
+  const now = new Date()
+  const campStart = new Date('2026-08-29 00:00:00')
+  return now >= campStart
+})
 const navLinks = computed(() => auth.isLoggedIn ? [...publicLinks.slice(0,2), ...authLinks] : publicLinks)
 const mobileExtra = computed(() => auth.isLoggedIn ? [
   { to: '/profile', label: 'nav.profile' },

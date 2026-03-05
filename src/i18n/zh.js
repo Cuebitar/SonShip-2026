@@ -22,7 +22,7 @@ export default {
     home: {
         hero_title: 'sonship.',
         hero_tagline: '重新连接中...',
-        hero_subtitle: '一个让你与神、与人、与自己重新连接的营会。',
+        hero_subtitle: '一个让你与神、与人、与自己重新连接的营会',
         hero_cta: '立即报名',
         hero_learn: '了解更多',
         highlights_title: '为什么选择 SonShip？',
@@ -78,6 +78,13 @@ export default {
         full_name: '全名',
         ic_number: '身份证号码',
         phone: '电话号码',
+        email: '电子邮件',
+        emergency_contact_name: '紧急联系人姓名',
+        emergency_contact_phone: '紧急联系人电话',
+        emergency_contact_relationship: '紧急联系人关系',
+        transportation: '交通方式',
+        car: '开车',
+        bus: '搭巴士',
         gender: '性别',
         male: '男',
         female: '女',
@@ -200,4 +207,15 @@ export default {
         group: '小组',
         or: '或',
     },
+    names: {
+        elson: 'Pastor Elson',
+        hao: 'Hao',
+        jolin: 'Jolin',
+        alvin: 'Alvin',
+        ruth: '佳韵',
+        shawn: '汉陞',
+        jonathan: 'Jonathan L.',
+        florance: 'Florance T.',
+        jack: 'Jack',
+    }
 }

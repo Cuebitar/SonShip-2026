@@ -30,7 +30,7 @@
           <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">{{ t('footer.camp_info') }}</h4>
           <ul class="space-y-2 font-body text-sm text-tertiary/60">
             <li class="flex items-center gap-2"><span>📅</span> August 28–31, 2026</li>
-            <li class="flex items-center gap-2"><span>📍</span> Nature Retreat Centre, Malaysia</li>
+            <li class="flex items-center gap-2"><span>📍</span> Radiant Retreats Site B, Jalan Utama Janda Baik, Kampung Chemperoh, 28750 Bentong, Pahang</li>
             <li class="flex items-center gap-2"><span>✉️</span> hello@sonship.camp</li>
           </ul>
         </div>
