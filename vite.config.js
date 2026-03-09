@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: ['902a-202-184-126-151.ngrok-free.app']
+    allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
   },
   // base: '/SonShip-2026/',
 })
