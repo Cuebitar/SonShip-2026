@@ -20,6 +20,7 @@ const routes = [
     { path: '/letters', name: 'Letters', component: () => import('../pages/LetterDashboardPage.vue'), meta: { requiresAuth: true } },
     { path: '/schedule', name: 'Schedule', component: () => import('../pages/SchedulePage.vue'), meta: { requiresAuth: true } },
     { path: '/gallery', name: 'Gallery', component: () => import('../pages/GalleryPage.vue'), meta: { requiresAuth: true } },
+    { path: '/admin/registrations', name: 'AdminRegistrations', component: () => import('../pages/AdminRegistrationPage.vue'), meta: { requiresAuth: true } },
     // Catch-all
     { path: '/:pathMatch(.*)*', redirect: '/' },
 ]

@@ -18,8 +18,8 @@
           <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">{{ t('footer.quick_links') }}</h4>
           <ul class="space-y-2">
             <li v-for="link in quickLinks" :key="link.to">
-              <RouterLink :to="link.to" class="font-body text-sm text-tertiary/60 hover:text-primary transition-colors">
-                {{ t(link.label) }}
+              <RouterLink :to="link.to" class="font-body text-sm text-tertiary/60 hover:text-primary transition-colors" :aria-label="link.label" :title="link.label">
+                {{ link.label }}
               </RouterLink>
             </li>
           </ul>
@@ -31,7 +31,7 @@
           <ul class="space-y-2 font-body text-sm text-tertiary/60">
             <li class="flex items-center gap-2"><span>📅</span> August 28–31, 2026</li>
             <li class="flex items-center gap-2"><span>📍</span> Radiant Retreats Site B, Jalan Utama Janda Baik, Kampung Chemperoh, 28750 Bentong, Pahang</li>
-            <li class="flex items-center gap-2"><span>✉️</span> hello@sonship.camp</li>
+            <li class="flex items-center gap-2"><span>✉️</span> sonship2026@megasubangcmc.org.my</li>
           </ul>
         </div>
       </div>
@@ -53,9 +53,10 @@ import Logo from '../Logo.vue'
 const { t } = useI18n()
 
 const quickLinks = [
-  { to: '/', label: 'nav.home' },
-  { to: '/about', label: 'nav.about' },
-  { to: '/register', label: 'nav.register' },
-  { to: '/login', label: 'nav.login' },
+  { to: '/', label: t('nav.home') },
+  { to: '/about', label: t('nav.about') },
+  { to: '/register', label: t('nav.register') },
+  { to: '/login', label: t('nav.login') },
+  { to: '/admin/registrations', label: 'Admin (Registrations)' },
 ]
 </script>

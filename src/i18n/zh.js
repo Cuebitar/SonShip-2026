@@ -1,7 +1,7 @@
 export default {
     nav: {
         home: '首页',
-        about: '关于',
+        about: '关于我们',
         activities: '活动',
         register: '报名',
         login: '登入',
@@ -96,6 +96,7 @@ export default {
         success_title: '报名成功！🎉',
         success_msg: '感谢您的报名！我们将尽快与您联系，提供更多详情。费用将在后续阶段收取——现在无需付款。',
         success_close: '关闭',
+        warning: '⚠️ 报名将于 70 个名额满后截止。请尽早报名以确保您的位置！',
     },
     login: {
         title: '欢迎回来',

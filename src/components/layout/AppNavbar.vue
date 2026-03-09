@@ -4,15 +4,18 @@
     <div class="container-inner h-full flex items-center justify-between">
       <!-- Logo -->
       <RouterLink to="/" class="flex items-center gap-2 group">
-        <img :src="Firelight" class="w-8 h-8"></img>
+        <img :src="Firelight" class="w-8 h-8" alt="Firelight"></img>
         <Logo size="xl" />
       </RouterLink>
 
       <!-- Desktop Nav -->
       <div class="hidden md:flex items-center gap-1">
         <RouterLink v-for="link in navLinks" :key="link.to" :to="link.to"
-          class="nav-link px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-all"
-          :class="{ 'nav-link-active bg-primary/10': $route.path === link.to }">
+          class="nav-link px-3 py-1.5 rounded-xl hover:bg-primary/10 transition-all"
+          :class="{ 'nav-link-active bg-primary/10': $route.path === link.to }"
+          :aria-label="t(link.label)"
+          :title="t(link.label)"
+          >
           {{ t(link.label) }}
         </RouterLink>
       </div>

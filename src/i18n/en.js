@@ -21,7 +21,7 @@ export default {
     },
     home: {
         hero_title: 'sonship.',
-        hero_tagline: 'Reconnecting...',
+        hero_tagline: 'reconnecting...',
         hero_subtitle: 'A Camp to Reconnect with God, Others, and Yourself',
         hero_cta: 'Register Now',
         hero_learn: 'Learn More',
@@ -97,6 +97,7 @@ export default {
         success_title: 'You\'re Registered! 🎉',
         success_msg: 'Thank you for registering! We\'ll be in touch soon with more details. Fees will be collected at a later stage — no payment needed right now.',
         success_close: 'Close',
+        warning: '⚠️ Registration closes when 70 spots are filled. Register early to secure your place!',
     },
     login: {
         title: 'Welcome Back',

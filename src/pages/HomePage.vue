@@ -3,22 +3,22 @@
     <!-- Hero Section -->
     <section class = "relative min-h-screen max-h-screen flex items-center justify-center overflow-hidden">
       <!-- Background gradient -->
+      <div class = "absolute inset-0 bg-[url('../assets/bg.JPG')] bg-cover bg-center"></div>
       <div class = "absolute inset-0 bg-gradient-hero opacity-90"></div>
-      <div class = "absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(230,177,83,0.15),transparent_60%)]"></div>
       <!-- Decorative circles -->
-      <div class = "absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/5 border border-primary/10 animate-spin-slow"></div>
-      <div class = "absolute bottom-20 left-10 w-48 h-48 rounded-full bg-accent/5 border border-accent/10 animate-float"></div>
+      <!-- <div class = "absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/5 border border-primary/10 animate-spin-slow"></div>
+      <div class = "absolute bottom-20 left-10 w-48 h-48 rounded-full bg-accent/5 border border-accent/10 animate-float"></div> -->
 
       <div class = "relative z-10 container-inner text-center px-4 ">
         <!-- Flame brandmark -->
-        <img class = "mb-12 animate-float inline-block w-40 h-40" :src = "Firelight"></img>
+        <!-- <img class = "mb-12 animate-float inline-block w-40 h-40" :src = "Firelight" alt="Firelight"></img> -->
 
         <!-- Main title -->
         <Logo class = "md:text-9xl text-7xl pb-2" />
 
         <!-- Tagline -->
-        <p   class = "font-script text-accent text-2xl md:text-3xl mb-6 animate-fade-in" style = "animation-delay:0.2s">
-        <img class = "inline-block w-10 h-10" :src                                             = "Firelight"></img> {{ t('home.hero_tagline') }}
+        <p   class=" text-lg md:text-xl mb-6 animate-fade-in mt-[-25px] md:mt-[-30px]  md:mr-[-76px]  font-body" style = "animation-delay:0.2s">
+        <img class = "inline-block w-6 h-6 mr-[-5px]" :src="Firelight" alt="Firelight"></img> reconnecting...
         </p>
 
         <p class = "font-body text-tertiary/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 animate-slide-up" style = "animation-delay:0.4s">
@@ -134,10 +134,15 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useActivitiesStore } from '../stores/activities'
 import { ArrowRight, ChevronDown, Calendar, MapPin, Users } from 'lucide-vue-next'
+import { useHead } from '@unhead/vue'
 import Logo from '../components/Logo.vue'
 import Firelight from '../assets/firelight.svg'
 const { t }           = useI18n()
 const activitiesStore = useActivitiesStore()
+
+useHead({
+  title: 'Home'
+})
 
   // Countdown Logic
 const targetDate = new Date('2026-08-28T09:00:00').getTime()

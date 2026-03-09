@@ -47,8 +47,7 @@
             <div class="divider" />
             <div class="card bg-primary/10 border-primary/30 p-4">
               <p class="font-body text-sm text-primary">
-                ⚠️ Registration closes when 70 spots are filled. Register early
-                to secure your place!
+                {{ t("register.warning") }}
               </p>
             </div>
           </div>
