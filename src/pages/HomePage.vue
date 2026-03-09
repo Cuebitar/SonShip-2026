@@ -14,11 +14,11 @@
         <!-- <img class = "mb-12 animate-float inline-block w-40 h-40" :src = "Firelight" alt="Firelight"></img> -->
 
         <!-- Main title -->
-        <Logo class = "md:text-9xl text-7xl pb-2" />
+        <Logo class = "md:text-9xl text-7xl pb-2 md:tracking-[-0.7rem] tracking-[-0.4rem]" />
 
         <!-- Tagline -->
-        <p   class=" text-lg md:text-xl mb-6 animate-fade-in mt-[-25px] md:mt-[-30px]  md:mr-[-76px]  font-body" style = "animation-delay:0.2s">
-        <img class = "inline-block w-6 h-6 mr-[-5px]" :src="Firelight" alt="Firelight"></img> reconnecting...
+        <p   class=" text-sm md:text-xl mb-6 animate-fade-in mt-[-25px] md:mt-[-30px] mr-[-24px]  md:mr-[-88px]  font-body" style = "animation-delay:0.2s">
+          <img class = "inline-block w-6 h-6 mr-[-5px]" :src="Firelight" alt="Firelight"/> reconnecting...
         </p>
 
         <p class = "font-body text-tertiary/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 animate-slide-up" style = "animation-delay:0.4s">
