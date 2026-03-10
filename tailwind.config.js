@@ -2,8 +2,15 @@
 export default {
 	darkMode: ['class'],
 	content: [
-		'./index.html',
-		'./src/**/*.{vue,js,ts,jsx,tsx}',
+		'./app.vue',
+		'./error.vue',
+		'./components/**/*.{vue,js,ts}',
+		'./layouts/**/*.vue',
+		'./pages/**/*.vue',
+		'./plugins/**/*.{js,ts}',
+		'./composables/**/*.{js,ts}',
+		'./utils/**/*.{js,ts}',
+		'./stores/**/*.{js,ts}',
 	],
 	theme: {
 		extend: {
