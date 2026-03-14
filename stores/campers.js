@@ -1,17 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore'
-import { getDb } from '~/lib/firebaseInit'
+import { useDb } from '~/composable/firebase'
 
 export const useCampersStore = defineStore('campers', () => {
+  const db = useDb();
   const campers = ref([])
   const loaded = ref(false)
 
   async function initCampers() {
     if (loaded.value) return
-    const db = getDb()
 
-    const rawCampers = await getDocs(collection(db, 'campers'))
+    const rawCampers = await getDocs(collection(db, 'campers'));
+    console.log(rawCampers);
     const mapped = await Promise.all(
       rawCampers.docs.map(async (c) => {
         const docRef = doc(db, 'campers', c.id)
@@ -31,7 +32,7 @@ export const useCampersStore = defineStore('campers', () => {
         }
       }),
     )
-
+    console.log(mapped);
     campers.value = mapped.filter(Boolean)
     loaded.value = true
   }

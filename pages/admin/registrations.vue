@@ -130,15 +130,15 @@
                 <h4 class="font-heading font-bold text-primary mb-3 text-sm uppercase tracking-widest border-b border-primary/20 pb-2">Questions</h4>
                 <div class="space-y-3 text-sm">
                   <div class="bg-white/5 p-3 rounded">
-                    <p class="text-tertiary/70 text-xs mb-1">Q1: How did you hear about us?</p>
+                    <p class="text-tertiary/70 text-xs mb-1">{{ t('questions.q1') }}</p>
                     <p class="text-white font-medium">{{ selectedRecord.q1 || '-' }}</p>
                   </div>
                   <div class="bg-white/5 p-3 rounded">
-                    <p class="text-tertiary/70 text-xs mb-1">Q2: Expectations?</p>
+                    <p class="text-tertiary/70 text-xs mb-1">{{ t('questions.q2') }}</p>
                     <p class="text-white font-medium">{{ selectedRecord.q2 || '-' }}</p>
                   </div>
                   <div class="bg-white/5 p-3 rounded">
-                    <p class="text-tertiary/70 text-xs mb-1">Q3: Referral</p>
+                    <p class="text-tertiary/70 text-xs mb-1">{{ t('questions.q3') }}</p>
                     <p class="text-white font-medium">{{ selectedRecord.q3 || '-' }}</p>
                   </div>
                 </div>
@@ -217,10 +217,12 @@
 </template>
 
 <script setup>
-definePageMeta({ requiresAuth: true })
+// definePageMeta({ requiresAuth: true })
 
 import { ref, computed, reactive } from 'vue';
 import { useCampersStore } from '~/stores/campers';
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const tabs = ['All', 'Pending', 'Approved', 'Rejected'];
 const activeTab = ref('All');

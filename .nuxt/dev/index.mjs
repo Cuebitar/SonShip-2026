@@ -1137,17 +1137,12 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
-    "vuefire": {
-      "config": {
-        "apiKey": "",
-        "authDomain": "",
-        "projectId": "",
-        "storageBucket": "",
-        "messagingSenderId": "",
-        "appId": ""
-      },
-      "appCheck": ""
-    },
+    "firebaseApiKey": "AIzaSyBqdw9-ghNWG6TUSLJObHCLeiIpmqSreds",
+    "firebaseAuthDomain": "sonship2026.firebaseapp.com",
+    "firebaseProjectId": "sonship2026",
+    "firebaseStorageBucket": "sonship2026.firebasestorage.app",
+    "firebaseMessagingSenderId": "303655197013",
+    "firebaseAppId": "1:303655197013:web:f4ba86689ded41f43bf7dc",
     "i18n": {
       "baseUrl": "",
       "defaultLocale": "zh",
@@ -1205,18 +1200,6 @@ const _inlineRuntimeConfig = {
   },
   "icon": {
     "serverKnownCssClasses": []
-  },
-  "vuefire": {
-    "admin": "",
-    "auth": {
-      "enabled": false,
-      "errorMap": "debug",
-      "persistence": [
-        "indexedDBLocal",
-        "browserLocal"
-      ],
-      "popupRedirectResolver": "browser"
-    }
   }
 };
 const envOptions = {

@@ -53,7 +53,5 @@ export { useScheduleStore } from '../stores/schedule';
 export { useColorMode } from '../node_modules/@nuxtjs/color-mode/dist/runtime/composables';
 export { useI18n } from '../node_modules/@nuxtjs/i18n/node_modules/vue-i18n/dist/vue-i18n';
 export { useRouteBaseName, useLocalePath, useLocaleRoute, useSwitchLocalePath, useLocaleHead, useBrowserLocale, useCookieLocale, useSetI18nParams, defineI18nRoute, defineI18nLocale, defineI18nConfig } from '../node_modules/@nuxtjs/i18n/dist/runtime/composables/index';
-export { useFirebaseApp } from '../node_modules/nuxt-vuefire/dist/runtime/app/composables';
-export { useFirestore, useDocument, useCollection, useDatabase, useDatabaseList, useDatabaseObject, useFirebaseStorage, useStorageFile, useStorageFileUrl, useStorageFileMetadata } from 'vuefire';
 export { defineStore, acceptHMRUpdate, usePinia, storeToRefs } from '../node_modules/@pinia/nuxt/dist/runtime/composables';
 export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';

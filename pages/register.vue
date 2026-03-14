@@ -70,6 +70,7 @@
                   :options="genderOptions" 
                   option-attribute="label" 
                   value-attribute="value" 
+                  required
                   :uiRadio="{
                     label: 'cursor-pointer input-label',
                     strategy: 'override'
@@ -88,6 +89,7 @@
                   :options="transportOptions" 
                   option-attribute="label" 
                   value-attribute="value" 
+                  required
                   :uiRadio="{
                     label: 'cursor-pointer input-label',
                     strategy: 'override'
@@ -119,8 +121,9 @@
               <label class="input-label">{{ t('register.emergency_contact_relationship') }} *</label>
               <select 
                 v-model="form.emergencyContactRelationship" 
-                :options="relationshipOptions" 
                 class="w-full input" 
+                placeholder="Choose One Relationship"
+                required
               >
                 <option v-for="option in relationshipOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
               </select>
@@ -130,20 +133,20 @@
             <h4 class="font-heading font-bold text-tertiary">Additional Questions</h4>
 
             <div>
+              <label class="input-label">{{ t('register.q3') }}</label>
+              <input v-model="form.q3" required placeholder="Playing Guitar..." class="w-full input" />
+            </div>
+            <div>
               <label class="input-label">{{ t('register.q1') }}</label>
-              <textarea v-model="form.q1" :rows="3" class="w-full input" />
+              <input v-model="form.q1" required :rows="3" class="w-full input" placeholder="The Prodigal Son..." />
             </div>
             <div>
               <label class="input-label">{{ t('register.q2') }}</label>
-              <textarea v-model="form.q2" :rows="2" class="w-full input" />
-            </div>
-            <div>
-              <label class="input-label">{{ t('register.q3') }}</label>
-              <input v-model="form.q3" placeholder="Instagram, friend, church..." class="w-full input" />
+              <input v-model="form.q2" required :rows="2" class="w-full input" placeholder="Words of Encouragement..."/>
             </div>
 
             <div class="pt-2">
-              <UButton type="submit" block size="lg" :loading="loading">
+              <UButton @click="handleSubmit" type="submit" block size="lg" :loading="loading">
                 {{ t('register.submit') }}
               </UButton>
             </div>

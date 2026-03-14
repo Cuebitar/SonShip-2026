@@ -42,11 +42,11 @@ export default {
 
     },
     about: {
-        title: 'About SonShip',
+        title: 'About Firelight',
         story_title: 'Our Story',
-        story: 'SonShip began with a simple vision — to create a space where young people could reconnect with God, with each other, and with their true selves. What started as a small gathering has grown into a transformative camp experience.',
+        story: 'Firelight was created to cultivate an authentic community where Firelighters can transparently wrestle with their faith, encounter God deeply and be transformed.',
         mission_title: 'Our Mission',
-        mission: 'To cultivate a generation rooted in sonship, walking in purpose and living in community.',
+        mission: 'Raising a generation on-fire for Christ \n empowered to transform the region for His Kingdom',
         timeline_title: 'Our Journey',
         team_title: 'The Team',
         cert_title: 'Certifications',
@@ -90,9 +90,10 @@ export default {
         male: 'Male',
         female: 'Female',
         important_info: 'Important Information / Special Needs',
-        q1: 'What do you hope to experience at SonShip? (Custom Question 1)',
-        q2: 'Is there anything specific you\'d like the team to know? (Custom Question 2)',
-        q3: 'How did you hear about SonShip? (Custom Question 3)',
+        q1: 'What is your favorite Bible story?',
+        q2: 'What is your "Love Language" (how you show care): Words of Encouragement, Acts of Service, Physical Touch, Quality Time or Giving Gifts?',
+        q3: 'What is one thing you do during your free time?',
+
         submit: 'Submit Registration',
         success_title: 'You\'re Registered! 🎉',
         success_msg: 'Thank you for registering! We\'ll be in touch soon with more details. Fees will be collected at a later stage — no payment needed right now.',

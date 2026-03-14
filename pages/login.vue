@@ -46,23 +46,6 @@
         </button>
       </form>
 
-      <!-- Social Login (visual only) -->
-      <div class="mt-6">
-        <div class="flex items-center gap-3 text-xs font-body text-tertiary/40 mb-4">
-          <div class="flex-1 h-px bg-primary/10"></div>
-          {{ t('login.or') }}
-          <div class="flex-1 h-px bg-primary/10"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <button class="btn-ghost btn-sm flex items-center gap-2 justify-center" @click="socialNotice">
-            <span>🇬</span> Google
-          </button>
-          <button class="btn-ghost btn-sm flex items-center gap-2 justify-center" @click="socialNotice">
-            <span>📘</span> Facebook
-          </button>
-        </div>
-      </div>
-
       <p class="text-center font-body text-sm text-tertiary/60 mt-6">
         {{ t('login.no_account') }}
         <NuxtLink to="/register" class="text-primary hover:underline ml-1">{{ t('login.register_link') }}</NuxtLink>

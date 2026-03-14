@@ -7,7 +7,9 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 const { locale } = useI18n()
+const auth = useAuthStore();
 
 useHead({
   titleTemplate: (title) => title ? `${title} | SonShip 2026` : 'SonShip 2026',
@@ -17,5 +19,9 @@ useHead({
     { property: 'og:description', content: 'The official youth camp for CMC Subang. Join us this August 28-31.' },
     { name: 'theme-color', content: '#1a1a1a' }
   ]
+})
+
+onMounted(() => {
+  auth.init();
 })
 </script>

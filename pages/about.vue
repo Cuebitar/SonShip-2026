@@ -17,9 +17,6 @@
           <div>
             <h2 class = "section-title mb-6">{{ t('about.story_title') }}</h2>
             <p  class = "font-body text-tertiary/75 leading-relaxed text-lg mb-6">{{ t('about.story') }}</p>
-            <p  class = "font-body text-tertiary/75 leading-relaxed">
-              Each year, dozens of young people leave transformed — with a clearer sense of identity, deeper relationships, and a heart set on fire for God.
-            </p>
           </div>
           <div class = "grid grid-cols-2 gap-4">
           <div v-for = "stat in stats" :key = "stat.label" class = "card p-6 text-center">
@@ -49,7 +46,7 @@
     <div     class = "grid grid-cols-2 md:grid-cols-4 gap-6">
     <div     v-for = "member in team" :key = "member.name" class = "card-hover p-6 text-center group">
     <div     class = "text-5xl mb-3 group-hover:animate-bounce inline-block">{{ member.emoji }}</div>
-    <h4      class = "font-heading font-bold text-tertiary text-sm mb-1">{{ member.name }}</h4>
+    <h4      class = "font-heading font-bold text-tertiary text-sm mb-1">{{ t(member.name) }}</h4>
     <p       class = "font-body text-primary text-xs">{{ member.role }}</p>
           </div>
         </div>
@@ -59,9 +56,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
+const campersStore = ref(null);
 
 const stats = [
   { value: '100+', label: 'Lives Touched' },
@@ -71,17 +69,19 @@ const stats = [
 ]
 
 
-const team = [
-  { name: t('names.elson'), role: 'Camp Consultant', emoji: '💼' },
-  { name: t('names.hao'), role: 'Superior Camp Coordinator', emoji: '👨' },
-  { name: t('names.jolin'), role: 'Camp Coordinator who assists with every details', emoji: '📄' },
-  { name: t('names.alvin'), role: 'Camp Coordinator who does all the physical work', emoji: '🏃' },
-  { name: t('names.ruth'), role: 'Worship Lead', emoji: '🎤' },
-  { name: t('names.shawn'), role: 'Activities Head', emoji: '🏆' },
-  { name: t('names.jonathan'), role: 'Game Head', emoji: '🎮' },
-  { name: t('names.florance'), role: 'Tech & Media', emoji: '🎬' },
-  { name: t('names.jack'), role: '3M', emoji: '🔉' },
-]
+const team = ref([
+    { name: 'names.elson', role: 'Camp Consultant', emoji: '💼' },
+    { name: 'names.hao', role: 'Superior Camp Coordinator', emoji: '👨' },
+    { name: 'names.jolin', role: 'Camp Coordinator who assists with every details', emoji: '📄' },
+    { name: 'names.alvin', role: 'Camp Coordinator who does all the physical work', emoji: '🏃' },
+    { name: 'names.ruth', role: 'Worship Lead', emoji: '🎤' },
+    { name: 'names.shawn', role: 'Activities Head', emoji: '🏆' },
+    { name: 'names.jonathan', role: 'Game Head', emoji: '🎮' },
+    { name: 'names.florance', role: 'Tech & Media', emoji: '🎬' },
+    { name: 'names.jack', role: '3M', emoji: '🔉' },
+    ]);
 
+onMounted(() => {
 
+})
 </script>
