@@ -29,13 +29,13 @@
         </button>
 
         <!-- Guest buttons -->
-        <template v-if="!auth.isLoggedIn && isCamp">
+        <template v-if="hydrated && !auth.isLoggedIn && isCamp">
           <NuxtLink to="/register" class="btn-ghost btn-sm rounded-md">{{ t('nav.register') }}</NuxtLink>
           <NuxtLink to="/login" class="btn-primary btn-sm rounded-md">{{ t('nav.login') }}</NuxtLink>
         </template>
 
         <!-- User avatar -->
-        <template v-else-if="auth.isLoggedIn">
+        <template v-else-if="hydrated && auth.isLoggedIn">
           <div class="relative" ref="dropdownRef">
             <button @click="showDropdown = !showDropdown"
               class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 transition-all">
@@ -86,12 +86,12 @@
           <button @click="toggleLang" class="btn-ghost btn-sm flex-1">
             {{ locale === 'en' ? '中文' : 'EN' }}
           </button>
-          <template v-if="!auth.isLoggedIn && isCamp">
+          <template v-if="hydrated && !auth.isLoggedIn && isCamp">
             <NuxtLink to="/login" @click="mobileOpen = false" class="btn-primary btn-sm flex-1 text-center">
               {{ t('nav.login') }}
             </NuxtLink>
           </template>
-          <template v-else-if="auth.isLoggedIn">
+          <template v-else-if="hydrated && auth.isLoggedIn">
             <button @click="handleLogout" class="btn-danger btn-sm flex-1">{{ t('nav.logout') }}</button>
           </template>
         </div>
@@ -116,6 +116,7 @@ const scrolled = ref(false)
 const mobileOpen = ref(false)
 const showDropdown = ref(false)
 const dropdownRef = ref(null)
+const hydrated = ref(false)
 
 const publicLinks = [
   { to: '/', label: 'nav.home' },
@@ -130,12 +131,13 @@ const authLinks = [
 ]
 
 const isCamp = computed(() => {
+  if (!hydrated.value) return false
   const now = new Date()
   const campStart = new Date('2026-08-29 00:00:00')
   return now >= campStart
 })
-const navLinks = computed(() => auth.isLoggedIn ? [...publicLinks.slice(0,2), ...authLinks] : publicLinks)
-const mobileExtra = computed(() => auth.isLoggedIn ? [
+const navLinks = computed(() => hydrated.value && auth.isLoggedIn ? [...publicLinks.slice(0,2), ...authLinks] : publicLinks)
+const mobileExtra = computed(() => hydrated.value && auth.isLoggedIn ? [
   { to: '/profile', label: 'nav.profile' },
   { to: '/friends', label: 'nav.friends' },
   { to: '/games', label: 'nav.games' },
@@ -171,9 +173,9 @@ function onClickOutside(e) {
 }
 
 onMounted(() => {
+  hydrated.value = true
   window.addEventListener('scroll', onScroll)
   document.addEventListener('click', onClickOutside)
-  console.log(auth.isLoggedIn)
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)

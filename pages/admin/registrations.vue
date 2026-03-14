@@ -217,7 +217,7 @@
 </template>
 
 <script setup>
-definePageMeta({ requiresAuth: true })
+definePageMeta({ requiresAuth: true, ssr: false })
 
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useCampersStore } from '~/stores/campers';
