@@ -17,5 +17,6 @@ export const useFirebase = () => {
 
 
 export const useDb = () => {
+  if (getApps().length === 0) return null
   return getFirestore(getApp())
 }

@@ -173,6 +173,7 @@ function onClickOutside(e) {
 onMounted(() => {
   window.addEventListener('scroll', onScroll)
   document.addEventListener('click', onClickOutside)
+  console.log(auth.isLoggedIn)
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)

@@ -217,9 +217,9 @@
 </template>
 
 <script setup>
-// definePageMeta({ requiresAuth: true })
+definePageMeta({ requiresAuth: true })
 
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, onMounted } from 'vue';
 import { useCampersStore } from '~/stores/campers';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -231,9 +231,13 @@ const filterRoom = ref('All');
 
 const campersStore = useCampersStore();
 
+onMounted(() => {
+  campersStore.initCampers()
+})
+
 // Map from pinia store campers
 console.log(campersStore.campers,12333);
-const records = ref(
+const records = computed(() =>
   campersStore.campers.map((c, index) => {
     const secretAngel = campersStore.getCamperById(c.secretAngelTargetId);
     

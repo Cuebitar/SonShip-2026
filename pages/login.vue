@@ -105,6 +105,10 @@ async function handleLogin() {
 function socialNotice() {
   alert('Social login is a demo feature — it\'s not connected to a real provider. Please use email + "sonship123".')
 }
+
+onMounted(() => {
+  auth.init();
+})
 </script>
 
 <style scoped>

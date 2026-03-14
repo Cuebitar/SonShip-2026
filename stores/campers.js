@@ -4,12 +4,16 @@ import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase'
 
 export const useCampersStore = defineStore('campers', () => {
-  const db = useDb();
   const campers = ref([])
   const loaded = ref(false)
 
   async function initCampers() {
+    // Firebase client SDK is only initialized on the client (plugins/firebase.client.ts).
+    if (import.meta.server) return
     if (loaded.value) return
+
+    const db = useDb()
+    if (!db) throw new Error('Firebase is not initialized yet (campers store).')
 
     const rawCampers = await getDocs(collection(db, 'campers'));
     console.log(rawCampers);
@@ -62,7 +66,13 @@ export const useCampersStore = defineStore('campers', () => {
   }
 
   async function registerCamper(camper) {
-    const db = getDb()
+    if (import.meta.server) {
+      throw new Error('registerCamper() must run on the client.')
+    }
+
+    const db = useDb()
+    if (!db) throw new Error('Firebase is not initialized yet (campers store).')
+
     const { name, email, phone, ic, group, roomNumber, status } = camper
     await addDoc(collection(db, 'campers'), { name, email, phone, ic, group, roomNumber, status })
   }
