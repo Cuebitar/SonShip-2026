@@ -92,11 +92,15 @@ async function handleLogin() {
   error.value = ''
   loading.value = true
   await new Promise(r => setTimeout(r, 1000))
-  const result = auth.login(form.email, form.password)
+  const result = await auth.login(form.email, form.password)
   loading.value = false
   if (result.success) {
-    const redirect = route.query.redirect || '/dashboard'
-    router.push(redirect)
+    const redirect = Array.isArray(route.query.redirect)
+      ? route.query.redirect[0]
+      : route.query.redirect
+
+    const target = redirect || '/dashboard'
+    router.push(target)
   } else {
     error.value = result.error
   }

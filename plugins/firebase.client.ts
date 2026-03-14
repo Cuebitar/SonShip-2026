@@ -1,6 +1,6 @@
 // plugins/firebase.client.ts
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
@@ -19,6 +19,8 @@ export default defineNuxtPlugin(() => {
   // Prevent duplicate initialization on hot reload
   const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
   const auth = getAuth(app)
+  // Ensure auth survives refresh/navigation.
+  setPersistence(auth, browserLocalPersistence).catch(() => {})
   const firestore = getFirestore(app)
   const storage = getStorage(app)
 

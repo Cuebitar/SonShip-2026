@@ -5,20 +5,63 @@ import { useFirebase } from '~/composable/firebase'
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null);
+    const ready = ref(false);
     const isLoggedIn = computed(() => !!user.value);
     const campers = useCampersStore();
-    campers.initCampers();
     if (import.meta.client) {
         user.value = JSON.parse(localStorage.getItem('sonship-user') || 'null')
     }
 
-    const init = () => {
-        const firebase = useFirebase()
-        if (!firebase) return  // ← guard here
+    let initPromise = null
 
-        onAuthStateChanged(firebase.auth, (firebaseUser) => {
-            user.value = campers.campers.find((camper) => camper.email === firebaseUser.email)
+    const init = () => {
+        if (import.meta.server) return Promise.resolve()
+        if (initPromise) return initPromise
+
+        initPromise = new Promise((resolve) => {
+            const firebase = useFirebase()
+            if (!firebase) {
+                ready.value = true
+                resolve()
+                return
+            }
+
+            let resolved = false
+            onAuthStateChanged(firebase.auth, (firebaseUser) => {
+                ;(async () => {
+                    if (!firebaseUser) {
+                        user.value = null
+                        ready.value = true
+                        if (import.meta.client) {
+                            localStorage.removeItem('sonship-user')
+                        }
+                    } else {
+                        // Ensure campers are loaded before mapping firebase user -> camper profile.
+                        await campers.initCampers()
+                        const camperProfile = campers.campers.find((camper) => camper.email === firebaseUser.email)
+                        user.value = camperProfile || { uid: firebaseUser.uid, email: firebaseUser.email }
+                        ready.value = true
+                        if (import.meta.client) {
+                            localStorage.setItem('sonship-user', JSON.stringify(user.value))
+                        }
+                    }
+
+                    if (!resolved) {
+                        resolved = true
+                        resolve(firebaseUser)
+                    }
+                })().catch((err) => {
+                    console.error(err)
+                    ready.value = true
+                    if (!resolved) {
+                        resolved = true
+                        resolve()
+                    }
+                })
+            })
         })
+
+        return initPromise
     }
 
     async function login(email, password) {
@@ -26,7 +69,10 @@ export const useAuthStore = defineStore('auth', () => {
         if (!firebase) return { success: false, error: 'Firebase not initialized.' }
         try{
             const result = await signInWithEmailAndPassword(firebase.auth, email, password)
-            user.value = campers.campers.find((camper) => camper.email === result.user.email)
+            await campers.initCampers()
+            const camperProfile = campers.campers.find((camper) => camper.email === result.user.email)
+            user.value = camperProfile || { uid: result.user.uid, email: result.user.email }
+            ready.value = true
 
             if (import.meta.client) {
                 localStorage.setItem('sonship-user', JSON.stringify(user.value))
@@ -41,14 +87,15 @@ export const useAuthStore = defineStore('auth', () => {
 
     async function logout() {
         user.value = null
+        ready.value = true
         const firebase = useFirebase()
         if (!firebase) return  // ← guard here
         
-        firebase.auth.signOut()
+        await firebase.auth.signOut()
         if (import.meta.client) {
             localStorage.removeItem('sonship-user')
         }
     }
 
-    return { user, isLoggedIn, login, logout, init }
+    return { user, ready, isLoggedIn, login, logout, init }
 })

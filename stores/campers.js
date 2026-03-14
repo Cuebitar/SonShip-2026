@@ -9,11 +9,12 @@ export const useCampersStore = defineStore('campers', () => {
 
   async function initCampers() {
     // Firebase client SDK is only initialized on the client (plugins/firebase.client.ts).
-    if (import.meta.server) return
-    if (loaded.value) return
+    if (import.meta.server) return false
+    if (loaded.value) return true
 
     const db = useDb()
-    if (!db) throw new Error('Firebase is not initialized yet (campers store).')
+    // Can happen during very early navigation; callers can retry after Firebase plugin runs.
+    if (!db) return false
 
     const rawCampers = await getDocs(collection(db, 'campers'));
     console.log(rawCampers);
@@ -39,6 +40,7 @@ export const useCampersStore = defineStore('campers', () => {
     console.log(mapped);
     campers.value = mapped.filter(Boolean)
     loaded.value = true
+    return true
   }
 
   function getCamperById(id) {

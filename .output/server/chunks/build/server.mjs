@@ -4,7 +4,7 @@ import { defineStore, createPinia, setActivePinia, shouldHydrate } from 'pinia';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION, isNavigationFailure } from 'vue-router';
 import { getFirestore } from 'firebase/firestore';
 import { getApps, getApp } from 'firebase/app';
-import { onAuthStateChanged, signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { createSharedComposable } from '@vueuse/core';
 import { extendTailwindMerge } from 'tailwind-merge';
 import { _api, addAPIProvider, setCustomIconsLoader } from '@iconify/vue';
@@ -746,8 +746,9 @@ const unhead_k2P3m_ZDyjlr2mMYnoDPwavjsDN8hBlk9cFai0bbopU = /* @__PURE__ */ defin
 function toArray$1(value) {
   return Array.isArray(value) ? value : [value];
 }
-const __nuxt_page_meta$9 = { requiresAuth: true };
-const __nuxt_page_meta$8 = { guestOnly: true };
+const __nuxt_page_meta$a = { requiresAuth: true };
+const __nuxt_page_meta$9 = { guestOnly: true };
+const __nuxt_page_meta$8 = { requiresAuth: true };
 const __nuxt_page_meta$7 = { requiresAuth: true };
 const __nuxt_page_meta$6 = { requiresAuth: true };
 const __nuxt_page_meta$5 = { requiresAuth: true };
@@ -765,7 +766,7 @@ const _routes = [
   {
     name: "games",
     path: "/games",
-    meta: __nuxt_page_meta$9 || {},
+    meta: __nuxt_page_meta$a || {},
     component: () => import('./games-DpfXauTd.mjs')
   },
   {
@@ -776,31 +777,31 @@ const _routes = [
   {
     name: "login",
     path: "/login",
-    meta: __nuxt_page_meta$8 || {},
-    component: () => import('./login-DrGqQMOw.mjs')
+    meta: __nuxt_page_meta$9 || {},
+    component: () => import('./login-B8hZj2EG.mjs')
   },
   {
     name: "friends",
     path: "/friends",
-    meta: __nuxt_page_meta$7 || {},
+    meta: __nuxt_page_meta$8 || {},
     component: () => import('./friends-DQVlKlvA.mjs')
   },
   {
     name: "gallery",
     path: "/gallery",
-    meta: __nuxt_page_meta$6 || {},
+    meta: __nuxt_page_meta$7 || {},
     component: () => import('./gallery-CW96-uOD.mjs')
   },
   {
     name: "profile",
     path: "/profile",
-    meta: __nuxt_page_meta$5 || {},
+    meta: __nuxt_page_meta$6 || {},
     component: () => import('./profile-BJ_aaS_X.mjs')
   },
   {
     name: "messages",
     path: "/messages",
-    meta: __nuxt_page_meta$4 || {},
+    meta: __nuxt_page_meta$5 || {},
     component: () => import('./messages-p-mAy4wd.mjs')
   },
   {
@@ -811,25 +812,25 @@ const _routes = [
   {
     name: "schedule",
     path: "/schedule",
-    meta: __nuxt_page_meta$3 || {},
+    meta: __nuxt_page_meta$4 || {},
     component: () => import('./schedule-Cfjosq-O.mjs')
   },
   {
     name: "dashboard",
     path: "/dashboard",
-    meta: __nuxt_page_meta$2 || {},
+    meta: __nuxt_page_meta$3 || {},
     component: () => import('./dashboard-JURkW9Lh.mjs')
   },
   {
     name: "letters",
     path: "/letters",
-    meta: __nuxt_page_meta$1 || {},
+    meta: __nuxt_page_meta$2 || {},
     component: () => import('./index-Bq1l4QJ1.mjs')
   },
   {
     name: "letters-write",
     path: "/letters/write",
-    meta: __nuxt_page_meta || {},
+    meta: __nuxt_page_meta$1 || {},
     component: () => import('./write-CzAdwKY_.mjs')
   },
   {
@@ -845,7 +846,8 @@ const _routes = [
   {
     name: "admin-registrations",
     path: "/admin/registrations",
-    component: () => import('./registrations-BrG6inFI.mjs')
+    meta: __nuxt_page_meta || {},
+    component: () => import('./registrations-DAlWhObc.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -971,7 +973,7 @@ const useCampersStore = defineStore("campers", () => {
   const campers = ref([]);
   const loaded = ref(false);
   async function initCampers() {
-    return;
+    return false;
   }
   function getCamperById(id) {
     return campers.value.find((c) => c.id === id);
@@ -1002,34 +1004,40 @@ const useCampersStore = defineStore("campers", () => {
 });
 const useAuthStore = defineStore("auth", () => {
   const user = ref(null);
+  const ready = ref(false);
   const isLoggedIn = computed(() => !!user.value);
+  const campers = useCampersStore();
   const init = () => {
-    const firebase = useFirebase();
-    if (!firebase) return;
-    onAuthStateChanged(firebase.auth, (firebaseUser) => {
-      user.value = firebaseUser;
-    });
+    return Promise.resolve();
   };
   async function login(email, password) {
     const firebase = useFirebase();
     if (!firebase) return { success: false, error: "Firebase not initialized." };
     try {
       const result = await signInWithEmailAndPassword(firebase.auth, email, password);
-      user.value = result.user;
+      await campers.initCampers();
+      const camperProfile = campers.campers.find((camper) => camper.email === result.user.email);
+      user.value = camperProfile || { uid: result.user.uid, email: result.user.email };
+      ready.value = true;
       if (false) ;
-      return { success: true, user: result.user };
+      return { success: true, user: user.value };
     } catch (error) {
       console.error(error);
       return { success: false, error: error.message };
     }
     return { success: false, error: "Invalid email or password." };
   }
-  function logout() {
+  async function logout() {
     user.value = null;
+    ready.value = true;
+    const firebase = useFirebase();
+    if (!firebase) return;
+    await firebase.auth.signOut();
   }
-  return { user, isLoggedIn, login, logout, init };
+  return { user, ready, isLoggedIn, login, logout, init };
 });
-const auth_45global = /* @__PURE__ */ defineNuxtRouteMiddleware((to) => {
+const auth_45global = /* @__PURE__ */ defineNuxtRouteMiddleware(async (to) => {
+  return;
 });
 const manifest_45route_45rule = /* @__PURE__ */ defineNuxtRouteMiddleware((to) => {
   {
@@ -6943,7 +6951,7 @@ const plugins = [
   ssg_detect_IpHCGcQQ_IR5Rl99qyukWoMA9fJGfuTYyoksTzy81cs
 ];
 const layouts = {
-  default: defineAsyncComponent(() => import('./default-DeyuQjjs.mjs').then((m) => m.default || m))
+  default: defineAsyncComponent(() => import('./default-CDxK9bgl.mjs').then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({
