@@ -134,10 +134,17 @@ export const useCampersStore = defineStore('campers', () => {
     const db = useDb()
     if (!db) throw new Error('Firebase is not initialized yet (campers store).')
 
-    const camperRef = doc(collection(db, 'campers'), camper.id);
-    delete camper.id;
-    await updateDoc(camperRef, camper);
-    campers.value = campers.value.map((c) => c.id === camper.id ? { ...c, ...camper } : c)
+    const camperId = camper.id
+    const camperRef = doc(collection(db, 'campers'), camperId)
+    const payload = { ...camper }
+
+    if (typeof payload.secret_angel === 'string' && payload.secret_angel) {
+      payload.secret_angel = doc(collection(db, 'campers'), payload.secret_angel)
+    }
+
+    delete payload.id
+    await updateDoc(camperRef, payload)
+    campers.value = campers.value.map((c) => c.id === camperId ? { ...c, ...payload } : c)
   }
 
   return { campers, loaded, initCampers, getCamperById, getCampersByGroup, addFriend, getFriends, registerCamper, updateCamper }

@@ -68,18 +68,18 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="input-label">Name</label>
-                <input v-if="editing" v-model="draft.emergencyContact.name" class="input" />
-                <p v-else class="font-body text-tertiary">{{ profile.emergencyContact?.name }}</p>
+                <input v-if="editing" v-model="draft.emergency.name" class="input" />
+                <p v-else class="font-body text-tertiary">{{ profile.emergency?.name }}</p>
               </div>
               <div>
                 <label class="input-label">Phone</label>
-                <input v-if="editing" v-model="draft.emergencyContact.phone" class="input" />
-                <p v-else class="font-body text-tertiary">{{ profile.emergencyContact?.phone }}</p>
+                <input v-if="editing" v-model="draft.emergency.phone" class="input" />
+                <p v-else class="font-body text-tertiary">{{ profile.emergency?.phone }}</p>
               </div>
               <div>
                 <label class="input-label">Relation</label>
-                <input v-if="editing" v-model="draft.emergencyContact.relation" class="input" />
-                <p v-else class="font-body text-tertiary">{{ profile.emergencyContact?.relation }}</p>
+                <input v-if="editing" v-model="draft.emergency.relationship" class="input" />
+                <p v-else class="font-body text-tertiary">{{ profile.emergency?.relationship }}</p>
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@ const profile = computed(() => campersStore.getCamperById(auth.user?.id) || auth
 const editing = ref(false)
 const draft = reactive({
   name: '', phone: '',
-  emergencyContact: { name: '', phone: '', relation: '' },
+  emergency: { name: '', phone: '', relationship: '' },
   medicalInfo: { allergies: '', medications: '', conditions: '' },
   dietary: '',
 })
@@ -142,7 +142,7 @@ const draft = reactive({
 function startEdit() {
   const p = profile.value
   draft.name = p.name; draft.phone = p.phone; draft.dietary = p.dietary
-  Object.assign(draft.emergencyContact, p.emergencyContact)
+  Object.assign(draft.emergency, p.emergency)
   Object.assign(draft.medicalInfo, p.medicalInfo)
 }
 
@@ -150,7 +150,7 @@ function save() {
   const camper = campersStore.getCamperById(auth.user?.id)
   if (camper) {
     camper.name = draft.name; camper.phone = draft.phone; camper.dietary = draft.dietary
-    Object.assign(camper.emergencyContact, draft.emergencyContact)
+    Object.assign(camper.emergency, draft.emergency)
     Object.assign(camper.medicalInfo, draft.medicalInfo)
   }
   editing.value = false

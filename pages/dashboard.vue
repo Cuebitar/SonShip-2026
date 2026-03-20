@@ -4,10 +4,10 @@
       <!-- Welcome header -->
       <div class="mb-10">
         <p class="font-body text-tertiary/60 text-sm mb-1">{{ t('dashboard.welcome') }}</p>
-        <h1 class="section-title">{{ auth.user?.name }} {{ auth.user?.avatar }}</h1>
-        <div class="flex flex-wrap gap-2 mt-3">
-          <span class="badge-primary">{{ auth.user?.group }}</span>
-          <span class="badge-accent">Camp Code: {{ auth.user?.campCode }}</span>
+        <h1 class="section-title">{{ dashboardTitle }}</h1>
+        <div v-if="hasMounted && auth.user" class="flex flex-wrap gap-2 mt-3">
+          <span class="badge-primary">{{ auth.user.group }}</span>
+          <span class="badge-accent">Camp Code: {{ auth.user.campCode }}</span>
         </div>
       </div>
 
@@ -94,7 +94,7 @@
           </div>
           <div v-else class="bg-accent/10 rounded-xl p-5 text-center border border-accent/30">
             <div class="text-5xl mb-2">✨</div>
-            <p class="font-heading font-bold text-accent text-lg">{{ auth.user?.secretIdentity }}</p>
+            <p class="font-heading font-bold text-accent text-lg">{{ revealedIdentity }}</p>
             <p class="font-body text-xs text-tertiary/50 mt-2">{{ t('dashboard.identity_revealed') }}</p>
           </div>
         </div>
@@ -119,7 +119,7 @@
 <script setup>
 definePageMeta({ requiresAuth: true, ssr: false })
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import { useCampersStore } from '~/stores/campers'
@@ -134,10 +134,22 @@ const scheduleStore = useScheduleStore()
 const revealCode = ref('')
 const identityRevealed = ref(false)
 const wrongCode = ref(false)
+const hasMounted = ref(false)
+
+const dashboardTitle = computed(() => {
+  if (!hasMounted.value || !auth.user) return ''
+
+  return [auth.user.name, auth.user.avatar].filter(Boolean).join(' ')
+})
+
+const revealedIdentity = computed(() => {
+  if (!hasMounted.value || !auth.user) return ''
+  return auth.user.secret_identity || ''
+})
 
 const angelTarget = computed(() => {
   if (!auth.user) return null
-  return campersStore.getCamperById(auth.user.secretAngelTargetId)
+  return campersStore.getCamperById(auth.user.secret_angel_id)
 })
 
 const mySchedule = computed(() => scheduleStore.schedule.slice(0, 3))
@@ -166,4 +178,8 @@ const quickLinks = [
   { to: '/gallery', label: 'nav.gallery', emoji: '📷' },
   { to: '/profile', label: 'nav.profile', emoji: '👤' },
 ]
+
+onMounted(() => {
+  hasMounted.value = true
+})
 </script>
