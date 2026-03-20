@@ -18,7 +18,7 @@
           <h4 class="font-heading font-bold text-primary mb-4 text-sm uppercase tracking-wider">{{ t('footer.quick_links') }}</h4>
           <ul class="space-y-2">
             <li v-for="link in quickLinks" :key="link.to">
-              <NuxtLink :to="link.to" class="font-body text-sm text-tertiary/60 hover:text-primary transition-colors" :aria-label="link.label" :title="link.label">
+              <NuxtLink v-if="Object.keys(link).includes('show') ? link.show : true" :to="link.to" class="font-body text-sm text-tertiary/60 hover:text-primary transition-colors" :aria-label="link.label" :title="link.label">
                 {{ link.label }}
               </NuxtLink>
             </li>
@@ -56,7 +56,6 @@ const quickLinks = [
   { to: '/', label: t('nav.home') },
   { to: '/about', label: t('nav.about') },
   { to: '/register', label: t('nav.register') },
-  { to: '/login', label: t('nav.login') },
-  { to: '/admin/registrations', label: 'Admin (Registrations)' },
+  { to: '/login', label: t('nav.login'), show: new Date() > new Date('2026-08-31') }
 ]
 </script>

@@ -266,7 +266,7 @@ const records = computed(() =>
       secretAngel: secretAngel ? secretAngel.name : "",
       iceBreakingTarget: "Liam Chen",
       group: c.group || "",
-      roomNumber: `R${100 + c.id}`,
+      roomNumber: c.roomNumber || "",
       registrationTime
     };
   })

@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
                         // Ensure campers are loaded before mapping firebase user -> camper profile.
                         await campers.initCampers()
                         const camperProfile = campers.campers.find((camper) => camper.email === firebaseUser.email)
-                        user.value = camperProfile || { uid: firebaseUser.uid, email: firebaseUser.email }
+                        user.value = camperProfile
                         ready.value = true
                         if (import.meta.client) {
                             localStorage.setItem('sonship-user', JSON.stringify(user.value))
@@ -97,5 +97,21 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    return { user, ready, isLoggedIn, login, logout, init }
+    async function changePassword(newPassword) {
+        const firebase = useFirebase()
+        if (!firebase) return { success: false, error: 'Firebase not initialized.' }
+        try {
+            await firebase.auth.currentUser.updatePassword(newPassword)
+            user.value.changed_password = true;
+            if (import.meta.client) {
+                localStorage.setItem('sonship-user', JSON.stringify(user.value))
+            }
+            return { success: true }
+        } catch (error) {
+            console.error(error)
+            return { success: false, error: error.message }
+        }
+    }
+
+    return { user, ready, isLoggedIn, login, logout, init, changePassword }
 })

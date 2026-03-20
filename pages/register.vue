@@ -146,7 +146,7 @@
             </div>
 
             <div class="pt-2">
-              <UButton @click="handleSubmit" type="submit" block size="lg" :loading="loading">
+              <UButton type="submit" block size="lg" :loading="loading">
                 {{ t('register.submit') }}
               </UButton>
             </div>
@@ -168,9 +168,11 @@
 
 <script setup>
 import { Info } from 'lucide-vue-next'
-
+import { onMounted } from 'vue';
+import { useCampersStore } from '~/stores/campers'
 const { t, locale } = useI18n()
 
+const campersStore = useCampersStore();
 const loading = ref(false)
 const showSuccess = ref(false)
 
@@ -180,8 +182,8 @@ const genderOptions = computed(() => [
 ])
 
 const transportOptions = computed(() => [
-  { label: t('register.car'), value: 'car' },
   { label: t('register.bus'), value: 'bus' },
+  { label: t('register.car'), value: 'car' },
 ])
 
 const relationshipOptions = computed(() => [
@@ -209,27 +211,49 @@ const form = reactive({
 })
 
 async function handleSubmit() {
+  
   loading.value = true
   await new Promise((r) => setTimeout(r, 1200))
-  loading.value = false
-  showSuccess.value = true
 
-  Object.assign(form, {
-    fullName: '',
-    ic: '',
-    phone: '',
-    email: '',
-    gender: 'male',
-    transportation: 'car',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    emergencyContactRelationship: '',
-    importantInfo: '',
-    q1: '',
-    q2: '',
-    q3: '',
-  })
+  const baseString = form.fullName.split(' ').slice(0, 5).join('').toLowerCase() + form.ic.slice(0, 6);
+  const password = baseString.split('').sort(() => 0.5 - Math.random()).join('');
+  
+  const camper = {
+    transport: form.transportation,
+    ic: form.ic,
+    important_info: form.importantInfo,
+    phone: form.phone,
+    emergency: {
+      name: form.emergencyContactName,
+      relationship: form.emergencyContactRelationship,
+      phone: form.emergencyContactPhone
+    },
+    name: form.fullName,
+    is_admin: false,
+    password: password,
+    changed_password: false,
+    questions: {
+      place: form.q1,
+      pain: form.q2,
+      verse: form.q3
+    },
+    gender: form.gender,
+    email: form.email
+  };
+
+  try {
+    await campersStore.registerCamper(camper);
+    showSuccess.value = true;
+  } catch (error) {
+
+    console.error(error);
+  }
+  loading.value = false
 }
+
+onMounted(() => {
+  campersStore.initCampers();
+})
 </script>
 
 <style scoped>

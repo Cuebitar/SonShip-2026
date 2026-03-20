@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore'
-import { useDb } from '~/composable/firebase'
+import { useDb, useFirebase } from '~/composable/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 export const useCampersStore = defineStore('campers', () => {
   const campers = ref([])
@@ -72,11 +73,14 @@ export const useCampersStore = defineStore('campers', () => {
       throw new Error('registerCamper() must run on the client.')
     }
 
-    const db = useDb()
-    if (!db) throw new Error('Firebase is not initialized yet (campers store).')
+    const db = useDb();
+    const firebase = useFirebase();
 
-    const { name, email, phone, ic, group, roomNumber, status } = camper
-    await addDoc(collection(db, 'campers'), { name, email, phone, ic, group, roomNumber, status })
+    if (!db) throw new Error('Firebase is not initialized yet (campers store).')
+    const docRef = await addDoc(collection(db, 'campers'), camper);
+    console.log(docRef);
+    await createUserWithEmailAndPassword(firebase.auth, camper.email, camper.password)
+    campers.value.push(camper);
   }
 
   return { campers, loaded, initCampers, getCamperById, getCampersByGroup, addFriend, getFriends, registerCamper }
