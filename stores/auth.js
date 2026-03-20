@@ -8,8 +8,46 @@ export const useAuthStore = defineStore('auth', () => {
     const ready = ref(false);
     const isLoggedIn = computed(() => !!user.value);
     const campers = useCampersStore();
+
+    function readStoredUser() {
+        if (!import.meta.client) return null
+
+        const raw = localStorage.getItem('sonship-user')
+        if (!raw || raw === 'undefined' || raw === 'null') return null
+
+        try {
+            return JSON.parse(raw)
+        } catch (error) {
+            console.error('Failed to parse stored sonship-user:', error)
+            localStorage.removeItem('sonship-user')
+            return null
+        }
+    }
+
+    function persistUser(nextUser) {
+        if (!import.meta.client) return
+
+        if (!nextUser) {
+            localStorage.removeItem('sonship-user')
+            return
+        }
+
+        localStorage.setItem('sonship-user', JSON.stringify(nextUser))
+    }
+
+    async function waitForFirebase(maxAttempts = 50, delayMs = 50) {
+        for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+            const firebase = useFirebase()
+            if (firebase) return firebase
+
+            await new Promise((resolve) => window.setTimeout(resolve, delayMs))
+        }
+
+        return null
+    }
+
     if (import.meta.client) {
-        user.value = JSON.parse(localStorage.getItem('sonship-user') || 'null')
+        user.value = readStoredUser()
     }
 
     let initPromise = null
@@ -19,45 +57,48 @@ export const useAuthStore = defineStore('auth', () => {
         if (initPromise) return initPromise
 
         initPromise = new Promise((resolve) => {
-            const firebase = useFirebase()
-            if (!firebase) {
-                ready.value = true
-                resolve()
-                return
-            }
-
-            let resolved = false
-            onAuthStateChanged(firebase.auth, (firebaseUser) => {
-                ;(async () => {
-                    if (!firebaseUser) {
-                        user.value = null
-                        ready.value = true
-                        if (import.meta.client) {
-                            localStorage.removeItem('sonship-user')
-                        }
-                    } else {
-                        // Ensure campers are loaded before mapping firebase user -> camper profile.
-                        await campers.initCampers()
-                        const camperProfile = campers.campers.find((camper) => camper.email === firebaseUser.email)
-                        user.value = camperProfile
-                        ready.value = true
-                        if (import.meta.client) {
-                            localStorage.setItem('sonship-user', JSON.stringify(user.value))
-                        }
-                    }
-
-                    if (!resolved) {
-                        resolved = true
-                        resolve(firebaseUser)
-                    }
-                })().catch((err) => {
-                    console.error(err)
+            ;(async () => {
+                const firebase = await waitForFirebase()
+                if (!firebase) {
                     ready.value = true
-                    if (!resolved) {
-                        resolved = true
-                        resolve()
-                    }
+                    initPromise = null
+                    resolve()
+                    return
+                }
+
+                let resolved = false
+                onAuthStateChanged(firebase.auth, (firebaseUser) => {
+                    ;(async () => {
+                        if (!firebaseUser) {
+                            user.value = null
+                            ready.value = true
+                            persistUser(null)
+                        } else {
+                            await campers.initCampers()
+                            const camperProfile = campers.campers.find((camper) => camper.email === firebaseUser.email)
+                            user.value = camperProfile || { uid: firebaseUser.uid, email: firebaseUser.email }
+                            ready.value = true
+                            persistUser(user.value)
+                        }
+
+                        if (!resolved) {
+                            resolved = true
+                            resolve(firebaseUser)
+                        }
+                    })().catch((err) => {
+                        console.error(err)
+                        ready.value = true
+                        if (!resolved) {
+                            resolved = true
+                            resolve()
+                        }
+                    })
                 })
+            })().catch((err) => {
+                console.error(err)
+                ready.value = true
+                initPromise = null
+                resolve()
             })
         })
 
@@ -74,9 +115,7 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = camperProfile || { uid: result.user.uid, email: result.user.email }
             ready.value = true
 
-            if (import.meta.client) {
-                localStorage.setItem('sonship-user', JSON.stringify(user.value))
-            }
+            persistUser(user.value)
             return { success: true, user: user.value }
         } catch (error) {
             console.error(error)
@@ -92,9 +131,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (!firebase) return  // ← guard here
         
         await firebase.auth.signOut()
-        if (import.meta.client) {
-            localStorage.removeItem('sonship-user')
-        }
+        persistUser(null)
     }
 
     async function changePassword(newPassword) {
@@ -103,9 +140,7 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             await firebase.auth.currentUser.updatePassword(newPassword)
             user.value.changed_password = true;
-            if (import.meta.client) {
-                localStorage.setItem('sonship-user', JSON.stringify(user.value))
-            }
+            persistUser(user.value)
             return { success: true }
         } catch (error) {
             console.error(error)

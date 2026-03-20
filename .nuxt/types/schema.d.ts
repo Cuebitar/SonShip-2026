@@ -11,6 +11,12 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
       cdnURL: string,
    },
 
+   resendApiKey: string,
+
+   registrationEmailFrom: string,
+
+   registrationEmailReplyTo: string,
+
    nitro: {
       envPrefix: string,
    },

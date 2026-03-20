@@ -40,7 +40,7 @@
             <button @click="showDropdown = !showDropdown"
               class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 transition-all">
               <span class="text-lg">{{ auth.user?.avatar }}</span>
-              <span class="font-heading font-semibold text-sm text-primary">{{ auth.user?.name.split(' ')[0] }}</span>
+              <span class="font-heading font-semibold text-sm text-primary">{{ auth.user?.name }}</span>
               <ChevronDown class="w-3.5 h-3.5 text-primary/60" />
             </button>
             <Transition name="dropdown">

@@ -23,6 +23,9 @@ export default defineNuxtConfig({
     },
   }], '@pinia/nuxt'],
   runtimeConfig: {
+    resendApiKey: process.env.RESEND_API_KEY,
+    registrationEmailFrom: process.env.REGISTRATION_EMAIL_FROM,
+    registrationEmailReplyTo: process.env.REGISTRATION_EMAIL_REPLY_TO,
     public: {
       firebaseApiKey: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN,

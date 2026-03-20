@@ -1,12 +1,25 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { useDb, useFirebase } from '~/composable/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 export const useCampersStore = defineStore('campers', () => {
   const campers = ref([])
   const loaded = ref(false)
+
+  function normalizeIc(value) {
+    return (value || '').replace(/\D/g, '')
+  }
+
+  function normalizeEmail(value) {
+    return (value || '').trim().toLowerCase()
+  }
+
+  function getReferenceId(reference) {
+    return reference?.id || reference?.path?.split('/').pop() || ''
+  }
+
 
   async function initCampers() {
     // Firebase client SDK is only initialized on the client (plugins/firebase.client.ts).
@@ -17,29 +30,8 @@ export const useCampersStore = defineStore('campers', () => {
     // Can happen during very early navigation; callers can retry after Firebase plugin runs.
     if (!db) return false
 
-    const rawCampers = await getDocs(collection(db, 'campers'));
-    console.log(rawCampers);
-    const mapped = await Promise.all(
-      rawCampers.docs.map(async (c) => {
-        const docRef = doc(db, 'campers', c.id)
-        const docSnap = await getDoc(docRef)
-        if (!docSnap.exists()) return null
-
-        const data = docSnap.data()
-        const emergency = data.emergency || {}
-        return {
-          id: docSnap.id,
-          ...data,
-          emergencyContact: {
-            name: emergency.name,
-            phone: emergency.phone,
-            relation: emergency.relation,
-          },
-        }
-      }),
-    )
-    console.log(mapped);
-    campers.value = mapped.filter(Boolean)
+    const rawCampers = await getDocs(collection(db, 'campers'))
+    campers.value = rawCampers.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     loaded.value = true
     return true
   }
@@ -73,15 +65,80 @@ export const useCampersStore = defineStore('campers', () => {
       throw new Error('registerCamper() must run on the client.')
     }
 
-    const db = useDb();
-    const firebase = useFirebase();
+    const db = useDb()
+    const firebase = useFirebase()
 
     if (!db) throw new Error('Firebase is not initialized yet (campers store).')
-    const docRef = await addDoc(collection(db, 'campers'), camper);
-    console.log(docRef);
+    if (!firebase) throw new Error('Firebase auth is not initialized yet (campers store).')
+
+    if (!loaded.value) {
+      await initCampers()
+    }
+
+    const normalizedIc = normalizeIc(camper.ic)
+    const normalizedEmail = normalizeEmail(camper.email)
+
+    if (campers.value.some((existingCamper) => normalizeIc(existingCamper.ic) === normalizedIc)) {
+      const error = new Error('IC already exists.')
+      error.code = 'campers/ic-already-exists'
+      throw error
+    }
+
+    if (campers.value.some((existingCamper) => normalizeEmail(existingCamper.email) === normalizedEmail)) {
+      const error = new Error('Email already exists.')
+      error.code = 'campers/email-already-exists'
+      throw error
+    }
+
+    const camperRef = doc(collection(db, 'campers'))
+    const camperPayload = {
+      avatar: camper.avatar || '',
+      changed_password: Boolean(camper.changed_password),
+      email: normalizedEmail,
+      emergency: {
+        name: camper.emergency?.name || '',
+        phone: camper.emergency?.phone || '',
+        relationship: camper.emergency?.relationship || '',
+      },
+      gender: camper.gender || '',
+      group: '',
+      ic: normalizedIc,
+      ice_breaking: {
+        riddle: '',
+        target: camperRef,
+      },
+      important_info: camper.important_info || '',
+      is_admin: Boolean(camper.is_admin),
+      name: camper.name || '',
+      password: camper.password || '',
+      phone: camper.phone || '',
+      questions: {
+        pain: camper.questions?.pain || '',
+        place: camper.questions?.place || '',
+        verse: camper.questions?.verse || '',
+      },
+      room_name: '',
+      secret_angel: camperRef,
+      secret_identity: '',
+      status: camper.status || 'Pending',
+      transport: camper.transport || '',
+      registrationTime: camper.registrationTime || new Date().toISOString(),
+    }
+
     await createUserWithEmailAndPassword(firebase.auth, camper.email, camper.password)
-    campers.value.push(camper);
+    await setDoc(camperRef, camperPayload)
+    campers.value.push(camperPayload);
   }
 
-  return { campers, loaded, initCampers, getCamperById, getCampersByGroup, addFriend, getFriends, registerCamper }
+  async function updateCamper(camper) {
+    const db = useDb()
+    if (!db) throw new Error('Firebase is not initialized yet (campers store).')
+
+    const camperRef = doc(collection(db, 'campers'), camper.id);
+    delete camper.id;
+    await updateDoc(camperRef, camper);
+    campers.value = campers.value.map((c) => c.id === camper.id ? { ...c, ...camper } : c)
+  }
+
+  return { campers, loaded, initCampers, getCamperById, getCampersByGroup, addFriend, getFriends, registerCamper, updateCamper }
 })

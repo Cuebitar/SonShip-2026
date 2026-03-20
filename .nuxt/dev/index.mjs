@@ -4,7 +4,7 @@ import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { escapeHtml } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/@vue/shared/dist/shared.cjs.js';
+import { escapeHtml as escapeHtml$1 } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/@vue/shared/dist/shared.cjs.js';
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import { renderToString } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/vue/server-renderer/index.mjs';
 import destr, { destr as destr$1 } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/destr/dist/index.mjs';
@@ -1198,6 +1198,9 @@ const _inlineRuntimeConfig = {
       }
     }
   },
+  "resendApiKey": "re_8zkSgdFs_PuRSXchAkFpEMafzNfh1pTdw",
+  "registrationEmailFrom": "sonship2026@megasubangcmc.org.my",
+  "registrationEmailReplyTo": "",
   "icon": {
     "serverKnownCssClasses": []
   }
@@ -3286,10 +3289,12 @@ const _SXJY6D = defineCachedEventHandler(async (event) => {
   // 1 week
 });
 
+const _lazy_X9Q7xs = () => Promise.resolve().then(function () { return registerConfirmation_post$1; });
 const _lazy_Ww1j2Y = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
   { route: '', handler: _YRwljS, lazy: false, middleware: true, method: undefined },
+  { route: '/api/register-confirmation', handler: _lazy_X9Q7xs, lazy: true, middleware: false, method: "post" },
   { route: '/__nuxt_error', handler: _lazy_Ww1j2Y, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: _SxA8c9, lazy: false, middleware: false, method: undefined },
   { route: '/api/_nuxt_icon/:collection', handler: _SXJY6D, lazy: false, middleware: false, method: undefined },
@@ -3535,7 +3540,7 @@ const template$1 = (messages) => {
 		..._messages,
 		...messages
 	};
-	return "<!DOCTYPE html><html lang=\"en\"><head><title>" + escapeHtml(messages.status) + " - " + escapeHtml(messages.statusText) + " | " + escapeHtml(messages.appName) + "</title><meta charset=\"utf-8\"><meta content=\"width=device-width,initial-scale=1.0,minimum-scale=1.0\" name=\"viewport\"><style>.spotlight{background:linear-gradient(45deg,#00dc82,#36e4da 50%,#0047e1);filter:blur(20vh)}*,:after,:before{border-color:var(--un-default-border-color,#e5e7eb);border-style:solid;border-width:0;box-sizing:border-box}:after,:before{--un-content:\"\"}html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent}body{line-height:inherit;margin:0}h1{font-size:inherit;font-weight:inherit}h1,p{margin:0}*,:after,:before{--un-rotate:0;--un-rotate-x:0;--un-rotate-y:0;--un-rotate-z:0;--un-scale-x:1;--un-scale-y:1;--un-scale-z:1;--un-skew-x:0;--un-skew-y:0;--un-translate-x:0;--un-translate-y:0;--un-translate-z:0;--un-pan-x: ;--un-pan-y: ;--un-pinch-zoom: ;--un-scroll-snap-strictness:proximity;--un-ordinal: ;--un-slashed-zero: ;--un-numeric-figure: ;--un-numeric-spacing: ;--un-numeric-fraction: ;--un-border-spacing-x:0;--un-border-spacing-y:0;--un-ring-offset-shadow:0 0 transparent;--un-ring-shadow:0 0 transparent;--un-shadow-inset: ;--un-shadow:0 0 transparent;--un-ring-inset: ;--un-ring-offset-width:0px;--un-ring-offset-color:#fff;--un-ring-width:0px;--un-ring-color:rgba(147,197,253,.5);--un-blur: ;--un-brightness: ;--un-contrast: ;--un-drop-shadow: ;--un-grayscale: ;--un-hue-rotate: ;--un-invert: ;--un-saturate: ;--un-sepia: ;--un-backdrop-blur: ;--un-backdrop-brightness: ;--un-backdrop-contrast: ;--un-backdrop-grayscale: ;--un-backdrop-hue-rotate: ;--un-backdrop-invert: ;--un-backdrop-opacity: ;--un-backdrop-saturate: ;--un-backdrop-sepia: }.fixed{position:fixed}.-bottom-1\\/2{bottom:-50%}.left-0{left:0}.right-0{right:0}.grid{display:grid}.mb-16{margin-bottom:4rem}.mb-8{margin-bottom:2rem}.h-1\\/2{height:50%}.max-w-520px{max-width:520px}.min-h-screen{min-height:100vh}.place-content-center{place-content:center}.overflow-hidden{overflow:hidden}.bg-white{--un-bg-opacity:1;background-color:rgb(255 255 255/var(--un-bg-opacity))}.px-8{padding-left:2rem;padding-right:2rem}.text-center{text-align:center}.text-8xl{font-size:6rem;line-height:1}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-black{--un-text-opacity:1;color:rgb(0 0 0/var(--un-text-opacity))}.font-light{font-weight:300}.font-medium{font-weight:500}.leading-tight{line-height:1.25}.font-sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}@media(prefers-color-scheme:dark){.dark\\:bg-black{--un-bg-opacity:1;background-color:rgb(0 0 0/var(--un-bg-opacity))}.dark\\:text-white{--un-text-opacity:1;color:rgb(255 255 255/var(--un-text-opacity))}}@media(min-width:640px){.sm\\:px-0{padding-left:0;padding-right:0}.sm\\:text-4xl{font-size:2.25rem;line-height:2.5rem}}</style><script>!function(){const e=document.createElement(\"link\").relList;if(!(e&&e.supports&&e.supports(\"modulepreload\"))){for(const e of document.querySelectorAll('link[rel=\"modulepreload\"]'))r(e);new MutationObserver(e=>{for(const o of e)if(\"childList\"===o.type)for(const e of o.addedNodes)\"LINK\"===e.tagName&&\"modulepreload\"===e.rel&&r(e)}).observe(document,{childList:!0,subtree:!0})}function r(e){if(e.ep)return;e.ep=!0;const r=function(e){const r={};return e.integrity&&(r.integrity=e.integrity),e.referrerPolicy&&(r.referrerPolicy=e.referrerPolicy),\"use-credentials\"===e.crossOrigin?r.credentials=\"include\":\"anonymous\"===e.crossOrigin?r.credentials=\"omit\":r.credentials=\"same-origin\",r}(e);fetch(e.href,r)}}();<\/script></head><body class=\"antialiased bg-white dark:bg-black dark:text-white font-sans grid min-h-screen overflow-hidden place-content-center text-black\"><div class=\"-bottom-1/2 fixed h-1/2 left-0 right-0 spotlight\"></div><div class=\"max-w-520px text-center\"><h1 class=\"font-medium mb-8 sm:text-10xl text-8xl\">" + escapeHtml(messages.status) + "</h1><p class=\"font-light leading-tight mb-16 px-8 sm:px-0 sm:text-4xl text-xl\">" + escapeHtml(messages.description) + "</p></div></body></html>";
+	return "<!DOCTYPE html><html lang=\"en\"><head><title>" + escapeHtml$1(messages.status) + " - " + escapeHtml$1(messages.statusText) + " | " + escapeHtml$1(messages.appName) + "</title><meta charset=\"utf-8\"><meta content=\"width=device-width,initial-scale=1.0,minimum-scale=1.0\" name=\"viewport\"><style>.spotlight{background:linear-gradient(45deg,#00dc82,#36e4da 50%,#0047e1);filter:blur(20vh)}*,:after,:before{border-color:var(--un-default-border-color,#e5e7eb);border-style:solid;border-width:0;box-sizing:border-box}:after,:before{--un-content:\"\"}html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-moz-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent}body{line-height:inherit;margin:0}h1{font-size:inherit;font-weight:inherit}h1,p{margin:0}*,:after,:before{--un-rotate:0;--un-rotate-x:0;--un-rotate-y:0;--un-rotate-z:0;--un-scale-x:1;--un-scale-y:1;--un-scale-z:1;--un-skew-x:0;--un-skew-y:0;--un-translate-x:0;--un-translate-y:0;--un-translate-z:0;--un-pan-x: ;--un-pan-y: ;--un-pinch-zoom: ;--un-scroll-snap-strictness:proximity;--un-ordinal: ;--un-slashed-zero: ;--un-numeric-figure: ;--un-numeric-spacing: ;--un-numeric-fraction: ;--un-border-spacing-x:0;--un-border-spacing-y:0;--un-ring-offset-shadow:0 0 transparent;--un-ring-shadow:0 0 transparent;--un-shadow-inset: ;--un-shadow:0 0 transparent;--un-ring-inset: ;--un-ring-offset-width:0px;--un-ring-offset-color:#fff;--un-ring-width:0px;--un-ring-color:rgba(147,197,253,.5);--un-blur: ;--un-brightness: ;--un-contrast: ;--un-drop-shadow: ;--un-grayscale: ;--un-hue-rotate: ;--un-invert: ;--un-saturate: ;--un-sepia: ;--un-backdrop-blur: ;--un-backdrop-brightness: ;--un-backdrop-contrast: ;--un-backdrop-grayscale: ;--un-backdrop-hue-rotate: ;--un-backdrop-invert: ;--un-backdrop-opacity: ;--un-backdrop-saturate: ;--un-backdrop-sepia: }.fixed{position:fixed}.-bottom-1\\/2{bottom:-50%}.left-0{left:0}.right-0{right:0}.grid{display:grid}.mb-16{margin-bottom:4rem}.mb-8{margin-bottom:2rem}.h-1\\/2{height:50%}.max-w-520px{max-width:520px}.min-h-screen{min-height:100vh}.place-content-center{place-content:center}.overflow-hidden{overflow:hidden}.bg-white{--un-bg-opacity:1;background-color:rgb(255 255 255/var(--un-bg-opacity))}.px-8{padding-left:2rem;padding-right:2rem}.text-center{text-align:center}.text-8xl{font-size:6rem;line-height:1}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-black{--un-text-opacity:1;color:rgb(0 0 0/var(--un-text-opacity))}.font-light{font-weight:300}.font-medium{font-weight:500}.leading-tight{line-height:1.25}.font-sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}@media(prefers-color-scheme:dark){.dark\\:bg-black{--un-bg-opacity:1;background-color:rgb(0 0 0/var(--un-bg-opacity))}.dark\\:text-white{--un-text-opacity:1;color:rgb(255 255 255/var(--un-text-opacity))}}@media(min-width:640px){.sm\\:px-0{padding-left:0;padding-right:0}.sm\\:text-4xl{font-size:2.25rem;line-height:2.5rem}}</style><script>!function(){const e=document.createElement(\"link\").relList;if(!(e&&e.supports&&e.supports(\"modulepreload\"))){for(const e of document.querySelectorAll('link[rel=\"modulepreload\"]'))r(e);new MutationObserver(e=>{for(const o of e)if(\"childList\"===o.type)for(const e of o.addedNodes)\"LINK\"===e.tagName&&\"modulepreload\"===e.rel&&r(e)}).observe(document,{childList:!0,subtree:!0})}function r(e){if(e.ep)return;e.ep=!0;const r=function(e){const r={};return e.integrity&&(r.integrity=e.integrity),e.referrerPolicy&&(r.referrerPolicy=e.referrerPolicy),\"use-credentials\"===e.crossOrigin?r.credentials=\"include\":\"anonymous\"===e.crossOrigin?r.credentials=\"omit\":r.credentials=\"same-origin\",r}(e);fetch(e.href,r)}}();<\/script></head><body class=\"antialiased bg-white dark:bg-black dark:text-white font-sans grid min-h-screen overflow-hidden place-content-center text-black\"><div class=\"-bottom-1/2 fixed h-1/2 left-0 right-0 spotlight\"></div><div class=\"max-w-520px text-center\"><h1 class=\"font-medium mb-8 sm:text-10xl text-8xl\">" + escapeHtml$1(messages.status) + "</h1><p class=\"font-light leading-tight mb-16 px-8 sm:px-0 sm:text-4xl text-xl\">" + escapeHtml$1(messages.description) + "</p></div></body></html>";
 };
 
 const error500 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -3555,6 +3560,237 @@ const styles = {};
 const styles$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: styles
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const copyByLocale = {
+  en: {
+    subject: "SonShip Camp Registration Confirmation",
+    heading: "Your registration has been received",
+    intro: "Thanks for registering for SonShip Camp. Here is a summary of the details you submitted.",
+    outro: "Please keep this email for reference. If anything needs to be updated, reply to this email or contact the organizing team.",
+    sections: {
+      personal: "Personal Details",
+      emergency: "Emergency Contact",
+      questions: "Additional Questions"
+    },
+    labels: {
+      name: "Full Name",
+      email: "Email",
+      ic: "IC Number",
+      phone: "Phone Number",
+      gender: "Gender",
+      transport: "Transportation",
+      importantInfo: "Important Information",
+      emergencyName: "Emergency Contact Name",
+      emergencyPhone: "Emergency Contact Phone",
+      emergencyRelationship: "Relationship",
+      q1: "Favorite Bible story",
+      q2: "Love language",
+      q3: "Free time activity",
+      notProvided: "Not provided"
+    },
+    values: {
+      male: "Male",
+      female: "Female",
+      bus: "By Bus",
+      car: "By Car",
+      father: "Father",
+      mother: "Mother",
+      guardian: "Guardian",
+      sibling: "Sibling",
+      partner: "Partner"
+    }
+  },
+  zh: {
+    subject: "SonShip \u8425\u4F1A\u62A5\u540D\u786E\u8BA4",
+    heading: "\u6211\u4EEC\u5DF2\u6536\u5230\u60A8\u7684\u62A5\u540D",
+    intro: "\u611F\u8C22\u60A8\u62A5\u540D SonShip \u8425\u4F1A\u3002\u4EE5\u4E0B\u662F\u60A8\u63D0\u4EA4\u7684\u8D44\u6599\u6458\u8981\uFF0C\u65B9\u4FBF\u60A8\u7559\u5E95\u53C2\u8003\u3002",
+    outro: "\u8BF7\u4FDD\u7559\u6B64\u90AE\u4EF6\u4F5C\u4E3A\u8BB0\u5F55\u3002\u5982\u9700\u66F4\u65B0\u8D44\u6599\uFF0C\u53EF\u76F4\u63A5\u56DE\u590D\u6B64\u90AE\u4EF6\u6216\u8054\u7CFB\u7B79\u59D4\u56E2\u961F\u3002",
+    sections: {
+      personal: "\u4E2A\u4EBA\u8D44\u6599",
+      emergency: "\u7D27\u6025\u8054\u7CFB\u4EBA",
+      questions: "\u9644\u52A0\u95EE\u9898"
+    },
+    labels: {
+      name: "\u5168\u540D",
+      email: "\u7535\u5B50\u90AE\u4EF6",
+      ic: "\u8EAB\u4EFD\u8BC1\u53F7\u7801",
+      phone: "\u7535\u8BDD\u53F7\u7801",
+      gender: "\u6027\u522B",
+      transport: "\u4EA4\u901A\u65B9\u5F0F",
+      importantInfo: "\u91CD\u8981\u4FE1\u606F",
+      emergencyName: "\u7D27\u6025\u8054\u7CFB\u4EBA\u59D3\u540D",
+      emergencyPhone: "\u7D27\u6025\u8054\u7CFB\u4EBA\u7535\u8BDD",
+      emergencyRelationship: "\u5173\u7CFB",
+      q1: "\u6700\u559C\u6B22\u7684\u5723\u7ECF\u6545\u4E8B",
+      q2: "Love Language",
+      q3: "\u7A7A\u95F2\u65F6\u4F1A\u505A\u7684\u4E8B",
+      notProvided: "\u672A\u586B\u5199"
+    },
+    values: {
+      male: "\u7537",
+      female: "\u5973",
+      bus: "\u642D\u5DF4\u58EB",
+      car: "\u5F00\u8F66",
+      father: "\u7236\u4EB2",
+      mother: "\u6BCD\u4EB2",
+      guardian: "\u76D1\u62A4\u4EBA",
+      sibling: "\u5144\u5F1F\u59D0\u59B9",
+      partner: "\u4F34\u4FA3"
+    }
+  }
+};
+function escapeHtml(value) {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function formatValue(value, fallback) {
+  if (!value) return fallback;
+  return value;
+}
+function maskIc(ic, fallback) {
+  if (!ic) return fallback;
+  const digits = ic.replace(/\D/g, "");
+  if (digits.length < 4) return fallback;
+  return `******-**-${digits.slice(-4)}`;
+}
+function translateOption(copy, value) {
+  var _a;
+  if (!value) return copy.labels.notProvided;
+  return (_a = copy.values[value]) != null ? _a : value;
+}
+function buildRows(rows) {
+  return rows.map(({ label, value }) => `
+      <tr>
+        <td style="padding:10px 0;color:#bca889;font-size:13px;vertical-align:top;width:38%;">${escapeHtml(label)}</td>
+        <td style="padding:10px 0;color:#f6e9d7;font-size:14px;line-height:1.5;">${escapeHtml(value)}</td>
+      </tr>
+    `).join("");
+}
+const registerConfirmation_post = defineEventHandler(async (event) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
+  const config = useRuntimeConfig(event);
+  const body = await readBody(event);
+  const registration = body.registration;
+  if (!(registration == null ? void 0 : registration.email) || !(registration == null ? void 0 : registration.name)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Registration name and email are required."
+    });
+  }
+  if (!config.resendApiKey || !config.registrationEmailFrom) {
+    return {
+      sent: false,
+      skipped: true,
+      reason: "email_not_configured"
+    };
+  }
+  const copy = copyByLocale[body.locale === "zh" ? "zh" : "en"];
+  const fallback = copy.labels.notProvided;
+  const personalRows = buildRows([
+    { label: copy.labels.name, value: formatValue(registration.name, fallback) },
+    { label: copy.labels.email, value: formatValue(registration.email, fallback) },
+    { label: copy.labels.ic, value: maskIc(registration.ic, fallback) },
+    { label: copy.labels.phone, value: formatValue(registration.phone, fallback) },
+    { label: copy.labels.gender, value: translateOption(copy, registration.gender) },
+    { label: copy.labels.transport, value: translateOption(copy, registration.transport) },
+    { label: copy.labels.importantInfo, value: formatValue(registration.important_info, fallback) }
+  ]);
+  const emergencyRows = buildRows([
+    { label: copy.labels.emergencyName, value: formatValue((_a = registration.emergency) == null ? void 0 : _a.name, fallback) },
+    { label: copy.labels.emergencyPhone, value: formatValue((_b = registration.emergency) == null ? void 0 : _b.phone, fallback) },
+    { label: copy.labels.emergencyRelationship, value: translateOption(copy, (_c = registration.emergency) == null ? void 0 : _c.relationship) }
+  ]);
+  const questionRows = buildRows([
+    { label: copy.labels.q1, value: formatValue((_d = registration.questions) == null ? void 0 : _d.place, fallback) },
+    { label: copy.labels.q2, value: formatValue((_e = registration.questions) == null ? void 0 : _e.pain, fallback) },
+    { label: copy.labels.q3, value: formatValue((_f = registration.questions) == null ? void 0 : _f.verse, fallback) }
+  ]);
+  const html = `
+    <div style="background:#171717;padding:32px 16px;font-family:Arial,sans-serif;">
+      <div style="max-width:680px;margin:0 auto;background:rgba(58,38,32,0.88);border:1px solid rgba(230,177,83,0.22);border-radius:24px;overflow:hidden;">
+        <div style="padding:32px;background:radial-gradient(circle at top, rgba(230,177,83,0.18), transparent 58%);">
+          <div style="display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(230,177,83,0.12);border:1px solid rgba(230,177,83,0.2);color:#e6b153;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">
+            SonShip Camp
+          </div>
+          <h1 style="margin:20px 0 10px;color:#e6b153;font-size:28px;line-height:1.2;">${escapeHtml(copy.heading)}</h1>
+          <p style="margin:0;color:#f6e9d7;font-size:15px;line-height:1.7;">${escapeHtml(copy.intro)}</p>
+        </div>
+        <div style="padding:0 32px 32px;">
+          <section style="padding:22px 0;border-top:1px solid rgba(230,177,83,0.14);">
+            <h2 style="margin:0 0 12px;color:#e6b153;font-size:18px;">${escapeHtml(copy.sections.personal)}</h2>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${personalRows}</table>
+          </section>
+          <section style="padding:22px 0;border-top:1px solid rgba(230,177,83,0.14);">
+            <h2 style="margin:0 0 12px;color:#e6b153;font-size:18px;">${escapeHtml(copy.sections.emergency)}</h2>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${emergencyRows}</table>
+          </section>
+          <section style="padding:22px 0;border-top:1px solid rgba(230,177,83,0.14);">
+            <h2 style="margin:0 0 12px;color:#e6b153;font-size:18px;">${escapeHtml(copy.sections.questions)}</h2>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${questionRows}</table>
+          </section>
+          <p style="margin:0;padding-top:10px;color:#bca889;font-size:13px;line-height:1.7;">${escapeHtml(copy.outro)}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  const text = [
+    copy.heading,
+    "",
+    copy.intro,
+    "",
+    `${copy.sections.personal}`,
+    `- ${copy.labels.name}: ${formatValue(registration.name, fallback)}`,
+    `- ${copy.labels.email}: ${formatValue(registration.email, fallback)}`,
+    `- ${copy.labels.ic}: ${maskIc(registration.ic, fallback)}`,
+    `- ${copy.labels.phone}: ${formatValue(registration.phone, fallback)}`,
+    `- ${copy.labels.gender}: ${translateOption(copy, registration.gender)}`,
+    `- ${copy.labels.transport}: ${translateOption(copy, registration.transport)}`,
+    `- ${copy.labels.importantInfo}: ${formatValue(registration.important_info, fallback)}`,
+    "",
+    `${copy.sections.emergency}`,
+    `- ${copy.labels.emergencyName}: ${formatValue((_g = registration.emergency) == null ? void 0 : _g.name, fallback)}`,
+    `- ${copy.labels.emergencyPhone}: ${formatValue((_h = registration.emergency) == null ? void 0 : _h.phone, fallback)}`,
+    `- ${copy.labels.emergencyRelationship}: ${translateOption(copy, (_i = registration.emergency) == null ? void 0 : _i.relationship)}`,
+    "",
+    `${copy.sections.questions}`,
+    `- ${copy.labels.q1}: ${formatValue((_j = registration.questions) == null ? void 0 : _j.place, fallback)}`,
+    `- ${copy.labels.q2}: ${formatValue((_k = registration.questions) == null ? void 0 : _k.pain, fallback)}`,
+    `- ${copy.labels.q3}: ${formatValue((_l = registration.questions) == null ? void 0 : _l.verse, fallback)}`,
+    "",
+    copy.outro
+  ].join("\n");
+  try {
+    const response = await $fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${config.resendApiKey}`
+      },
+      body: {
+        from: config.registrationEmailFrom,
+        to: [registration.email],
+        reply_to: config.registrationEmailReplyTo || void 0,
+        subject: copy.subject,
+        html,
+        text
+      }
+    });
+    return {
+      sent: true,
+      id: (_m = response == null ? void 0 : response.id) != null ? _m : null
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      sent: false,
+      skipped: false,
+      reason: "email_send_failed"
+    };
+  }
+});
+
+const registerConfirmation_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: registerConfirmation_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
 function renderPayloadResponse(ssrContext) {
