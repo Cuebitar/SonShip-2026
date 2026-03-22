@@ -1,5 +1,5 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, getResponseStatusText } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, getResponseStatus, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, setHeader, getResponseStatusText } from 'file:///Users/shawnliuhansheng/Development/SonShip-2026/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
@@ -1123,6 +1123,56 @@ const _inlineRuntimeConfig = {
     "routeRules": {
       "/__nuxt_error": {
         "cache": false
+      },
+      "/login": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/dashboard": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/profile": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/friends": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/games": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/messages": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/schedule": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/gallery": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/letters/**": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      },
+      "/admin/**": {
+        "headers": {
+          "X-Robots-Tag": "noindex, nofollow"
+        }
       },
       "/_nuxt/builds/meta/**": {
         "headers": {
@@ -2704,7 +2754,22 @@ _h3WvCWrYHZjvv8dsVXZcSTU41kfdquqNBmbkTwe6Yo,
 _cuNRt7ffcxuLiUEB0KW15gYECQPTbbcYJkoPjzcJc
 ];
 
-const assets = {};
+const assets = {
+  "/index.mjs": {
+    "type": "text/javascript; charset=utf-8",
+    "etag": "\"21b4e-D6qZV4yw8DWH8ZOb0HDZoHKIqX4\"",
+    "mtime": "2026-03-20T09:41:38.048Z",
+    "size": 138062,
+    "path": "index.mjs"
+  },
+  "/index.mjs.map": {
+    "type": "application/json",
+    "etag": "\"845be-jiyXKSdUvUH0LOGC9OYLA/Xsd9s\"",
+    "mtime": "2026-03-20T09:41:38.049Z",
+    "size": 542142,
+    "path": "index.mjs.map"
+  }
+};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -3290,11 +3355,15 @@ const _SXJY6D = defineCachedEventHandler(async (event) => {
 });
 
 const _lazy_X9Q7xs = () => Promise.resolve().then(function () { return registerConfirmation_post$1; });
+const _lazy_Jzjarp = () => Promise.resolve().then(function () { return robots_txt$1; });
+const _lazy_OTbSeq = () => Promise.resolve().then(function () { return sitemap_xml$1; });
 const _lazy_Ww1j2Y = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
   { route: '', handler: _YRwljS, lazy: false, middleware: true, method: undefined },
   { route: '/api/register-confirmation', handler: _lazy_X9Q7xs, lazy: true, middleware: false, method: "post" },
+  { route: '/robots.txt', handler: _lazy_Jzjarp, lazy: true, middleware: false, method: undefined },
+  { route: '/sitemap.xml', handler: _lazy_OTbSeq, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_error', handler: _lazy_Ww1j2Y, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: _SxA8c9, lazy: false, middleware: false, method: undefined },
   { route: '/api/_nuxt_icon/:collection', handler: _SXJY6D, lazy: false, middleware: false, method: undefined },
@@ -3791,6 +3860,61 @@ const registerConfirmation_post = defineEventHandler(async (event) => {
 const registerConfirmation_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: registerConfirmation_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const privatePaths = [
+  "/admin",
+  "/dashboard",
+  "/friends",
+  "/gallery",
+  "/games",
+  "/letters",
+  "/login",
+  "/messages",
+  "/profile",
+  "/schedule"
+];
+const robots_txt = defineEventHandler((event) => {
+  const origin = getRequestURL(event).origin;
+  setHeader(event, "content-type", "text/plain; charset=utf-8");
+  return [
+    "User-agent: *",
+    "Allow: /",
+    ...privatePaths.map((path) => `Disallow: ${path}`),
+    "",
+    `Sitemap: ${origin}/sitemap.xml`
+  ].join("\n");
+});
+
+const robots_txt$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: robots_txt
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const publicPages = [
+  { path: "/", changefreq: "weekly", priority: "1.0" },
+  { path: "/about", changefreq: "monthly", priority: "0.8" },
+  { path: "/activities", changefreq: "weekly", priority: "0.8" }
+];
+const sitemap_xml = defineEventHandler((event) => {
+  const origin = getRequestURL(event).origin;
+  const lastModified = (/* @__PURE__ */ new Date()).toISOString();
+  setHeader(event, "content-type", "application/xml; charset=utf-8");
+  const urls = publicPages.map(({ path, changefreq, priority }) => `  <url>
+    <loc>${origin}${path}</loc>
+    <lastmod>${lastModified}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+});
+
+const sitemap_xml$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: sitemap_xml
 }, Symbol.toStringTag, { value: 'Module' }));
 
 function renderPayloadResponse(ssrContext) {

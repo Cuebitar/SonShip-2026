@@ -6,6 +6,12 @@ declare module "nitropack/types" {
     '/api/register-confirmation': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/register-confirmation.post').default>>>>
     }
+    '/robots.txt': {
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/robots.txt').default>>>>
+    }
+    '/sitemap.xml': {
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/sitemap.xml').default>>>>
+    }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/@nuxt/nitro-server/dist/runtime/handlers/renderer').default>>>>
     }

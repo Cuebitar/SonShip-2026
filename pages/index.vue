@@ -3,13 +3,15 @@
     <!-- Hero Section -->
     <section class = "relative min-h-screen max-h-screen flex items-center justify-center overflow-hidden">
       <!-- Background gradient -->
-      <div class = "absolute inset-0 bg-[url('../assets/bg.JPG')] bg-cover bg-center"></div>
+      <div class = "absolute inset-0 bg-cover bg-center" :class="`bg-[url(${currentBg})]`"></div>
       <div class = "absolute inset-0 bg-gradient-hero opacity-90"></div>
       <!-- Decorative circles -->
       <!-- <div class = "absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/5 border border-primary/10 animate-spin-slow"></div>
       <div class = "absolute bottom-20 left-10 w-48 h-48 rounded-full bg-accent/5 border border-accent/10 animate-float"></div> -->
 
       <div class = "relative z-10 container-inner text-center px-4 ">
+        <h1 class="sr-only">{{ seoTitle }}</h1>
+
         <!-- Flame brandmark -->
         <!-- <img class = "mb-12 animate-float inline-block w-40 h-40" :src = "Firelight" alt="Firelight"></img> -->
 
@@ -130,17 +132,81 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useActivitiesStore } from '~/stores/activities'
-import { ArrowRight, ChevronDown, Calendar, MapPin, Users } from 'lucide-vue-next'
+import { ArrowRight, ChevronDown } from 'lucide-vue-next'
 import Logo from '~/components/Logo.vue'
 import Firelight from '../assets/firelight.svg'
-const { t }           = useI18n()
+const { locale, t }   = useI18n()
 const activitiesStore = useActivitiesStore()
+const requestUrl = useRequestURL()
+const canonicalUrl = computed(() => new URL('/', requestUrl.origin).toString())
+const currentBg = ref('/assets/background/DSC06263.JPG');
+const seoTitle = computed(() => locale.value === 'zh'
+  ? 'SonShip 2026 青年营会 | 与神、与人、与自己重新连接'
+  : 'SonShip 2026 Youth Camp | Reconnect with God, Others, and Yourself')
 
-useHead({
-  title: 'Home'
+const seoDescription = computed(() => locale.value === 'zh'
+  ? 'SonShip 2026 是 CMC Subang 青年营会官网。营会将于 2026 年 8 月 28 日至 31 日举行，欢迎报名参加这段与神、与人、与自己重新连接的旅程。'
+  : 'SonShip 2026 is the official CMC Subang youth camp. Join us from August 28 to 31, 2026 for a meaningful journey of reconnecting with God, others, and yourself.')
+
+const structuredData = computed(() => ({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      name: 'SonShip 2026',
+      url: canonicalUrl.value,
+      inLanguage: locale.value
+    },
+    {
+      '@type': 'Organization',
+      name: 'CMC Subang',
+      url: canonicalUrl.value,
+      logo: `${requestUrl.origin}/logo.svg`
+    },
+    {
+      '@type': 'Event',
+      name: 'SonShip 2026 Youth Camp',
+      startDate: '2026-08-28T09:00:00+08:00',
+      endDate: '2026-08-31T18:00:00+08:00',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      image: [`${requestUrl.origin}/logo.svg`],
+      organizer: {
+        '@type': 'Organization',
+        name: 'CMC Subang'
+      },
+      description: seoDescription.value,
+      url: canonicalUrl.value
+    }
+  ]
+}))
+
+useHead(() => ({
+  title: seoTitle.value,
+  script: [
+    {
+      key: 'home-structured-data',
+      type: 'application/ld+json',
+      children: JSON.stringify(structuredData.value)
+    }
+  ]
+}))
+
+useSeoMeta({
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+  ogTitle: () => seoTitle.value,
+  ogDescription: () => seoDescription.value,
+  ogImage: () => `${requestUrl.origin}/logo.svg`,
+  ogImageAlt: 'SonShip 2026',
+  ogType: 'website',
+  ogUrl: () => canonicalUrl.value,
+  twitterTitle: () => seoTitle.value,
+  twitterDescription: () => seoDescription.value,
+  twitterImage: () => `${requestUrl.origin}/logo.svg`
 })
 
   // Countdown Logic

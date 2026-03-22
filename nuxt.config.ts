@@ -49,6 +49,58 @@ export default defineNuxtConfig({
   devServer: {
     port: 5173,
   },
+  routeRules: {
+    '/login': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/dashboard': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/profile': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/friends': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/games': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/messages': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/schedule': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/gallery': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/letters/**': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
+    '/admin/**': {
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    }
+  },
   vite: {
     server: {
       allowedHosts: ["902a-202-184-126-151.ngrok-free.app"],
