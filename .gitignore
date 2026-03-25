@@ -22,5 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-firebase_admin_sdk.json
+
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Local env files
 .env
+.env.*
+!.env.example
