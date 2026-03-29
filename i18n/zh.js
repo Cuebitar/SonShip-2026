@@ -25,7 +25,7 @@ export default {
         hero_subtitle: '一个让你与神、与人、与自己重新连接的营会',
         hero_cta: '立即报名',
         hero_learn: '了解更多',
-        highlights_title: '为什么选择 SonShip？',
+        highlights_title: '在营会中能期待什么？',
         highlights: {
             community: { title: '团契', desc: '在安全、充满爱的环境中建立终生友谊。' },
             growth: { title: '成长', desc: '透过敬拜与教导，遇见神并发现你的身份认同。' },

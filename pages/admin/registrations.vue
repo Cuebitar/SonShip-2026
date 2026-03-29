@@ -23,7 +23,7 @@
           </button>
         </div>
         
-        <div class="flex flex-wrap gap-4">
+        <div v-if="hasMounted" class="flex flex-wrap gap-4">
           <div class="flex items-center gap-2">
             <label class="text-xs font-bold text-primary">Group:</label>
             <select v-model="filterGroup" class="input py-1.5 px-3 text-sm bg-dark/50 border-white/10 w-40">
@@ -227,7 +227,6 @@ definePageMeta({ requiresAuth: true })
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useCampersStore } from '~/stores/campers';
 import { useI18n } from 'vue-i18n'
-import { Target } from 'lucide-vue-next';
 const { t } = useI18n()
 
 const tabs = ['All', 'Pending', 'Pending For Collection', 'Registered', 'Rejected'];
@@ -238,8 +237,8 @@ const hasMounted = ref(false);
 
 const campersStore = useCampersStore();
 
-onMounted(() => {
-  campersStore.initCampers();
+onMounted(async () =>  {
+  await campersStore.initCampers();
   hasMounted.value = true;
 })
 
@@ -251,25 +250,25 @@ const records = computed(() =>
     const day = (1 + (index % 15)).toString().padStart(2, '0');
     const registrationTime = `2026-08-${day} ${hour}:${minute}`;
     return {
-      id: c.id,
-      fullName: c.name,
-      ic: c.ic,
-      phone: c.phone,
-      email: c.email,
-      gender: c.gender,
-      transport: c.transport,
-      important_info: c.important_info,
-      emergency: c.emergency || { name: '', phone: '', relationship: '' },
-      q1: c.questions?.place ?? '',
-      q2: c.questions?.verse ?? '',
-      q3: c.questions?.pain ?? '',
-      status: c.status,
-      secret_identity: c.secret_identity,
-      secretAngel: c.secret_angel?.id ?? '',
+      id               : c.id,
+      fullName         : c.name,
+      ic               : c.ic,
+      phone            : c.phone,
+      email            : c.email,
+      gender           : c.gender,
+      transport        : c.transport,
+      important_info   : c.important_info,
+      emergency        : c.emergency || { name: '', phone: '', relationship: '' },
+      q1               : c.questions?.place ?? '',
+      q2               : c.questions?.verse ?? '',
+      q3               : c.questions?.pain ?? '',
+      status           : c.status,
+      secret_identity  : c.secret_identity,
+      secretAngel      : c.secret_angel?.id ?? '',
       iceBreakingTarget: c.ice_breaking?.target ?? '',
       iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
-      group: c.group || "",
-      room_name: c.room_name || "",
+      group            : c.group || "",
+      room_name        : c.room_name || "",
       registrationTime
     };
   })
@@ -286,11 +285,10 @@ const availableRooms = computed(() => {
 });
 
 const filteredRecords = computed(() => {
-  console.log(records.value,12333);
   return records.value.filter(r => {
-    const matchTab = activeTab.value === 'All' || r.status === activeTab.value;
-    const matchGroup = filterGroup.value === 'All' || r.group === filterGroup.value;
-    const matchRoom = filterRoom.value === 'All' || r.room_name === filterRoom.value;
+    const matchTab   = activeTab.value   === 'All' || r.status    === activeTab.value;
+    const matchGroup = filterGroup.value === 'All' || r.group     === filterGroup.value;
+    const matchRoom  = filterRoom.value  === 'All' || r.room_name === filterRoom.value;
     return matchTab && matchGroup && matchRoom;
   });
 });
@@ -307,24 +305,24 @@ const formatedIC = computed(() => {
 
 const selectedRecord = ref(null);
 const editForm = reactive({
-  status: '',
-  group: '',
-  room_name: '',
-  transport: '',
-  secret_identity: '',
-  secretAngel: '',
+  status           : '',
+  group            : '',
+  room_name        : '',
+  transport        : '',
+  secret_identity  : '',
+  secretAngel      : '',
   iceBreakingTarget: '',
   iceBreakingRiddle: ''
 });
 
 function openModal(record) {
-  selectedRecord.value = record;
-  editForm.status = record.status;
-  editForm.group = record.group || '';
-  editForm.room_name = record.room_name || '';
-  editForm.transport = record.transport;
-  editForm.secret_identity = record.secret_identity || '';
-  editForm.secretAngel = record.secretAngel || '';
+  selectedRecord.value       = record;
+  editForm.status            = record.status;
+  editForm.group             = record.group || '';
+  editForm.room_name         = record.room_name || '';
+  editForm.transport         = record.transport;
+  editForm.secret_identity   = record.secret_identity || '';
+  editForm.secretAngel       = record.secretAngel || '';
   editForm.iceBreakingTarget = record.iceBreakingTarget || '';
   editForm.iceBreakingRiddle = record.iceBreakingRiddle || '';
 }

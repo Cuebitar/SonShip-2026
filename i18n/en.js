@@ -25,7 +25,7 @@ export default {
         hero_subtitle: 'A Camp to Reconnect with God, Others, and Yourself',
         hero_cta: 'Register Now',
         hero_learn: 'Learn More',
-        highlights_title: 'Why SonShip?',
+        highlights_title: 'What To Expect From Camp?',
         highlights: {
             community: { title: 'Fellowship', desc: 'Build lifelong friendships in a safe, loving environment.' },
             growth: { title: 'Growth', desc: 'Encounter God and discover your identity through worship and teaching.' },

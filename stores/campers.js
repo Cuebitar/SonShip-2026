@@ -3,10 +3,12 @@ import { ref } from 'vue'
 import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { useDb, useFirebase } from '~/composable/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { useAuthStore } from '~/stores/auth'
 
 export const useCampersStore = defineStore('campers', () => {
   const campers = ref([])
   const loaded = ref(false)
+  const auth = useAuthStore();
 
   function normalizeIc(value) {
     return (value || '').replace(/\D/g, '')
@@ -125,7 +127,8 @@ export const useCampersStore = defineStore('campers', () => {
       registrationTime: camper.registrationTime || new Date().toISOString(),
     }
 
-    await createUserWithEmailAndPassword(firebase.auth, camper.email, camper.password)
+    await createUserWithEmailAndPassword(firebase.auth, camper.email, camper.password);
+    await auth.logout();
     await setDoc(camperRef, camperPayload)
     campers.value.push(camperPayload);
   }

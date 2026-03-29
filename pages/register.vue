@@ -252,25 +252,31 @@
       </div>
     </section>
 
-    <UModal v-model="showSuccess">
-      <div class="relative overflow-hidden card max-w-lg mx-auto border-primary/30 shadow-warm-lg">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(230,177,83,0.24),transparent_58%)] pointer-events-none" />
-        <div class="relative p-8 md:p-10 text-center">
-          <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary/15 border border-primary/30 shadow-warm">
+    <UModal v-model="showSuccess" class="rounded-lg">
+      <div class="success-modal">
+        <div class="success-modal__glow success-modal__glow--top" />
+        <div class="success-modal__glow success-modal__glow--bottom" />
+        <div class="success-modal__inner">
+          <div class="success-modal__icon">
             <Mail class="w-10 h-10 text-primary" />
           </div>
-          <p class="badge-primary mb-4 inline-flex">{{ t('register.success_badge') }}</p>
-          <h3 class="font-heading font-black text-3xl text-primary mb-3">{{ t('register.success_title') }}</h3>
-          <p class="font-body text-tertiary/80 leading-relaxed mb-4">{{ t('register.success_msg') }}</p>
-          <div class="rounded-2xl border border-primary/20 bg-dark/40 px-5 py-4 mb-4">
-            <p class="font-body text-sm text-tertiary/60 mb-2">{{ t('register.success_sent_to') }}</p>
+          <p class="success-modal__badge">{{ t('register.success_badge') }}</p>
+          <h3 class="font-heading font-black text-3xl text-primary mb-3">{{ t('register.success_title') }} 🎉</h3>
+          <p class="font-body text-tertiary/90 leading-relaxed mb-5">{{ t('register.success_msg') }}</p>
+
+          <div class="success-modal__email-box">
+            <p class="font-body text-sm text-tertiary/70 mb-2">{{ t('register.success_sent_to') }}</p>
             <p class="font-heading text-lg text-primary break-all">{{ submittedEmail }}</p>
           </div>
-          <p class="font-body text-sm text-tertiary/80 leading-relaxed mb-2">
+
+          <p class="font-body text-sm text-tertiary/90 leading-relaxed mb-2">
             {{ confirmationEmailSent ? t('register.success_email_sent') : t('register.success_email_pending') }}
           </p>
-          <p class="font-body text-xs text-tertiary/50 leading-relaxed mb-6">{{ t('register.success_email_note') }}</p>
-          <UButton block size="lg" @click="showSuccess = false">{{ t('register.success_close') }}</UButton>
+          <p class="font-body text-xs text-tertiary/60 leading-relaxed mb-7">{{ t('register.success_email_note') }}</p>
+
+          <UButton block size="lg" class="success-modal__cta" @click="closeRegistration">
+            {{ t('register.success_close') }}
+          </UButton>
         </div>
       </div>
     </UModal>
@@ -553,10 +559,127 @@ async function sendConfirmationEmail(camper) {
   })
 }
 
+function closeRegistration() {
+  showSuccess.value = false;
+  navigateTo('/');
+}
 onMounted(() => {
   campersStore.initCampers();
 })
 </script>
 
 <style scoped>
+.success-modal {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 38rem;
+  border: 1px solid rgba(230, 177, 83, 0.28);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(255, 186, 90, 0.24), transparent 36%),
+    radial-gradient(circle at 92% 86%, rgba(255, 119, 73, 0.15), transparent 42%),
+    linear-gradient(145deg, rgba(33, 29, 26, 0.96), rgba(24, 20, 18, 0.96));
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 199, 122, 0.08) inset;
+}
+
+.success-modal__inner {
+  position: relative;
+  padding: 2.1rem 2.3rem 2rem;
+  text-align: center;
+}
+
+.success-modal__glow {
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 9999px;
+  filter: blur(22px);
+  pointer-events: none;
+}
+
+.success-modal__glow--top {
+  top: -8rem;
+  left: -4.5rem;
+  background: rgba(255, 162, 64, 0.34);
+}
+
+.success-modal__glow--bottom {
+  right: -5.5rem;
+  bottom: -9rem;
+  background: rgba(255, 106, 74, 0.26);
+}
+
+.success-modal__icon {
+  display: flex;
+  width: 5rem;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(230, 177, 83, 0.45);
+  background: linear-gradient(145deg, rgba(230, 177, 83, 0.22), rgba(230, 177, 83, 0.08));
+  box-shadow: 0 12px 28px rgba(230, 177, 83, 0.2);
+  animation: success-pop 2.3s ease-in-out infinite;
+}
+
+.success-modal__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(230, 177, 83, 0.33);
+  background: rgba(230, 177, 83, 0.14);
+  color: #f7c06f;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.success-modal__email-box {
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 189, 103, 0.23);
+  background: linear-gradient(145deg, rgba(8, 8, 8, 0.48), rgba(20, 18, 17, 0.52));
+}
+
+:deep(.success-modal__cta) {
+  border: 0;
+  border-radius: 0.95rem;
+  color: #fff7ef;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffab2e, #ff7a3d);
+  box-shadow: 0 16px 28px rgba(255, 125, 45, 0.36);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+:deep(.success-modal__cta:hover) {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 20px 30px rgba(255, 125, 45, 0.42);
+}
+
+@keyframes success-pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 640px) {
+  .success-modal {
+    margin-inline: 0.5rem;
+    border-radius: 1.25rem;
+  }
+
+  .success-modal__inner {
+    padding: 1.4rem 1.1rem 1.25rem;
+  }
+}
 </style>

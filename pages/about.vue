@@ -62,7 +62,7 @@ const { t } = useI18n()
 const campersStore = ref(null);
 
 const stats = [
-  { value: '100+', label: 'Lives Touched' },
+  { value: '50+', label: 'Our Attendees' },
   { value: '2019', label: 'Running Since' },
   { value: '4', label: 'Days of Camp' },
   { value: '6', label: 'Small Groups' },
