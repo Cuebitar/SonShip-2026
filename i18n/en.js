@@ -29,7 +29,14 @@ export default {
         highlights: {
             community: { title: 'Fellowship', desc: 'Build lifelong friendships in a safe, loving environment.' },
             growth: { title: 'Growth', desc: 'Encounter God and discover your identity through worship and teaching.' },
-            adventure: { title: 'Testing Limits', desc: 'Unforgettable activities and games that push your limits.' },
+            adventure: { title: 'Authenticity', desc: 'Cultivate the courage to be real and vulnerable with God yourself and others.' },
+        },
+        topics_title: 'Topics To Expect',
+        topics_subtitle: 'Explore relevant and meaningful subjects that touch on real-life challenges, guided by faith and truth.',
+        topics: {
+            bgr: { title: 'BGR (Boy-Girl Relationship)', desc: 'Navigate relationships, boundaries, and love from a biblical perspective.' },
+            ai: { title: 'AI & Faith', desc: 'Understanding technology’s impact and how to stay grounded in an AI-driven world.' },
+            prodigal: { title: 'The Prodigal Son', desc: 'Rediscover your identity, grace, and finding your way back to the Father.' },
         },
         sessions_title: 'Journey To SonShip In',
         sessions_subtitle: 'The fire is being prepared! Join us for an unforgettable journey of reconnection this August.',

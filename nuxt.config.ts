@@ -103,7 +103,7 @@ export default defineNuxtConfig({
   },
   vite: {
     server: {
-      allowedHosts: ["902a-202-184-126-151.ngrok-free.app"],
+      allowedHosts: ["firelight.com.my"],
     },
   }
 })

@@ -58,9 +58,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-const campersStore = ref(null);
 
+const { locale, t } = useI18n()
+const campersStore = ref(null);
+const seoTitle = ref('About Us');
+const seoDescription = ref('Learn about SonShip 2026, the annual youth camp organized by CMC Subang. Discover our mission, story, and the passionate team behind the event.');
 const stats = [
   { value: '50+', label: 'Our Attendees' },
   { value: '2019', label: 'Running Since' },
@@ -79,8 +81,67 @@ const team = ref([
     { name: 'names.jonathan', role: 'Game Head', emoji: '🎮' },
     { name: 'names.florance', role: 'Tech & Media', emoji: '🎬' },
     { name: 'names.jack', role: '3M', emoji: '🔉' },
-    ]);
+]);
 
+const requestUrl          = useRequestURL()
+const canonicalUrl        = computed(() => new URL('/', requestUrl.origin).toString());
+const structuredData      = computed(() => ({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type'   : 'WebSite',
+      name      : 'SonShip 2026',
+      url       : canonicalUrl.value,
+      inLanguage: locale.value
+    },
+    {
+      '@type': 'Organization',
+      name   : 'CMC Subang',
+      url    : canonicalUrl.value,
+      logo   : `${requestUrl.origin}/logo.svg`
+    },
+    {
+      '@type'            : 'Event',
+      name               : 'SonShip 2026 Youth Camp',
+      startDate          : '2026-08-28T09:00:00+08:00',
+      endDate            : '2026-08-31T18:00:00+08:00',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus        : 'https://schema.org/EventScheduled',
+      image              : [`${requestUrl.origin}/logo.svg`],
+      organizer          : {
+        '@type': 'Organization',
+        name   : 'CMC Subang'
+      },
+      description: seoDescription.value,
+      url        : canonicalUrl.value
+    }
+  ]
+}))
+
+useHead(() => ({
+  title: seoTitle.value,
+  script: [
+    {
+      key: 'about-structured-data',
+      type: 'application/ld+json',
+      children: JSON.stringify(structuredData.value)
+    }
+  ]
+}))
+
+useSeoMeta({
+  title             : () => seoTitle.value,
+  description       : () => seoDescription.value,
+  ogTitle           : () => seoTitle.value,
+  ogDescription     : () => seoDescription.value,
+  ogImage           : () => `${requestUrl.origin}/assets/firelight.svg`,
+  ogImageAlt        : 'SonShip 2026',
+  ogType            : 'website',
+  ogUrl             : () => canonicalUrl.value,
+  twitterTitle      : () => seoTitle.value,
+  twitterDescription: () => seoDescription.value,
+  twitterImage      : () => `${requestUrl.origin}/assets/firelight.svg`
+})
 onMounted(() => {
 
 })

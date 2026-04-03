@@ -1,7 +1,6 @@
 <template>
-  <nav class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-primary/10"
-       :class="scrolled ? 'bg-dark/95 backdrop-blur-xl shadow-dark' : 'bg-transparent'">
-    <div class="container-inner h-full flex items-center justify-between">
+  <nav class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-primary/10 bg-transparent">
+    <div class="container-inner h-full flex items-center justify-between w-full bg-dark ">
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center gap-2 group">
         <img :src="Firelight" class="w-8 h-8" alt="Firelight"/>
@@ -139,21 +138,16 @@ const isCamp = computed(() => {
 const navLinks = computed(() => hydrated.value && auth.isLoggedIn ? [...publicLinks.slice(0,2), ...authLinks] : publicLinks)
 const mobileExtra = computed(() => hydrated.value && auth.isLoggedIn ? [
   { to: '/profile', label: 'nav.profile' },
-  { to: '/friends', label: 'nav.friends' },
   { to: '/games', label: 'nav.games' },
-  { to: '/messages', label: 'nav.messages' },
   { to: '/letters', label: 'nav.letters' },
 ] : [])
 
 const userMenu = [
   { to: '/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
   { to: '/profile', label: 'nav.profile', icon: User },
-  { to: '/friends', label: 'nav.friends', icon: Users },
   { to: '/games', label: 'nav.games', icon: Gamepad2 },
-  { to: '/messages', label: 'nav.messages', icon: MessageCircle },
   { to: '/letters', label: 'nav.letters', icon: Mail },
   { to: '/schedule', label: 'nav.schedule', icon: Calendar },
-  { to: '/gallery', label: 'nav.gallery', icon: Image },
 ]
 
 function toggleLang() {

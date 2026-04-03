@@ -10,7 +10,7 @@
 
     <section class="py-16 bg-dark">
       <div class="container-inner grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div class="space-y-4">
+        <div class="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <h3 class="font-heading font-bold text-primary text-lg">{{ t('register.info_title') }}</h3>
           <div class="card p-6 space-y-4">
             <div>
@@ -23,12 +23,30 @@
               <p class="font-body text-tertiary">Radiant Retreats Site B, Jalan Utama Janda Baik, Kampung Chemperoh, 28750 Bentong, Pahang</p>
             </div>
             <div class="divider" />
-            <div>
+            <div class="space-y-3">
               <p class="input-label">💰 {{ t('register.fee') }}</p>
-              <p class="font-body text-primary font-bold text-xl">RM 200 ({{ t('register.early_bird') }}, before 31th May)</p>
-              <p class="font-body text-primary font-bold text-xl">RM 230 ({{ t('register.normal') }}, before 30th June)</p>
-              <p class="font-body text-primary font-bold text-xl">RM 280 ({{ t('register.super_late_bird') }}, from 1st July)</p>
-              <p class="font-body text-xs text-tertiary/50 mt-1">{{ t('register.fee_note') }}</p>
+              <div class="p-4 rounded-xl border border-primary/30 bg-primary/10 flex items-center justify-between shadow-warm shadow-primary/5">
+                <div>
+                  <p class="font-heading font-bold text-sm text-primary">{{ t('register.early_bird') }}</p>
+                  <p class="text-xs text-tertiary/70 mt-1">before 31th May</p>
+                </div>
+                <p class="font-heading text-primary font-bold text-2xl">RM 200</p>
+              </div>
+              <div class="p-3 rounded-lg border border-primary/10 bg-dark/50 flex items-center justify-between hover:border-primary/20 transition-colors">
+                <div>
+                  <p class="font-heading font-bold text-sm text-tertiary">{{ t('register.normal') }}</p>
+                  <p class="text-xs text-tertiary/50 mt-1">before 30th June</p>
+                </div>
+                <p class="font-heading text-primary font-bold text-xl">RM 230</p>
+              </div>
+              <div class="p-3 rounded-lg border border-primary/10 bg-dark/50 flex items-center justify-between hover:border-primary/20 transition-colors">
+                <div>
+                  <p class="font-heading font-bold text-sm text-tertiary">{{ t('register.super_late_bird') }}</p>
+                  <p class="text-xs text-tertiary/50 mt-1">from 1st July</p>
+                </div>
+                <p class="font-heading text-primary font-bold text-xl">RM 280</p>
+              </div>
+              <p class="font-body text-xs text-tertiary/50 !mt-4">{{ t('register.fee_note') }}</p>
             </div>
             <div class="divider" />
             <div class="card bg-primary/10 border-primary/30 p-4">
@@ -258,21 +276,11 @@
         <div class="success-modal__glow success-modal__glow--bottom" />
         <div class="success-modal__inner">
           <div class="success-modal__icon">
-            <Mail class="w-10 h-10 text-primary" />
+            <TicketCheck class="w-10 h-10 text-primary" />
           </div>
           <p class="success-modal__badge">{{ t('register.success_badge') }}</p>
           <h3 class="font-heading font-black text-3xl text-primary mb-3">{{ t('register.success_title') }} 🎉</h3>
           <p class="font-body text-tertiary/90 leading-relaxed mb-5">{{ t('register.success_msg') }}</p>
-
-          <div class="success-modal__email-box">
-            <p class="font-body text-sm text-tertiary/70 mb-2">{{ t('register.success_sent_to') }}</p>
-            <p class="font-heading text-lg text-primary break-all">{{ submittedEmail }}</p>
-          </div>
-
-          <p class="font-body text-sm text-tertiary/90 leading-relaxed mb-2">
-            {{ confirmationEmailSent ? t('register.success_email_sent') : t('register.success_email_pending') }}
-          </p>
-          <p class="font-body text-xs text-tertiary/60 leading-relaxed mb-7">{{ t('register.success_email_note') }}</p>
 
           <UButton block size="lg" class="success-modal__cta" @click="closeRegistration">
             {{ t('register.success_close') }}
@@ -284,17 +292,54 @@
 </template>
 
 <script setup>
-import { Info, Mail } from 'lucide-vue-next'
+import { Info, TicketCheck } from 'lucide-vue-next'
 import { nextTick, onMounted } from 'vue';
 import { useCampersStore } from '~/stores/campers'
 const { t, locale } = useI18n()
 
 const campersStore = useCampersStore();
-const loading = ref(false)
-const showSuccess = ref(false)
-const submitError = ref('')
-const submittedEmail = ref('')
-const confirmationEmailSent = ref(false)
+const loading        = ref(false)
+const showSuccess    = ref(false)
+const submitError    = ref('')
+const seoTitle       = ref('Registration | SonShip 2026');
+const seoDescription = ref('Register for the SonShip 2026 Youth Camp hosted by CMC Subang. Join us from August 28-31 at Radiant Retreats in Janda Baik for an unforgettable experience. Secure your spot today!');
+
+const requestUrl          = useRequestURL()
+const canonicalUrl        = computed(() => new URL('/register', requestUrl.origin).toString());
+
+const structuredData      = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type'   : 'WebPage',
+  name      : seoTitle.value,
+  description: seoDescription.value,
+  url       : canonicalUrl.value,
+  inLanguage: locale.value
+}))
+
+useHead(() => ({
+  title: seoTitle.value,
+  script: [
+    {
+      key: 'register-structured-data',
+      type: 'application/ld+json',
+      children: JSON.stringify(structuredData.value)
+    }
+  ]
+}))
+
+useSeoMeta({
+  title             : () => seoTitle.value,
+  description       : () => seoDescription.value,
+  ogTitle           : () => seoTitle.value,
+  ogDescription     : () => seoDescription.value,
+  ogImage           : () => `${requestUrl.origin}/assets/firelight.svg`,
+  ogImageAlt        : 'SonShip 2026',
+  ogType            : 'website',
+  ogUrl             : () => canonicalUrl.value,
+  twitterTitle      : () => seoTitle.value,
+  twitterDescription: () => seoDescription.value,
+  twitterImage      : () => `${requestUrl.origin}/assets/firelight.svg`
+})
 
 const genderOptions = computed(() => [
   { label: t('register.male'), value: 'male' },
@@ -320,7 +365,7 @@ const form = reactive({
   phone: '',
   email: '',
   gender: 'male',
-  transport: 'car',
+  transport: 'bus',
   emergency: {
     name: '',
     phone: '',
@@ -478,7 +523,6 @@ async function validateForm() {
 
 async function handleSubmit() {
   submitError.value = ''
-  confirmationEmailSent.value = false
 
   const { isValid, normalized } = await validateForm()
   if (!isValid) return
@@ -523,14 +567,6 @@ async function handleSubmit() {
 
   try {
     await campersStore.registerCamper(camper);
-    submittedEmail.value = normalized.email
-    try {
-      const emailResult = await sendConfirmationEmail(camper)
-      confirmationEmailSent.value = Boolean(emailResult?.sent)
-    } catch (emailError) {
-      confirmationEmailSent.value = false
-      console.error(emailError)
-    }
     showSuccess.value = true;
   } catch (error) {
     if (error?.code === 'auth/email-already-in-use' || error?.code === 'campers/email-already-exists') {
@@ -547,16 +583,6 @@ async function handleSubmit() {
   } finally {
     loading.value = false
   }
-}
-
-async function sendConfirmationEmail(camper) {
-  return await $fetch('/api/register-confirmation', {
-    method: 'POST',
-    body: {
-      locale: locale.value,
-      registration: camper,
-    },
-  })
 }
 
 function closeRegistration() {
@@ -636,14 +662,6 @@ onMounted(() => {
   font-size: 0.84rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-}
-
-.success-modal__email-box {
-  margin-bottom: 1rem;
-  padding: 1rem 1.1rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 189, 103, 0.23);
-  background: linear-gradient(145deg, rgba(8, 8, 8, 0.48), rgba(20, 18, 17, 0.52));
 }
 
 :deep(.success-modal__cta) {

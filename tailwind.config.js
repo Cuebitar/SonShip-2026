@@ -64,8 +64,8 @@ export default {
 			},
 			fontFamily: {
 				heading: [
-					'"Be Vietnam Pro"',
 					'"QingNiaoHuaGuang"',
+					'"Be Vietnam Pro"',
 					'Inter',
 					'sans-serif'
 				],

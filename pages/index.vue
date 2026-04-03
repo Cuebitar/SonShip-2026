@@ -3,7 +3,11 @@
     <!-- Hero Section -->
     <section class = "relative min-h-screen max-h-screen flex items-center justify-center overflow-hidden">
       <!-- Background gradient -->
-      <div class = "absolute inset-0 bg-cover bg-center" :class="`bg-[url(${currentBg})]`"></div>
+      <div
+        class="absolute inset-0 bg-cover bg-center transition-opacity ease-in-out"
+        :class="isBackgroundVisible ? 'opacity-100' : 'opacity-0'"
+        :style="{ backgroundImage: `url(${currentBg})`, transitionDuration: '1400ms' }"
+      ></div>
       <div class = "absolute inset-0 bg-gradient-hero opacity-90"></div>
       <!-- Decorative circles -->
       <!-- <div class = "absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/5 border border-primary/10 animate-spin-slow"></div>
@@ -54,9 +58,46 @@
         <div class = "grid grid-cols-1 md:grid-cols-3 gap-6">
         <div v-for = "(item, key) in highlights" :key = "key"
              class = "card-hover p-8 text-center group">
-        <div class = "text-5xl mb-4 group-hover:animate-bounce inline-block">{{ item.emoji }}</div>
+        <div class = "text-5xl mb-4 group-hover:animate-bounce inline-block"><img :src="item.emoji" :alt="key" class="w-12 h-12"></div>
         <h3  class = "font-heading font-bold text-xl text-primary mb-3">{{ t(`home.highlights.${key}.title`) }}</h3>
         <p   class = "font-body text-tertiary/70 text-sm leading-relaxed">{{ t(`home.highlights.${key}.desc`) }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Topics Section -->
+    <section class="py-24 bg-gradient-to-b from-dark to-secondary/10 relative overflow-hidden border-t border-primary/10">
+      <!-- Decorative element -->
+      <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      
+      <div class="container-inner relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="section-title mb-3">{{ t('home.topics_title') }}</h2>
+          <div class="w-16 h-1 bg-gradient-warm mx-auto rounded-full"></div>
+          <p class="font-body text-tertiary/70 max-w-2xl mx-auto mt-6">
+            {{ t('home.topics_subtitle') }}
+          </p>
+        </div>
+        
+        <div class="space-y-6 max-w-4xl mx-auto">
+          <div v-for="(item, key, index) in topics" :key="key"
+               class="group relative bg-dark/40 backdrop-blur-sm border border-primary/10 hover:border-primary/30 rounded-3xl p-6 md:p-8 transition-all duration-300 hover:shadow-[0_0_30px_rgba(230,177,83,0.1)] hover:-translate-y-1 overflow-hidden flex flex-col sm:flex-row items-center gap-6"
+               :class="{ 'sm:flex-row-reverse': index % 2 !== 0 }">
+            
+            <!-- Large faint emoji in background -->
+            <div class="absolute -right-10 -bottom-10 text-[10rem] opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 group-hover:rotate-12 duration-500 pointer-events-none z-0 select-none">
+              {{ item.emoji }}
+            </div>
+
+            <div class="w-20 h-20 md:w-28 md:h-28 shrink-0 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 flex items-center justify-center text-4xl md:text-5xl group-hover:scale-110 transition-transform duration-500 relative z-10 shadow-lg">
+              {{ item.emoji }}
+            </div>
+            
+            <div class="flex-1 text-center sm:text-left relative z-10" :class="{ 'sm:text-right': index % 2 !== 0 }">
+              <h3 class="font-heading font-bold text-2xl text-primary mb-3">{{ t(`home.topics.${key}.title`) }}</h3>
+              <p class="font-body text-tertiary/80 text-base leading-relaxed">{{ t(`home.topics.${key}.desc`) }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -138,14 +179,24 @@ import { useActivitiesStore } from '~/stores/activities'
 import { ArrowRight, ChevronDown } from 'lucide-vue-next'
 import Logo from '~/components/Logo.vue'
 import Firelight from '../assets/firelight.svg'
-const { locale, t }   = useI18n()
-const activitiesStore = useActivitiesStore()
-const requestUrl = useRequestURL()
-const canonicalUrl = computed(() => new URL('/', requestUrl.origin).toString())
-const currentBg = ref('/assets/background/DSC06263.JPG');
-const seoTitle = computed(() => locale.value === 'zh'
-  ? 'SonShip 2026 青年营会 | 与神、与人、与自己重新连接'
-  : 'SonShip 2026 Youth Camp | Reconnect with God, Others, and Yourself')
+import FellowshipIcon from '../assets/icon/Fellowship.svg'
+import GrowthIcon from '../assets/icon/Growth.svg'
+import AdventureIcon from '../assets/icon/Adventure.svg'
+
+const backgroundImages = Object.values(import.meta.glob('~/assets/background/*.{JPG,JPEG,jpg,jpeg,png,webp}', {
+  eager : true,
+  import: 'default'
+})).sort()
+
+const { locale, t }       = useI18n()
+const requestUrl          = useRequestURL()
+const canonicalUrl        = computed(() => new URL('/', requestUrl.origin).toString())
+const backgroundIndex     = ref(0)
+const currentBg           = computed(() => backgroundImages[backgroundIndex.value] ?? '')
+const isBackgroundVisible = ref(true)
+const seoTitle            = computed(() => locale.value === 'zh'
+  ? 'Home'
+  : 'Home')
 
 const seoDescription = computed(() => locale.value === 'zh'
   ? 'SonShip 2026 是 CMC Subang 青年营会官网。营会将于 2026 年 8 月 28 日至 31 日举行，欢迎报名参加这段与神、与人、与自己重新连接的旅程。'
@@ -155,31 +206,31 @@ const structuredData = computed(() => ({
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'WebSite',
-      name: 'SonShip 2026',
-      url: canonicalUrl.value,
+      '@type'   : 'WebSite',
+      name      : 'SonShip 2026',
+      url       : canonicalUrl.value,
       inLanguage: locale.value
     },
     {
       '@type': 'Organization',
-      name: 'CMC Subang',
-      url: canonicalUrl.value,
-      logo: `${requestUrl.origin}/logo.svg`
+      name   : 'CMC Subang',
+      url    : canonicalUrl.value,
+      logo   : `${requestUrl.origin}/logo.svg`
     },
     {
-      '@type': 'Event',
-      name: 'SonShip 2026 Youth Camp',
-      startDate: '2026-08-28T09:00:00+08:00',
-      endDate: '2026-08-31T18:00:00+08:00',
+      '@type'            : 'Event',
+      name               : 'SonShip 2026 Youth Camp',
+      startDate          : '2026-08-28T09:00:00+08:00',
+      endDate            : '2026-08-31T18:00:00+08:00',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-      eventStatus: 'https://schema.org/EventScheduled',
-      image: [`${requestUrl.origin}/logo.svg`],
-      organizer: {
+      eventStatus        : 'https://schema.org/EventScheduled',
+      image              : [`${requestUrl.origin}/logo.svg`],
+      organizer          : {
         '@type': 'Organization',
-        name: 'CMC Subang'
+        name   : 'CMC Subang'
       },
       description: seoDescription.value,
-      url: canonicalUrl.value
+      url        : canonicalUrl.value
     }
   ]
 }))
@@ -196,17 +247,17 @@ useHead(() => ({
 }))
 
 useSeoMeta({
-  title: () => seoTitle.value,
-  description: () => seoDescription.value,
-  ogTitle: () => seoTitle.value,
-  ogDescription: () => seoDescription.value,
-  ogImage: () => `${requestUrl.origin}/logo.svg`,
-  ogImageAlt: 'SonShip 2026',
-  ogType: 'website',
-  ogUrl: () => canonicalUrl.value,
-  twitterTitle: () => seoTitle.value,
+  title             : () => seoTitle.value,
+  description       : () => seoDescription.value,
+  ogTitle           : () => seoTitle.value,
+  ogDescription     : () => seoDescription.value,
+  ogImage           : () => `${requestUrl.origin}/assets/firelight.svg`,
+  ogImageAlt        : 'SonShip 2026',
+  ogType            : 'website',
+  ogUrl             : () => canonicalUrl.value,
+  twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage: () => `${requestUrl.origin}/logo.svg`
+  twitterImage      : () => `${requestUrl.origin}/assets/firelight.svg`
 })
 
   // Countdown Logic
@@ -219,6 +270,11 @@ const timeLeft   = ref({
 })
 
 let timer = null
+let backgroundTimer = null
+let backgroundTransitionTimer = null
+
+const BACKGROUND_CHANGE_INTERVAL = 6000
+const BACKGROUND_FADE_DURATION = 900
 
 const updateCountdown = () => {
   const now      = new Date().getTime()
@@ -240,23 +296,36 @@ const updateCountdown = () => {
 onMounted(() => {
   updateCountdown()
   timer = setInterval(updateCountdown, 1000)
+
+  if (backgroundImages.length > 1) {
+    backgroundTimer = setInterval(() => {
+      isBackgroundVisible.value = false
+
+      if (backgroundTransitionTimer) clearTimeout(backgroundTransitionTimer)
+
+      backgroundTransitionTimer = setTimeout(() => {
+        backgroundIndex.value = (backgroundIndex.value + 1) % backgroundImages.length
+        isBackgroundVisible.value = true
+      }, BACKGROUND_FADE_DURATION)
+    }, BACKGROUND_CHANGE_INTERVAL)
+  }
 })
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
+  if (backgroundTimer) clearInterval(backgroundTimer)
+  if (backgroundTransitionTimer) clearTimeout(backgroundTransitionTimer)
 })
 
 const highlights = {
-  community: { emoji: '🤝' },
-  growth   : { emoji: '🌱' },
-  adventure: { emoji: '⛰️' },
+  community: { emoji: FellowshipIcon },
+  growth   : { emoji: GrowthIcon },
+  adventure: { emoji: AdventureIcon },
 }
 
-const sessions = [
-  { id: 1, name: 'SonShip Camp 2026', date: 'August 28–31, 2026', location: 'Nature Retreat Centre', spots: 28, status: 'Registration Open', emoji: '🏕️' },
-  { id: 2, name: 'Pre-Camp Orientation', date: 'August 23, 2026', location: 'Online / Zoom', spots: 50, status: 'Coming Soon', emoji: '💻' },
-  { id: 3, name: 'SonShip 2027 (Early)', date: 'TBA 2027', location: 'TBA', spots: '∞', status: 'Interested?', emoji: '🗓️' },
-]
-
-const featuredActivities = activitiesStore.activities.slice(0, 8)
+const topics = {
+  bgr: { emoji: '❤️' },
+  ai: { emoji: '🤖' },
+  prodigal: { emoji: '📖' },
+}
 </script>

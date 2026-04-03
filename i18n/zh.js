@@ -29,7 +29,14 @@ export default {
         highlights: {
             community: { title: '团契', desc: '在安全、充满爱的环境中建立终生友谊。' },
             growth: { title: '成长', desc: '透过敬拜与教导，遇见神并发现你的身份认同。' },
-            adventure: { title: '冒险', desc: '难忘的活动和游戏，突破你的极限。' },
+            adventure: { title: '真实', desc: '体验敞开心扉，做最真实自己的自由。' },
+        },
+        topics_title: '营会主题内容',
+        topics_subtitle: '探索与现实生活息息相关的深刻主题，用信仰和真理引导我们前行。',
+        topics: {
+            bgr: { title: '男女关系 (BGR)', desc: '从圣经的角度探讨恋爱、关系界线与神所赐的爱。' },
+            ai: { title: '人工智能与信仰', desc: '在人工智能驱动的时代中寻找定位，并探讨科技带来的影响。' },
+            prodigal: { title: '浪子的比喻', desc: '重新发现你的身份认同、恩典，以及回转向父神的路。' },
         },
         sessions_title: '倒数前往 SonShip 的旅程',
         sessions_subtitle: '火种正在预备! 加入我们，在这个八月开启一段难忘的重新连接之旅',
