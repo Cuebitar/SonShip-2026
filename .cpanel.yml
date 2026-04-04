@@ -1,5 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/mgkvvytn/public_html/
+    - export DEPLOYPATH=/home/shawnliuhansheng/public_html/
     - /bin/cp -R * $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - /bin/npm install
+    - /bin/npm run build
