@@ -64,9 +64,9 @@ export default {
 			},
 			fontFamily: {
 				heading: [
-					'"QingNiaoHuaGuang"',
 					'"Be Vietnam Pro"',
 					'Inter',
+					'"QingNiaoHuaGuang"',
 					'sans-serif'
 				],
 				body: [
@@ -80,7 +80,7 @@ export default {
 				],
 				zh: [
 					'"QingNiaoHuaGuang"',
-					'sans-serif'
+					'sans-serif',
 				],
 				'zh-body': [
 					'"AaManYuShouXieTi"',

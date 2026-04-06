@@ -20,7 +20,7 @@
         <!-- <img class = "mb-12 animate-float inline-block w-40 h-40" :src = "Firelight" alt="Firelight"></img> -->
 
         <!-- Main title -->
-        <Logo class = "md:text-9xl text-7xl pb-2 md:tracking-[-0.7rem] tracking-[-0.4rem]" />
+        <Logo class = "md:text-9xl text-7xl pb-2 md:tracking-[-0.6rem] tracking-[-0.2rem]" />
 
         <!-- Tagline -->
         <p   class=" text-sm md:text-xl mb-6 animate-fade-in mt-[-25px] md:mt-[-30px] mr-[-24px]  md:mr-[-88px]  font-body" style = "animation-delay:0.2s">

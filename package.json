@@ -1,7 +1,7 @@
 {
   "name": "temp-scaffold",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
@@ -20,6 +20,7 @@
     "class-variance-authority": "^0.7.1",
     "firebase": "^12.10.0",
     "nuxt": "^3.16.2",
+    "nuxt-gtag": "^4.1.0",
     "pinia": "^2.1.7"
   },
   "devDependencies": {

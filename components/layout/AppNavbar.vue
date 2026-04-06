@@ -4,7 +4,8 @@
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center gap-2 group">
         <img :src="Firelight" class="w-8 h-8" alt="Firelight"/>
-        <Logo size="xl" />
+        <Logo class="text-xl tracking-[0rem]" />
+
       </NuxtLink>
 
       <!-- Desktop Nav -->

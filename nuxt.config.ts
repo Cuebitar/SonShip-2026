@@ -1,4 +1,7 @@
 export default defineNuxtConfig({
+  nitro: {
+    preset: 'node-server'
+  },
   devtools: { enabled: true },
   modules: [['@nuxt/ui', {
     input: {
@@ -21,7 +24,10 @@ export default defineNuxtConfig({
       cookieKey: 'sonship-locale',
       redirectOn: 'root',
     },
-  }], '@pinia/nuxt'],
+  }], '@pinia/nuxt', 'nuxt-gtag'],
+  gtag: {
+    id: 'G-Y9G19YP6EF'
+  },
   runtimeConfig: {
     resendApiKey: process.env.RESEND_API_KEY,
     registrationEmailFrom: process.env.REGISTRATION_EMAIL_FROM,

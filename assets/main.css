@@ -35,6 +35,10 @@
         min-height: 100vh;
     }
 
+    html[lang='zh'] body {
+        @apply font-zh;
+    }
+
     h1,
     h2,
     h3,
@@ -42,6 +46,24 @@
     h5,
     h6 {
         @apply font-heading font-bold;
+    }
+
+    html[lang='zh'] h1,
+    html[lang='zh'] h2,
+    html[lang='zh'] h3,
+    html[lang='zh'] h4,
+    html[lang='zh'] h5,
+    html[lang='zh'] h6 {
+        @apply font-zh;
+    }
+
+    html[lang='zh'] .font-body,
+    html[lang='zh'] .font-heading {
+        @apply font-zh;
+    }
+
+    html[lang='zh'] .font-script {
+        @apply font-zh-script;
     }
 
     ::selection {

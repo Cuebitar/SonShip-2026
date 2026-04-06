@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{ 'font-zh': locale === 'zh' }">
+  <div id="app">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
