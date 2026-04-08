@@ -1,4 +1,11 @@
 export default defineNuxtConfig({
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/firelight.svg' }
+      ]
+    }
+  },
   nitro: {
     preset: 'node-server'
   },

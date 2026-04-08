@@ -332,13 +332,13 @@ useSeoMeta({
   description       : () => seoDescription.value,
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${requestUrl.origin}/assets/firelight.svg`,
+  ogImage           : () => `${requestUrl.origin}/firelight.svg`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${requestUrl.origin}/assets/firelight.svg`
+  twitterImage      : () => `${requestUrl.origin}/firelight.svg`
 })
 
 const genderOptions = computed(() => [

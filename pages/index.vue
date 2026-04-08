@@ -199,8 +199,8 @@ const seoTitle            = computed(() => locale.value === 'zh'
   : 'Home')
 
 const seoDescription = computed(() => locale.value === 'zh'
-  ? 'SonShip 2026 是 CMC Subang 青年营会官网。营会将于 2026 年 8 月 28 日至 31 日举行，欢迎报名参加这段与神、与人、与自己重新连接的旅程。'
-  : 'SonShip 2026 is the official CMC Subang youth camp. Join us from August 28 to 31, 2026 for a meaningful journey of reconnecting with God, others, and yourself.')
+  ? 'SonShip 2026 是由 Mega Subang CMC 与 Firelight 联合筹办的青年营会官网。营会将于 2026 年 8 月 28 日至 31 日举行，邀请你一同踏上与神、与人、与自己重新连接的信仰旅程。'
+  : 'SonShip 2026 is the official website for a youth camp organized by Mega Subang CMC and Firelight, happening August 28 to 31, 2026, for a meaningful journey of reconnecting with God, others, and yourself.')
 
 const structuredData = computed(() => ({
   '@context': 'https://schema.org',
@@ -215,7 +215,7 @@ const structuredData = computed(() => ({
       '@type': 'Organization',
       name   : 'CMC Subang',
       url    : canonicalUrl.value,
-      logo   : `${requestUrl.origin}/logo.svg`
+      logo   : `${requestUrl.origin}/firelight.svg`
     },
     {
       '@type'            : 'Event',
@@ -224,7 +224,7 @@ const structuredData = computed(() => ({
       endDate            : '2026-08-31T18:00:00+08:00',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus        : 'https://schema.org/EventScheduled',
-      image              : [`${requestUrl.origin}/logo.svg`],
+      image              : [`${requestUrl.origin}/firelight.svg`],
       organizer          : {
         '@type': 'Organization',
         name   : 'CMC Subang'
@@ -249,15 +249,16 @@ useHead(() => ({
 useSeoMeta({
   title             : () => seoTitle.value,
   description       : () => seoDescription.value,
+  keywords          : 'Firelight Camp, Mega Subang CMC, Mega Subang CMC Youth Camp, SonShip 2026, SonShip Camp, SonShip Youth Camp, SonShip Youth Camp 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026',
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${requestUrl.origin}/assets/firelight.svg`,
+  ogImage           : () => `${requestUrl.origin}/firelight.svg`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${requestUrl.origin}/assets/firelight.svg`
+  twitterImage      : () => `${requestUrl.origin}/firelight.svg`
 })
 
   // Countdown Logic

@@ -98,7 +98,7 @@ const structuredData      = computed(() => ({
       '@type': 'Organization',
       name   : 'CMC Subang',
       url    : canonicalUrl.value,
-      logo   : `${requestUrl.origin}/logo.svg`
+      logo   : `${requestUrl.origin}/firelight.svg`
     },
     {
       '@type'            : 'Event',
@@ -107,7 +107,7 @@ const structuredData      = computed(() => ({
       endDate            : '2026-08-31T18:00:00+08:00',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus        : 'https://schema.org/EventScheduled',
-      image              : [`${requestUrl.origin}/logo.svg`],
+      image              : [`${requestUrl.origin}/firelight.svg`],
       organizer          : {
         '@type': 'Organization',
         name   : 'CMC Subang'
@@ -134,13 +134,13 @@ useSeoMeta({
   description       : () => seoDescription.value,
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${requestUrl.origin}/assets/firelight.svg`,
+  ogImage           : () => `${requestUrl.origin}/firelight.svg`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${requestUrl.origin}/assets/firelight.svg`
+  twitterImage      : () => `${requestUrl.origin}/firelight.svg`
 })
 onMounted(() => {
 
