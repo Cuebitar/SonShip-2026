@@ -1,3 +1,5 @@
+import { normalizeSiteUrl } from '~/lib/site'
+
 const publicPages = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/about', changefreq: 'monthly', priority: '0.8' },
@@ -5,13 +7,14 @@ const publicPages = [
 ]
 
 export default defineEventHandler((event) => {
-  const origin = getRequestURL(event).origin
+  const config = useRuntimeConfig(event)
+  const siteUrl = normalizeSiteUrl(config.public.siteUrl)
   const lastModified = new Date().toISOString()
 
   setHeader(event, 'content-type', 'application/xml; charset=utf-8')
 
   const urls = publicPages.map(({ path, changefreq, priority }) => `  <url>
-    <loc>${origin}${path}</loc>
+    <loc>${siteUrl}${path}</loc>
     <lastmod>${lastModified}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>

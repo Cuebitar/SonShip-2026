@@ -1,12 +1,16 @@
-// server/middleware/www-redirect.ts
-export default defineEventHandler((event) => {
-    const host = getRequestHost(event)
+import { normalizeSiteUrl } from '~/lib/site'
 
-    if (host?.startsWith('www.')) {
-        const proto = getRequestHeader(event, 'x-forwarded-proto') || 'https'
-        const newHost = host.replace('www.', '')
-        const url = event.node.req.url || '/'
-        
-        return sendRedirect(event, `${proto}://${newHost}${url}`, 301)
+export default defineEventHandler((event) => {
+    if (import.meta.dev) {
+        return
+    }
+
+    const config = useRuntimeConfig(event)
+    const canonicalSiteUrl = new URL(normalizeSiteUrl(config.public.siteUrl))
+    const requestUrl = getRequestURL(event)
+
+    if (requestUrl.host !== canonicalSiteUrl.host || requestUrl.protocol !== canonicalSiteUrl.protocol) {
+        const targetUrl = `${canonicalSiteUrl.origin}${requestUrl.pathname}${requestUrl.search}`
+        return sendRedirect(event, targetUrl, 301)
     }
 })

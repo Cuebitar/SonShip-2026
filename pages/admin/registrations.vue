@@ -10,6 +10,26 @@
 
     <!-- Content -->
     <section class="container-inner mt-8">
+      <div class="card mb-6 p-5 border border-primary/20 bg-primary/5">
+        <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary/80">Registration Count</p>
+            <h2 class="font-heading text-3xl font-black text-white mt-1">
+              {{ registrationCount }} / {{ registrationLimit }}
+            </h2>
+          </div>
+          <p class="text-sm text-tertiary">
+            {{ registrationSpotsLeft }} spots left
+          </p>
+        </div>
+        <div class="mt-4 h-2 rounded-full bg-white/10 overflow-hidden">
+          <div
+            class="h-full rounded-full bg-primary transition-all duration-300"
+            :style="{ width: `${registrationProgress}%` }"
+          ></div>
+        </div>
+      </div>
+
       <!-- Tabs / Filters -->
       <div class="flex flex-col gap-4 mb-6">
         <div class="flex flex-wrap gap-2">
@@ -43,26 +63,36 @@
 
       <!-- Table -->
       <div class="card overflow-x-auto">
-        <table class="w-full text-left border-collapse min-w-[800px]">
+        <table class="w-full text-left border-collapse min-w-[1100px]">
           <thead>
             <tr class="border-b border-white/10 bg-white/5">
-              <th class="p-4 font-heading text-primary font-bold text-sm">Name</th>
-              <th class="p-4 font-heading text-primary font-bold text-sm">Date</th>
-              <th class="p-4 font-heading text-primary font-bold text-sm">Gender</th>
-              <th class="p-4 font-heading text-primary font-bold text-sm">Group</th>
-              <th class="p-4 font-heading text-primary font-bold text-sm">Room</th>
-              <th class="p-4 font-heading text-primary font-bold text-sm">Status</th>
+              <th
+                v-for="column in sortableColumns"
+                :key="column.key"
+                class="p-4 font-heading text-primary font-bold text-sm"
+              >
+                <button
+                  type="button"
+                  class="flex items-center gap-2 transition-opacity hover:opacity-80"
+                  @click="setSort(column.key)"
+                >
+                  <span>{{ column.label }}</span>
+                  <span class="text-xs text-primary/70">{{ getSortIndicator(column.key) }}</span>
+                </button>
+              </th>
               <th class="p-4 font-heading text-primary font-bold text-sm text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="filteredRecords.length > 0 && hasMounted" v-for="record in filteredRecords" :key="record.id" class="border-b border-white/5 hover:bg-white/5 transition-colors">
+            <tr v-if="sortedRecords.length > 0 && hasMounted" v-for="record in sortedRecords" :key="record.id" class="border-b border-white/5 hover:bg-white/5 transition-colors">
               <td class="p-4">
                 <div class="font-bold text-white">{{ record.fullName }}</div>
-                <div class="text-xs text-tertiary/70">{{ record.phone }}</div>
+                <div class="text-xs text-tertiary/70">{{ record.email }}</div>
               </td>
+              <td class="p-4 text-tertiary text-sm">{{ record.phone || '-' }}</td>
               <td class="p-4 text-tertiary text-sm">{{ record.registrationTime }}</td>
               <td class="p-4 text-tertiary text-sm capitalize">{{ record.gender }}</td>
+              <td class="p-4 text-tertiary text-sm capitalize">{{ record.transport || '-' }}</td>
               <td class="p-4 text-tertiary text-sm">{{ record.group || '-' }}</td>
               <td class="p-4 text-tertiary text-sm">{{ record.room_name || '-' }}</td>
               <td class="p-4">
@@ -83,10 +113,10 @@
               </td>
             </tr>
             <tr v-else-if="hasMounted">
-              <td colspan="6" class="p-8 text-center text-tertiary">No records found.</td>
+              <td colspan="9" class="p-8 text-center text-tertiary">No records found.</td>
             </tr>
             <tr v-else>
-              <td colspan="6" class="p-8 text-center text-tertiary">Loading...</td>
+              <td colspan="9" class="p-8 text-center text-tertiary">Loading...</td>
             </tr>
           </tbody>
         </table>
@@ -227,6 +257,7 @@ definePageMeta({ requiresAuth: true })
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useCampersStore } from '~/stores/campers';
 import { useI18n } from 'vue-i18n'
+import moment from 'moment';
 const { t } = useI18n()
 
 const tabs = ['All', 'Pending', 'Pending For Collection', 'Registered', 'Rejected'];
@@ -234,8 +265,21 @@ const activeTab = ref('All');
 const filterGroup = ref('All');
 const filterRoom = ref('All');
 const hasMounted = ref(false);
+const sortKey = ref('registrationTime');
+const sortDirection = ref('desc');
 
 const campersStore = useCampersStore();
+const registrationLimit = 70;
+const sortableColumns = [
+  { key: 'fullName', label: 'Name' },
+  { key: 'phone', label: 'Phone' },
+  { key: 'registrationTime', label: 'Date' },
+  { key: 'gender', label: 'Gender' },
+  { key: 'transport', label: 'Transportation' },
+  { key: 'group', label: 'Group' },
+  { key: 'room_name', label: 'Room' },
+  { key: 'status', label: 'Status' }
+];
 
 onMounted(async () =>  {
   await campersStore.initCampers();
@@ -245,10 +289,12 @@ onMounted(async () =>  {
 // Map from pinia store campers
 const records = computed(() =>
   campersStore.campers.map((c, index) => {
+    console.log(c)
     const hour = (8 + (index % 10)).toString().padStart(2, '0');
     const minute = ((index * 13) % 60).toString().padStart(2, '0');
     const day = (1 + (index % 15)).toString().padStart(2, '0');
-    const registrationTime = `2026-08-${day} ${hour}:${minute}`;
+    const month = (1 + (index % 12)).toString().padStart(2, '0');
+    const registrationTime = `2026-${month}-${day} ${hour}:${minute}`;
     return {
       id               : c.id,
       fullName         : c.name,
@@ -269,7 +315,13 @@ const records = computed(() =>
       iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
       group            : c.group || "",
       room_name        : c.room_name || "",
-      registrationTime
+      registrationTime: c.registrationTime ? new Date(c.registrationTime).toLocaleString('en-UK', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      }) : ''
     };
   })
 );
@@ -291,6 +343,30 @@ const filteredRecords = computed(() => {
     const matchRoom  = filterRoom.value  === 'All' || r.room_name === filterRoom.value;
     return matchTab && matchGroup && matchRoom;
   });
+});
+
+const sortedRecords = computed(() => {
+  const direction = sortDirection.value === 'asc' ? 1 : -1;
+
+  return [...filteredRecords.value].sort((a, b) => {
+    if (sortKey.value === 'registrationTime') {
+      const aTime = moment(a.registrationTime, ['DD/MM/YYYY, HH:mm', 'DD/MM/YYYY HH:mm', moment.ISO_8601], true).valueOf();
+      const bTime = moment(b.registrationTime, ['DD/MM/YYYY, HH:mm', 'DD/MM/YYYY HH:mm', moment.ISO_8601], true).valueOf();
+      if (!Number.isFinite(aTime) || !Number.isFinite(bTime)) return 0;
+      return (aTime - bTime) * direction;
+    }
+
+    const aValue = String(a[sortKey.value] ?? '').toLowerCase();
+    const bValue = String(b[sortKey.value] ?? '').toLowerCase();
+    return aValue.localeCompare(bValue) * direction;
+  });
+});
+
+const registrationCount = computed(() => records.value.length == 0 ? 0 : records.value.length - 1);
+const registrationSpotsLeft = computed(() => Math.max(registrationLimit - registrationCount.value, 0));
+const registrationProgress = computed(() => {
+  if (registrationLimit === 0) return 0;
+  return Math.min((registrationCount.value / registrationLimit) * 100, 100);
 });
 
 const recordOptions = computed(() => {
@@ -329,6 +405,21 @@ function openModal(record) {
 
 function closeModal() {
   selectedRecord.value = null;
+}
+
+function setSort(columnKey) {
+  if (sortKey.value === columnKey) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+    return;
+  }
+
+  sortKey.value = columnKey;
+  sortDirection.value = columnKey === 'registrationTime' ? 'desc' : 'asc';
+}
+
+function getSortIndicator(columnKey) {
+  if (sortKey.value !== columnKey) return '';
+  return sortDirection.value === 'asc' ? '↑' : '↓';
 }
 
 async function saveChanges() {

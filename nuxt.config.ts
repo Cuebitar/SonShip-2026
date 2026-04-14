@@ -40,6 +40,7 @@ export default defineNuxtConfig({
     registrationEmailFrom: process.env.REGISTRATION_EMAIL_FROM,
     registrationEmailReplyTo: process.env.REGISTRATION_EMAIL_REPLY_TO,
     public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://firelight.com.my',
       firebaseApiKey: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
       firebaseProjectId: process.env.NUXT_PUBLIC_FIREBASE_PROJECT_ID,

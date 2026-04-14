@@ -182,6 +182,7 @@ import Firelight from '../assets/firelight.svg'
 import FellowshipIcon from '../assets/icon/Fellowship.svg'
 import GrowthIcon from '../assets/icon/Growth.svg'
 import AdventureIcon from '../assets/icon/Adventure.svg'
+import { buildCanonicalUrl, normalizeSiteUrl } from '~/lib/site'
 
 const backgroundImages = Object.values(import.meta.glob('~/assets/background/*.{JPG,JPEG,jpg,jpeg,png,webp}', {
   eager : true,
@@ -189,8 +190,9 @@ const backgroundImages = Object.values(import.meta.glob('~/assets/background/*.{
 })).sort()
 
 const { locale, t }       = useI18n()
-const requestUrl          = useRequestURL()
-const canonicalUrl        = computed(() => new URL('/', requestUrl.origin).toString())
+const config              = useRuntimeConfig()
+const siteUrl             = normalizeSiteUrl(config.public.siteUrl)
+const canonicalUrl        = computed(() => buildCanonicalUrl(siteUrl, '/'))
 const backgroundIndex     = ref(0)
 const currentBg           = computed(() => backgroundImages[backgroundIndex.value] ?? '')
 const isBackgroundVisible = ref(true)
@@ -215,7 +217,7 @@ const structuredData = computed(() => ({
       '@type': 'Organization',
       name   : 'CMC Subang',
       url    : canonicalUrl.value,
-      logo   : `${requestUrl.origin}/firelight.svg`
+      logo   : `${siteUrl}/firelight.svg`
     },
     {
       '@type'            : 'Event',
@@ -224,7 +226,7 @@ const structuredData = computed(() => ({
       endDate            : '2026-08-31T18:00:00+08:00',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus        : 'https://schema.org/EventScheduled',
-      image              : [`${requestUrl.origin}/firelight.svg`],
+      image              : [`${siteUrl}/firelight.svg`],
       organizer          : {
         '@type': 'Organization',
         name   : 'CMC Subang'
@@ -249,16 +251,16 @@ useHead(() => ({
 useSeoMeta({
   title             : () => seoTitle.value,
   description       : () => seoDescription.value,
-  keywords          : 'Firelight Camp, Mega Subang CMC, Mega Subang CMC Youth Camp, SonShip 2026, SonShip Camp, SonShip Youth Camp, SonShip Youth Camp 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026',
+  keywords          : 'Firelight Camp, Firelight, Mega Subang CMC, Mega Subang Firelight, Mega Subang CMC Youth Camp, SonShip 2026, SonShip Camp, SonShip Youth Camp, SonShip Youth Camp 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026',
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${requestUrl.origin}/firelight.svg`,
+  ogImage           : () => `${siteUrl}/firelight.svg`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${requestUrl.origin}/firelight.svg`
+  twitterImage      : () => `${siteUrl}/firelight.svg`
 })
 
   // Countdown Logic

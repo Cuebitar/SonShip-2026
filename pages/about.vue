@@ -58,8 +58,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { buildCanonicalUrl, normalizeSiteUrl } from '~/lib/site'
 
 const { locale, t } = useI18n()
+const config = useRuntimeConfig()
+const siteUrl = normalizeSiteUrl(config.public.siteUrl)
 const campersStore = ref(null);
 const seoTitle = ref('About Us');
 const seoDescription = ref('Learn about SonShip 2026, the annual youth camp organized by CMC Subang. Discover our mission, story, and the passionate team behind the event.');
@@ -82,9 +85,7 @@ const team = ref([
     { name: 'names.florance', role: 'Tech & Media', emoji: '🎬' },
     { name: 'names.jack', role: '3M', emoji: '🔉' },
 ]);
-
-const requestUrl          = useRequestURL()
-const canonicalUrl        = computed(() => new URL('/', requestUrl.origin).toString());
+const canonicalUrl        = computed(() => buildCanonicalUrl(siteUrl, '/about'));
 const structuredData      = computed(() => ({
   '@context': 'https://schema.org',
   '@graph': [
@@ -98,7 +99,7 @@ const structuredData      = computed(() => ({
       '@type': 'Organization',
       name   : 'CMC Subang',
       url    : canonicalUrl.value,
-      logo   : `${requestUrl.origin}/firelight.svg`
+      logo   : `${siteUrl}/firelight.svg`
     },
     {
       '@type'            : 'Event',
@@ -107,7 +108,7 @@ const structuredData      = computed(() => ({
       endDate            : '2026-08-31T18:00:00+08:00',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus        : 'https://schema.org/EventScheduled',
-      image              : [`${requestUrl.origin}/firelight.svg`],
+      image              : [`${siteUrl}/firelight.svg`],
       organizer          : {
         '@type': 'Organization',
         name   : 'CMC Subang'
@@ -134,13 +135,13 @@ useSeoMeta({
   description       : () => seoDescription.value,
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${requestUrl.origin}/firelight.svg`,
+  ogImage           : () => `${siteUrl}/firelight.svg`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${requestUrl.origin}/firelight.svg`
+  twitterImage      : () => `${siteUrl}/firelight.svg`
 })
 onMounted(() => {
 

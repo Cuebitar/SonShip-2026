@@ -1,3 +1,5 @@
+import { normalizeSiteUrl } from '~/lib/site'
+
 const privatePaths = [
   '/admin',
   '/dashboard',
@@ -12,7 +14,8 @@ const privatePaths = [
 ]
 
 export default defineEventHandler((event) => {
-  const origin = getRequestURL(event).origin
+  const config = useRuntimeConfig(event)
+  const siteUrl = normalizeSiteUrl(config.public.siteUrl)
 
   setHeader(event, 'content-type', 'text/plain; charset=utf-8')
 
@@ -21,6 +24,6 @@ export default defineEventHandler((event) => {
     'Allow: /',
     ...privatePaths.map((path) => `Disallow: ${path}`),
     '',
-    `Sitemap: ${origin}/sitemap.xml`
+    `Sitemap: ${siteUrl}/sitemap.xml`
   ].join('\n')
 })

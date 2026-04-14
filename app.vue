@@ -8,17 +8,19 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
+import { buildCanonicalUrl, normalizeSiteUrl } from '~/lib/site'
 const { locale } = useI18n()
 const auth = useAuthStore()
 const route = useRoute()
-const requestUrl = useRequestURL()
+const config = useRuntimeConfig()
+const siteUrl = normalizeSiteUrl(config.public.siteUrl)
 
 const localizedDescription = computed(() => locale.value === 'zh'
   ? 'SonShip 2026 是 Mega Subang CMC 青年营会官网，帮助你与神、与人、与自己重新连接。'
   : 'SonShip 2026 is the official Mega Subang CMC youth camp website, helping you reconnect with God, others, and yourself.')
 
 const localizedSiteName = computed(() => locale.value === 'zh' ? 'SonShip 2026 青年营会' : 'SonShip 2026 Youth Camp')
-const canonicalUrl = computed(() => `https://firelight.com.my${route.path}`)
+const canonicalUrl = computed(() => buildCanonicalUrl(siteUrl, route.path))
 const robotsPolicy = computed(() => {
   if (route.meta.requiresAuth || route.meta.guestOnly || route.path.startsWith('/admin')) {
     return 'noindex, nofollow'
@@ -31,17 +33,17 @@ useHead(() => ({
   htmlAttrs: {
     lang: locale.value
   },
-  titleTemplate: (title) => title ? `${title} | SonShip 2026 | Firelight Camp` : 'SonShip 2026 | Firelight Camp',
+  titleTemplate: (title) => title ? `Firelight | SonShip 2026 | ${title} ` : 'Firelight | SonShip 2026',
   link: [
     { rel: 'canonical', href: canonicalUrl.value }
   ]
 }))
 
 useSeoMeta({
-  applicationName: 'SonShip 2026 | Firelight Camp',
+  applicationName: 'Firelight | SonShip 2026',
   description: () => localizedDescription.value,
   ogDescription: () => localizedDescription.value,
-  ogImage: () => `${requestUrl.origin}/firelight.svg`,
+  ogImage: () => `${siteUrl}/firelight.svg`,
   ogImageAlt: () => localizedSiteName.value,
   ogLocale: () => locale.value === 'zh' ? 'zh_TW' : 'en_US',
   ogSiteName: () => localizedSiteName.value,
@@ -51,7 +53,7 @@ useSeoMeta({
   themeColor: '#1a1a1a',
   twitterCard: 'summary_large_image',
   twitterDescription: () => localizedDescription.value,
-  twitterImage: () => `${requestUrl.origin}/firelight.svg`,
+  twitterImage: () => `${siteUrl}/firelight.svg`,
   twitterTitle: () => localizedSiteName.value
 })
 

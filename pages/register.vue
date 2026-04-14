@@ -295,6 +295,7 @@
 import { Info, TicketCheck } from 'lucide-vue-next'
 import { nextTick, onMounted } from 'vue';
 import { useCampersStore } from '~/stores/campers'
+import { buildCanonicalUrl, normalizeSiteUrl } from '~/lib/site'
 const { t, locale } = useI18n()
 
 const campersStore = useCampersStore();
@@ -304,8 +305,9 @@ const submitError    = ref('')
 const seoTitle       = ref('Registration | SonShip 2026');
 const seoDescription = ref('Register for the SonShip 2026 Youth Camp hosted by CMC Subang. Join us from August 28-31 at Radiant Retreats in Janda Baik for an unforgettable experience. Secure your spot today!');
 
-const requestUrl          = useRequestURL()
-const canonicalUrl        = computed(() => new URL('/register', requestUrl.origin).toString());
+const config              = useRuntimeConfig()
+const siteUrl             = normalizeSiteUrl(config.public.siteUrl)
+const canonicalUrl        = computed(() => buildCanonicalUrl(siteUrl, '/register'));
 
 const structuredData      = computed(() => ({
   '@context': 'https://schema.org',
@@ -332,13 +334,13 @@ useSeoMeta({
   description       : () => seoDescription.value,
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${requestUrl.origin}/firelight.svg`,
+  ogImage           : () => `${siteUrl}/firelight.svg`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${requestUrl.origin}/firelight.svg`
+  twitterImage      : () => `${siteUrl}/firelight.svg`
 })
 
 const genderOptions = computed(() => [
