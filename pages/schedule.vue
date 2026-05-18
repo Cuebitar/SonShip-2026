@@ -63,13 +63,14 @@
             </div>
           </div>
 
-          <!-- Legend -->
+          <!-- Camp Dates -->
           <div class="card p-5">
             <h4 class="font-heading font-bold text-sm text-primary mb-3">Camp Dates</h4>
             <div class="space-y-2 text-xs font-body text-tertiary/60">
-              <p>📅 Day 1 — April 10, 2026</p>
-              <p>📅 Day 2 — April 11, 2026</p>
-              <p>📅 Day 3 — April 12, 2026</p>
+              <p>📅 Day 1 — 28 Aug 2026 · 建立关系</p>
+              <p>📅 Day 2 — 29 Aug 2026 · 建立关系</p>
+              <p>📅 Day 3 — 30 Aug 2026 · 灵命</p>
+              <p>📅 Day 4 — 31 Aug 2026 · Action Plan</p>
             </div>
           </div>
         </div>
