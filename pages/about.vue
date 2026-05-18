@@ -63,9 +63,11 @@ import { buildCanonicalUrl, normalizeSiteUrl } from '~/lib/site'
 const { locale, t } = useI18n()
 const config = useRuntimeConfig()
 const siteUrl = normalizeSiteUrl(config.public.siteUrl)
-const campersStore = ref(null);
-const seoTitle = ref('About Us');
-const seoDescription = ref('Learn about SonShip 2026, the annual youth camp organized by CMC Subang. Discover our mission, story, and the passionate team behind the event.');
+const campersStore   = ref(null);
+const seoTitle       = ref('About Us');
+const seoDescription = computed(() => locale.value === 'zh'
+  ? '了解 SonShip 2026 的故事、使命与团队。由 CMC Subang 主办的青年营会，2026 年 8 月 28 日至 31 日于彭亨吉兰丹举行，诚邀你同行。'
+  : 'Learn about SonShip 2026, the annual youth camp organized by CMC Subang. Discover our mission, story, and the passionate team behind the event.')
 const stats = [
   { value: '50+', label: 'Our Attendees' },
   { value: '2019', label: 'Running Since' },
@@ -85,49 +87,10 @@ const team = ref([
     { name: 'names.florance', role: 'Tech & Media', emoji: '🎬' },
     { name: 'names.jack', role: '3M', emoji: '🔉' },
 ]);
-const canonicalUrl        = computed(() => buildCanonicalUrl(siteUrl, '/about'));
-const structuredData      = computed(() => ({
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type'   : 'WebSite',
-      name      : 'SonShip 2026',
-      url       : canonicalUrl.value,
-      inLanguage: locale.value
-    },
-    {
-      '@type': 'Organization',
-      name   : 'CMC Subang',
-      url    : canonicalUrl.value,
-      logo   : `${siteUrl}/firelight.svg`
-    },
-    {
-      '@type'            : 'Event',
-      name               : 'SonShip 2026 Youth Camp',
-      startDate          : '2026-08-28T09:00:00+08:00',
-      endDate            : '2026-08-31T18:00:00+08:00',
-      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-      eventStatus        : 'https://schema.org/EventScheduled',
-      image              : [`${siteUrl}/firelight.svg`],
-      organizer          : {
-        '@type': 'Organization',
-        name   : 'CMC Subang'
-      },
-      description: seoDescription.value,
-      url        : canonicalUrl.value
-    }
-  ]
-}))
+const canonicalUrl = computed(() => buildCanonicalUrl(siteUrl, '/about'));
 
 useHead(() => ({
   title: seoTitle.value,
-  script: [
-    {
-      key: 'about-structured-data',
-      type: 'application/ld+json',
-      children: JSON.stringify(structuredData.value)
-    }
-  ]
 }))
 
 useSeoMeta({
@@ -135,13 +98,13 @@ useSeoMeta({
   description       : () => seoDescription.value,
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${siteUrl}/firelight.svg`,
+  ogImage           : () => `${siteUrl}/og-image.png`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${siteUrl}/firelight.svg`
+  twitterImage      : () => `${siteUrl}/og-image.png`
 })
 onMounted(() => {
 

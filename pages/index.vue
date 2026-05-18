@@ -139,25 +139,6 @@
 
 
 
-    <!-- Group Photo Banner -->
-    <section class = "py-20 bg-secondary/30">
-    <div     class = "container-inner">
-    <div     class = "rounded-3xl overflow-hidden relative bg-gradient-hero min-h-64 flex items-center justify-center p-10">
-    <div     class = "absolute inset-0 opacity-20 flex items-center justify-center select-none">
-          </div>
-          <div  class = "relative text-center">
-          <p    class = "font-script text-primary text-3xl md:text-5xl mb-4">{{ t('home.gallery_title') }}</p>
-          <p    class = "font-body text-tertiary/70 mb-6">{{ t('home.gallery_subtitle') }}</p>
-          <div  class = "flex flex-wrap justify-center gap-2 text-4xl">
-          <span v-for = "i in 12" :key = "i" class = "animate-pulse" :style = "`animation-delay: ${i*0.1}s`">
-                {{ ['🦁','🌸','⚡','🌙','🌊','✨','🔥','🌺','🕊️','🌟','🦅','🌈'][i-1] }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- CTA Banner -->
     <section    class = "py-20 bg-dark">
     <div        class = "container-inner text-center">
@@ -197,44 +178,42 @@ const backgroundIndex     = ref(0)
 const currentBg           = computed(() => backgroundImages[backgroundIndex.value] ?? '')
 const isBackgroundVisible = ref(true)
 const seoTitle            = computed(() => locale.value === 'zh'
-  ? 'Home'
-  : 'Home')
+  ? 'Register Now'
+  : 'Register Now')
 
 const seoDescription = computed(() => locale.value === 'zh'
   ? 'SonShip 2026 是由 Mega Subang CMC 与 Firelight 联合筹办的青年营会官网。营会将于 2026 年 8 月 28 日至 31 日举行，邀请你一同踏上与神、与人、与自己重新连接的信仰旅程。'
   : 'SonShip 2026 is the official website for a youth camp organized by Mega Subang CMC and Firelight, happening August 28 to 31, 2026, for a meaningful journey of reconnecting with God, others, and yourself.')
 
 const structuredData = computed(() => ({
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type'   : 'WebSite',
-      name      : 'SonShip 2026',
-      url       : canonicalUrl.value,
-      inLanguage: locale.value
-    },
-    {
-      '@type': 'Organization',
-      name   : 'CMC Subang',
-      url    : canonicalUrl.value,
-      logo   : `${siteUrl}/firelight.svg`
-    },
-    {
-      '@type'            : 'Event',
-      name               : 'SonShip 2026 Youth Camp',
-      startDate          : '2026-08-28T09:00:00+08:00',
-      endDate            : '2026-08-31T18:00:00+08:00',
-      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-      eventStatus        : 'https://schema.org/EventScheduled',
-      image              : [`${siteUrl}/firelight.svg`],
-      organizer          : {
-        '@type': 'Organization',
-        name   : 'CMC Subang'
-      },
-      description: seoDescription.value,
-      url        : canonicalUrl.value
+  '@context'          : 'https://schema.org',
+  '@type'             : 'Event',
+  name                : 'SonShip 2026 Youth Camp',
+  startDate           : '2026-08-28T09:00:00+08:00',
+  endDate             : '2026-08-31T18:00:00+08:00',
+  eventAttendanceMode : 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus         : 'https://schema.org/EventScheduled',
+  image               : [`${siteUrl}/og-image.png`],
+  location            : {
+    '@type' : 'Place',
+    name    : 'Radiant Retreats Site B',
+    address : {
+      '@type'         : 'PostalAddress',
+      streetAddress   : 'Jalan Utama Janda Baik, Kampung Chemperoh',
+      addressLocality : 'Bentong',
+      addressRegion   : 'Pahang',
+      postalCode      : '28750',
+      addressCountry  : 'MY'
     }
-  ]
+  },
+  organizer: {
+    '@type': 'Organization',
+    '@id'  : `${siteUrl}/#organization`,
+    name   : 'CMC Subang',
+    url    : siteUrl
+  },
+  description: seoDescription.value,
+  url        : canonicalUrl.value
 }))
 
 useHead(() => ({
@@ -251,16 +230,15 @@ useHead(() => ({
 useSeoMeta({
   title             : () => seoTitle.value,
   description       : () => seoDescription.value,
-  keywords          : 'Firelight Camp, Firelight, Mega Subang CMC, Mega Subang Firelight, Mega Subang CMC Youth Camp, SonShip 2026, SonShip Camp, SonShip Youth Camp, SonShip Youth Camp 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026, SonShip Youth Camp Malaysia, SonShip Youth Camp Malaysia 2026',
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${siteUrl}/firelight.svg`,
+  ogImage           : () => `${siteUrl}/og-image.png`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${siteUrl}/firelight.svg`
+  twitterImage      : () => `${siteUrl}/og-image.png`
 })
 
   // Countdown Logic

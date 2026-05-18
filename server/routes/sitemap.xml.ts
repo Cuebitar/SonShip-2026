@@ -3,6 +3,7 @@ import { normalizeSiteUrl } from '~/lib/site'
 const publicPages = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/about', changefreq: 'monthly', priority: '0.8' },
+  { path: '/register', changefreq: 'monthly', priority: '0.9' },
   { path: '/activities', changefreq: 'weekly', priority: '0.8' }
 ]
 

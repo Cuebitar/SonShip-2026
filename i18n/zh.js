@@ -12,7 +12,6 @@ export default {
         messages: '留言',
         letters: '信件',
         schedule: '行程',
-        gallery: '相册',
         logout: '登出',
     },
     footer: {
@@ -41,8 +40,6 @@ export default {
         sessions_title: '倒数前往 SonShip 的旅程',
         sessions_subtitle: '火种正在预备! 加入我们，在这个八月开启一段难忘的重新连接之旅',
         activities_title: '营会活动',
-        gallery_title: 'SonShip 生活',
-        gallery_subtitle: '这可能就是你——加入我们这个八月！',
         cta_title: '准备好重新连接了吗？',
         cta_subtitle: '加入我们这次的营会，名额有限！',
         cta_btn: '立即报名',
@@ -102,7 +99,7 @@ export default {
         submit: '提交报名',
         success_badge: '报名已收到',
         success_title: '报名成功！🎉',
-        success_msg: '感谢您的报名！我们会把您填写的资料寄到您的电子邮件，方便您保存与查阅。',
+        success_msg: '感谢您的报名！我们将会让我们可爱的团长们尽快与您联系，以进行下一步的安排。',
         success_sent_to: '确认邮件将寄送到',
         success_email_sent: '我们已经把您的报名资料寄到您的电子邮件，请记得查看收件箱。',
         success_email_pending: '我们会在短时间内把您的报名资料寄到您的电子邮件，请稍后查看收件箱。',
@@ -217,12 +214,6 @@ export default {
         time: '时间',
         activity: '活动',
         location: '地点',
-    },
-    gallery: {
-        title: '相册',
-        filter_all: '全部',
-        share: '分享',
-        close: '关闭',
     },
     common: {
         loading: '加载中...',

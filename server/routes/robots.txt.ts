@@ -4,7 +4,6 @@ const privatePaths = [
   '/admin',
   '/dashboard',
   '/friends',
-  '/gallery',
   '/games',
   '/letters',
   '/login',
@@ -23,6 +22,15 @@ export default defineEventHandler((event) => {
     'User-agent: *',
     'Allow: /',
     ...privatePaths.map((path) => `Disallow: ${path}`),
+    '',
+    'User-agent: GPTBot',
+    'Allow: /',
+    '',
+    'User-agent: Claude-Web',
+    'Allow: /',
+    '',
+    'User-agent: PerplexityBot',
+    'Allow: /',
     '',
     `Sitemap: ${siteUrl}/sitemap.xml`
   ].join('\n')

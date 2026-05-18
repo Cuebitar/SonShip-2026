@@ -127,7 +127,6 @@ const publicLinks = [
 const authLinks = [
   { to: '/dashboard', label: 'nav.dashboard' },
   { to: '/schedule', label: 'nav.schedule' },
-  { to: '/gallery', label: 'nav.gallery' },
 ]
 
 const isCamp = computed(() => {

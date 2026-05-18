@@ -334,13 +334,13 @@ useSeoMeta({
   description       : () => seoDescription.value,
   ogTitle           : () => seoTitle.value,
   ogDescription     : () => seoDescription.value,
-  ogImage           : () => `${siteUrl}/firelight.svg`,
+  ogImage           : () => `${siteUrl}/og-image.png`,
   ogImageAlt        : 'SonShip 2026',
   ogType            : 'website',
   ogUrl             : () => canonicalUrl.value,
   twitterTitle      : () => seoTitle.value,
   twitterDescription: () => seoDescription.value,
-  twitterImage      : () => `${siteUrl}/firelight.svg`
+  twitterImage      : () => `${siteUrl}/og-image.png`
 })
 
 const genderOptions = computed(() => [
@@ -557,6 +557,7 @@ async function handleSubmit() {
     email: normalized.email,
     status: 'Pending',
     registrationTime: new Date().toISOString(),
+    preferred_language: locale.value || 'zh',
   };
   // Assign a random people or animal emoji avatar
   const emojiAvatars = [
@@ -571,7 +572,7 @@ async function handleSubmit() {
     await campersStore.registerCamper(camper);
     showSuccess.value = true;
   } catch (error) {
-    if (error?.code === 'auth/email-already-in-use' || error?.code === 'campers/email-already-exists') {
+    if (error?.code === 'auth/email-already-in-use' && error?.code === 'campers/email-already-exists') {
       fieldErrors.email = t('register.validation.email_taken')
       await focusFirstInvalidField()
     } else if (error?.code === 'campers/ic-already-exists') {
@@ -580,7 +581,6 @@ async function handleSubmit() {
     } else {
       submitError.value = t('register.validation.submit_error')
     }
-    window.reload();
     console.error(error);
   } finally {
     loading.value = false

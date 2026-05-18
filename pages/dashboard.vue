@@ -175,7 +175,6 @@ const quickLinks = [
   { to: '/messages', label: 'nav.messages', emoji: '💬' },
   { to: '/letters', label: 'nav.letters', emoji: '💌' },
   { to: '/friends', label: 'nav.friends', emoji: '👥' },
-  { to: '/gallery', label: 'nav.gallery', emoji: '📷' },
   { to: '/profile', label: 'nav.profile', emoji: '👤' },
 ]
 

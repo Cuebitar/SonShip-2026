@@ -1,0 +1,24 @@
+# SonShip Firelight Camp 2026
+> Annual Christian youth retreat organized by Mega Subang CMC and Firelight, helping young people reconnect with God, others, and themselves.
+
+## Event Details
+- Dates: August 28–31, 2026
+- Venue: Radiant Retreats Site B, Jalan Utama Janda Baik, Kampung Chemperoh, 28750 Bentong, Pahang, Malaysia
+- Organizer: CMC Subang (megasubangcmc.org.my)
+- Contact: sonship2026@megasubangcmc.org.my
+- Capacity: 70 registrants
+
+## Key Pages
+- /: Camp overview, mission, topics, and registration CTA
+- /about: Mission, story, team, and camp statistics
+- /register: Registration form with tiered pricing (RM200 / RM230 / RM280)
+- /activities: 12 structured camp activities across devotion, sports, arts, and team-building
+
+## Camp Topics
+- BGR (Boy-Girl Relationships)
+- AI & Faith
+- The Prodigal Son Parable
+
+## Languages
+- Chinese (Simplified) — primary
+- English — available via language toggle

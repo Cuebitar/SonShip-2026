@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { useDb, useFirebase } from '~/composable/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, deleteUser, signInWithEmailAndPassword } from 'firebase/auth'
 import { useAuthStore } from '~/stores/auth'
 
 export const useCampersStore = defineStore('campers', () => {
@@ -20,6 +20,22 @@ export const useCampersStore = defineStore('campers', () => {
 
   function getReferenceId(reference) {
     return reference?.id || reference?.path?.split('/').pop() || ''
+  }
+
+  async function removeCampersByEmail(db, email) {
+    const normalizedEmail = normalizeEmail(email)
+    const matchedCampers = campers.value.filter((existingCamper) => normalizeEmail(existingCamper.email) === normalizedEmail)
+
+    if (!matchedCampers.length) return
+
+    await Promise.all(
+      matchedCampers
+        .map((matchedCamper) => matchedCamper.id)
+        .filter(Boolean)
+        .map((camperId) => deleteDoc(doc(db, 'campers', camperId)))
+    )
+
+    campers.value = campers.value.filter((existingCamper) => normalizeEmail(existingCamper.email) !== normalizedEmail)
   }
 
 
@@ -87,9 +103,7 @@ export const useCampersStore = defineStore('campers', () => {
     }
 
     if (campers.value.some((existingCamper) => normalizeEmail(existingCamper.email) === normalizedEmail)) {
-      const error = new Error('Email already exists.')
-      error.code = 'campers/email-already-exists'
-      throw error
+      await removeCampersByEmail(db, normalizedEmail)
     }
 
     const camperRef = doc(collection(db, 'campers'))
@@ -114,6 +128,7 @@ export const useCampersStore = defineStore('campers', () => {
       name: camper.name || '',
       password: camper.password || '',
       phone: camper.phone || '',
+      preferred_language: camper.preferred_language || '',
       questions: {
         pain: camper.questions?.pain || '',
         place: camper.questions?.place || '',
@@ -127,10 +142,22 @@ export const useCampersStore = defineStore('campers', () => {
       registrationTime: camper.registrationTime || new Date().toISOString(),
     }
 
-    await createUserWithEmailAndPassword(firebase.auth, camper.email, camper.password);
+    try{
+      await createUserWithEmailAndPassword(firebase.auth, normalizedEmail, camper.password)
+    } catch (error) {
+      if (error?.code !== 'auth/email-already-in-use') {
+        throw error
+      }
+    }
     await auth.logout();
-    await setDoc(camperRef, camperPayload)
-    campers.value.push(camperPayload);
+
+    try{
+      await setDoc(camperRef, camperPayload)
+      campers.value.push(camperPayload);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async function updateCamper(camper) {

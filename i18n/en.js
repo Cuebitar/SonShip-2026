@@ -12,7 +12,6 @@ export default {
         messages: 'Messages',
         letters: 'Letters',
         schedule: 'Schedule',
-        gallery: 'Gallery',
         logout: 'Logout',
     },
     footer: {
@@ -41,8 +40,6 @@ export default {
         sessions_title: 'Journey To SonShip In',
         sessions_subtitle: 'The fire is being prepared! Join us for an unforgettable journey of reconnection this August.',
         activities_title: 'Camp Activities',
-        gallery_title: 'Life at SonShip',
-        gallery_subtitle: 'This could be you — join us this August!',
         cta_title: 'Are You Ready to Reconnect?',
         cta_subtitle: 'Join us this camp season. Spots fill fast!',
         cta_btn: 'Register Now',
@@ -104,7 +101,7 @@ export default {
         submit: 'Submit Registration',
         success_badge: 'Registration received',
         success_title: 'You\'re Registered! 🎉',
-        success_msg: 'Thank you for registering! We\'ll email the details you submitted so you have a copy for reference.',
+        success_msg: 'Thank you for registering! We\'ll be having our lovely Coordinators to contact you soon for the next steps.',
         success_sent_to: 'Confirmation email destination',
         success_email_sent: 'We have sent your registration details to your email. Please check your inbox.',
         success_email_pending: 'We will send your registration details to your email shortly. Please check your inbox in a few minutes.',
@@ -219,12 +216,6 @@ export default {
         time: 'Time',
         activity: 'Activity',
         location: 'Location',
-    },
-    gallery: {
-        title: 'Gallery',
-        filter_all: 'All',
-        share: 'Share',
-        close: 'Close',
     },
     common: {
         loading: 'Loading...',

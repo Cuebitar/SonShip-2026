@@ -93,6 +93,7 @@
               <td class="p-4 text-tertiary text-sm">{{ record.registrationTime }}</td>
               <td class="p-4 text-tertiary text-sm capitalize">{{ record.gender }}</td>
               <td class="p-4 text-tertiary text-sm capitalize">{{ record.transport || '-' }}</td>
+              <td class="p-4 text-tertiary text-sm">{{ languageLabel(record.preferred_language) }}</td>
               <td class="p-4 text-tertiary text-sm">{{ record.group || '-' }}</td>
               <td class="p-4 text-tertiary text-sm">{{ record.room_name || '-' }}</td>
               <td class="p-4">
@@ -113,10 +114,10 @@
               </td>
             </tr>
             <tr v-else-if="hasMounted">
-              <td colspan="9" class="p-8 text-center text-tertiary">No records found.</td>
+              <td colspan="10" class="p-8 text-center text-tertiary">No records found.</td>
             </tr>
             <tr v-else>
-              <td colspan="9" class="p-8 text-center text-tertiary">Loading...</td>
+              <td colspan="10" class="p-8 text-center text-tertiary">Loading...</td>
             </tr>
           </tbody>
         </table>
@@ -147,6 +148,7 @@
                   <div class="flex flex-col"><span class="text-tertiary/70 text-xs">Reg. Time</span> <span class="text-white font-medium">{{ selectedRecord.registrationTime }}</span></div>
                   <div class="flex flex-col"><span class="text-tertiary/70 text-xs">Gender</span> <span class="text-white capitalize font-medium">{{ selectedRecord.gender }}</span></div>
                   <div class="flex flex-col"><span class="text-tertiary/70 text-xs">Phone</span> <span class="text-white font-medium">{{ selectedRecord.phone }}</span></div>
+                  <div class="flex flex-col"><span class="text-tertiary/70 text-xs">Preferred language</span> <span class="text-white font-medium">{{ languageLabel(selectedRecord.preferred_language) }}</span></div>
                   <div class="flex flex-col"><span class="text-tertiary/70 text-xs">Important Info</span> <span class="text-white font-medium bg-white/5 p-2 rounded mt-1">{{ selectedRecord.important_info || 'None' }}</span></div>
                 </div>
               </div>
@@ -209,6 +211,15 @@
                   <select v-model="editForm.transport" class="input py-2 bg-dark/50">
                     <option value="car">Car</option>
                     <option value="bus">Bus</option>
+                  </select>
+                </div>
+
+                <div class="col-span-2">
+                  <label class="block text-xs font-bold text-primary/80 mb-1">Preferred language</label>
+                  <select v-model="editForm.preferred_language" class="input py-2 bg-dark/50">
+                    <option value="">— Not set —</option>
+                    <option value="zh">简体中文</option>
+                    <option value="en">English</option>
                   </select>
                 </div>
 
@@ -276,10 +287,18 @@ const sortableColumns = [
   { key: 'registrationTime', label: 'Date' },
   { key: 'gender', label: 'Gender' },
   { key: 'transport', label: 'Transportation' },
+  { key: 'preferred_language', label: 'Language' },
   { key: 'group', label: 'Group' },
   { key: 'room_name', label: 'Room' },
   { key: 'status', label: 'Status' }
 ];
+
+const LANGUAGE_LABELS = { zh: '简体中文', en: 'English' }
+
+function languageLabel(code) {
+  if (!code) return '—'
+  return LANGUAGE_LABELS[code] || code
+}
 
 onMounted(async () =>  {
   await campersStore.initCampers();
@@ -303,6 +322,7 @@ const records = computed(() =>
       email            : c.email,
       gender           : c.gender,
       transport        : c.transport,
+      preferred_language: c.preferred_language || '',
       important_info   : c.important_info,
       emergency        : c.emergency || { name: '', phone: '', relationship: '' },
       q1               : c.questions?.place ?? '',
@@ -385,6 +405,7 @@ const editForm = reactive({
   group            : '',
   room_name        : '',
   transport        : '',
+  preferred_language: '',
   secret_identity  : '',
   secretAngel      : '',
   iceBreakingTarget: '',
@@ -397,6 +418,7 @@ function openModal(record) {
   editForm.group             = record.group || '';
   editForm.room_name         = record.room_name || '';
   editForm.transport         = record.transport;
+  editForm.preferred_language = record.preferred_language || '';
   editForm.secret_identity   = record.secret_identity || '';
   editForm.secretAngel       = record.secretAngel || '';
   editForm.iceBreakingTarget = record.iceBreakingTarget || '';
@@ -434,6 +456,7 @@ async function saveChanges() {
       group: editForm.group,
       room_name: editForm.room_name,
       transport: editForm.transport,
+      preferred_language: editForm.preferred_language,
       secret_identity: editForm.secret_identity,
       secret_angel: editForm.secretAngel,
       ice_breaking: {

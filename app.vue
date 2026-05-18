@@ -31,21 +31,51 @@ const robotsPolicy = computed(() => {
 
 useHead(() => ({
   htmlAttrs: {
-    lang: locale.value
+    lang: locale.value === 'zh' ? 'zh-Hans' : 'en'
   },
-  titleTemplate: (title) => title ? `Firelight | SonShip 2026 | ${title} ` : 'Firelight | SonShip 2026',
+  titleTemplate: (title) => title ? `Sonship Firelight Camp 2026 | ${title} | Firelight Youth Service` : 'Sonship Firelight Camp 2026',
   link: [
-    { rel: 'canonical', href: canonicalUrl.value }
+    { rel: 'canonical', href: canonicalUrl.value },
+    { rel: 'alternate', hreflang: 'zh-Hans', href: canonicalUrl.value },
+    { rel: 'alternate', hreflang: 'en', href: canonicalUrl.value },
+    { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl.value },
+  ],
+  script: [
+    {
+      key: 'global-structured-data',
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'WebSite',
+            '@id': `${siteUrl}/#website`,
+            name: localizedSiteName.value,
+            url: siteUrl,
+            inLanguage: locale.value === 'zh' ? 'zh-Hans' : 'en'
+          },
+          {
+            '@type': 'Organization',
+            '@id': `${siteUrl}/#organization`,
+            name: 'CMC Subang',
+            url: siteUrl,
+            logo: `${siteUrl}/og-image.png`,
+            email: 'sonship2026@megasubangcmc.org.my',
+            sameAs: ['https://www.megasubangcmc.org.my']
+          }
+        ]
+      })
+    }
   ]
 }))
 
 useSeoMeta({
-  applicationName: 'Firelight | SonShip 2026',
+  applicationName: 'Sonship Firelight Camp 2026',
   description: () => localizedDescription.value,
   ogDescription: () => localizedDescription.value,
-  ogImage: () => `${siteUrl}/firelight.svg`,
+  ogImage: () => `${siteUrl}/og-image.png`,
   ogImageAlt: () => localizedSiteName.value,
-  ogLocale: () => locale.value === 'zh' ? 'zh_TW' : 'en_US',
+  ogLocale: () => locale.value === 'zh' ? 'zh_CN' : 'en_US',
   ogSiteName: () => localizedSiteName.value,
   ogType: 'website',
   ogUrl: () => canonicalUrl.value,
@@ -53,7 +83,7 @@ useSeoMeta({
   themeColor: '#1a1a1a',
   twitterCard: 'summary_large_image',
   twitterDescription: () => localizedDescription.value,
-  twitterImage: () => `${siteUrl}/firelight.svg`,
+  twitterImage: () => `${siteUrl}/og-image.png`,
   twitterTitle: () => localizedSiteName.value
 })
 

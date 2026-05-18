@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     defaultLocale: 'zh',
     locales: [
       { code: 'en', name: 'English' },
-      { code: 'zh', name: '繁體中文' },
+      { code: 'zh', name: '简体中文' },
     ],
     vueI18n: './i18n.config.ts',
     detectBrowserLanguage: {
@@ -95,11 +95,6 @@ export default defineNuxtConfig({
       }
     },
     '/schedule': {
-      headers: {
-        'X-Robots-Tag': 'noindex, nofollow'
-      }
-    },
-    '/gallery': {
       headers: {
         'X-Robots-Tag': 'noindex, nofollow'
       }
