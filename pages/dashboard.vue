@@ -22,7 +22,7 @@
               <p class="text-xs font-body text-tertiary/60">📅 August 28–31, 2026</p>
               <p class="text-xs font-body text-tertiary/60">📍 Nature Retreat Centre, Selangor</p>
             </div>
-            <NuxtLink to="/schedule" class="btn-ghost btn-sm w-full justify-center">View Schedule</NuxtLink>
+           <!-- <NuxtLink to="/schedule" class="btn-ghost btn-sm w-full justify-center">View Schedule</NuxtLink> -->
           </div>
         </div>
 
