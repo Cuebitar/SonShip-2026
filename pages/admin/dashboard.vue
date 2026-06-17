@@ -110,7 +110,7 @@
           <div class="flex flex-wrap items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
             <div class="flex items-center gap-2 flex-1 min-w-[120px]">
               <label class="text-xs font-bold text-primary">Day:</label>
-              <select v-model="filterDay" class="input py-1.5 px-2 text-xs bg-dark/50 border-white/10 w-full">
+              <select v-model="filterDay" class="input py-1.5 px-2 m text-xs bg-dark/50 border-white/10 w-full">
                 <option value="All">All Days</option>
                 <option v-for="day in availableDays" :key="day" :value="day">{{ day }}</option>
               </select>
