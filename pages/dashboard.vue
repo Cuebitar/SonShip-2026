@@ -1,7 +1,6 @@
 <template>
   <div class="page-container bg-dark min-h-screen">
     <div class="container-inner py-10">
-      <!-- Welcome header -->
       <div class="mb-10">
         <p class="font-body text-tertiary/60 text-sm mb-1">{{ t('dashboard.welcome') }}</p>
         <h1 class="section-title">{{ dashboardTitle }}</h1>
@@ -13,7 +12,6 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-        <!-- Upcoming Session -->
         <div class="card p-6">
           <h2 class="font-heading font-bold text-primary mb-4 flex items-center gap-2"><Calendar class="w-5 h-5" />{{ t('dashboard.upcoming') }}</h2>
           <div class="space-y-3">
@@ -25,13 +23,11 @@
           </div>
         </div>
 
-        <!-- Announcements -->
         <div class="card p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="font-heading font-bold text-primary flex items-center gap-2">
               <Bell class="w-5 h-5" />{{ t('dashboard.announcements') }}
             </h2>
-            <!-- 未读数量红色号码 -->
             <span v-if="unreadCount > 0" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white shadow-[0_0_8px_rgba(239,68,68,0.6)]">
               {{ unreadCount }}
             </span>
@@ -45,18 +41,20 @@
                  @click="markAsRead(ann.id)"
                  class="relative border-b border-primary/10 pb-3 last:border-0 last:pb-0 p-2 -mx-2 rounded-lg cursor-pointer transition-all hover:bg-white/5">
               
-              <!-- 右上角小红点 -->
               <div v-if="!readAnnouncements.includes(ann.id)" 
                    class="absolute top-3 right-2 w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.8)]">
               </div>
 
-              <!-- 标题 (未读时加粗亮白色) -->
               <p class="font-body text-sm pr-4 transition-colors" 
-                 :class="readAnnouncements.includes(ann.id) ? 'text-tertiary' : 'font-bold text-white'">
+                 :class="readAnnouncements.includes(ann.id) ? 'text-primary font-bold' : 'font-bold text-primary'">
                 {{ ann.title }}
               </p>
-              <p class="font-body text-xs text-tertiary/60 mt-1">{{ ann.description }}</p>
-              <p class="font-body text-xs text-primary/70 mt-1">{{ ann.date }}</p>
+              <p class="font-body text-xs text-tertiary/60 text-justify mt-1">{{ ann.description }}</p>
+              
+              <p class="font-body text-xs text-primary/70 mt-1 flex justify-between items-center">
+                <span>{{ timeAgo(ann.createdAt, ann.date) }}</span>
+                <span v-if="!readAnnouncements.includes(ann.id)" class="text-[10px] text-red-400 font-bold">NEW</span>
+              </p>
             </div>
           </div>
           <div v-else class="text-center py-4 text-tertiary/50 text-sm">
@@ -65,33 +63,36 @@
         </div>
 
         <!-- My Schedule Preview -->
-        <div class="card p-6">
-          <h2 class="font-heading font-bold text-primary mb-4 flex items-center gap-2"><Clock class="w-5 h-5" />{{ t('dashboard.my_schedule') }}</h2>
-          
-          <div v-if="isLoading" class="text-center py-4 text-tertiary/60 text-sm animate-pulse">
-            Loading schedule...
-          </div>
-          <div v-else-if="mySchedule.length > 0" class="space-y-2">
-            <!-- 遍历最近的 3 个活动 -->
-            <div v-for="slot in mySchedule" :key="slot.id" class="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span class="text-xs font-heading font-bold text-primary w-14 mt-0.5">{{ slot.time }}</span>
-              <div class="flex-1">
-                <p class="font-body text-xs text-tertiary font-semibold">{{ slot.name }}</p>
-                <p class="font-body text-[10px] text-tertiary/50 mt-0.5">{{ slot.day }}</p>
-                <p v-if="slot.description" class="font-body text-[11px] text-tertiary/70 mt-1.5 line-clamp-2">
-                  {{ slot.description }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div v-else class="text-center py-4 text-tertiary/50 text-sm">
-            No upcoming events.
-          </div>
-
-          <NuxtLink to="/schedule" class="btn-ghost btn-sm w-full justify-center mt-3">Full Schedule</NuxtLink>
+<div class="card p-6">
+  <h2 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
+    <Clock class="w-5 h-5" />{{ t('dashboard.my_schedule') }}
+  </h2>
+  
+  <div v-if="isLoading" class="text-center py-4 text-tertiary/60 text-sm animate-pulse">
+    Loading schedule...
+  </div>
+  <div v-else-if="mySchedule.length > 0" class="space-y-2">
+    <div v-for="slot in mySchedule" :key="slot.id" class="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+      <span class="text-xs font-heading font-bold text-primary w-14 mt-0.5">{{ slot.time }}</span>
+      <div class="flex-1">
+        <p class="font-body text-xs text-tertiary font-semibold">{{ slot.name }}</p>
+        <p class="font-body text-[10px] text-tertiary/50 mt-0.5">{{ slot.day }}</p>
+        
+        <!-- === 新增：显示 Notes === -->
+        <div v-if="slot.notes" class="mt-1.5 inline-flex items-center gap-1 bg-red-500/10 px-1.5 py-0.5 rounded text-red-400 w-fit">
+          <AlertCircle class="w-3 h-3 flex-shrink-0" />
+          <span class="font-body text-[10px] leading-tight">{{ slot.notes }}</span>
         </div>
+      </div>
+    </div>
+  </div>
+  <div v-else class="text-center py-4 text-tertiary/50 text-sm">
+    No upcoming events.
+  </div>
 
-        <!-- Secret Angel -->
+  <NuxtLink to="/schedule" class="btn-ghost btn-sm w-full justify-center mt-3">Full Schedule</NuxtLink>
+</div>
+
         <div class="card p-6 border-primary/30">
           <h2 class="font-heading font-bold text-primary mb-2 flex items-center gap-2">
             <Heart class="w-5 h-5 text-red-400" />{{ t('dashboard.secret_angel') }}
@@ -111,7 +112,6 @@
           </div>
         </div>
 
-        <!-- Secret Identity -->
         <div class="card p-6 border-accent/30">
           <h2 class="font-heading font-bold text-accent mb-2 flex items-center gap-2">
             <Sparkles class="w-5 h-5" />{{ t('dashboard.secret_identity') }}
@@ -137,7 +137,6 @@
           </div>
         </div>
 
-        <!-- Quick Links -->
         <div class="card p-6">
           <h2 class="font-heading font-bold text-primary mb-4">Quick Access</h2>
           <div class="grid grid-cols-2 gap-3">
@@ -163,7 +162,7 @@ import { useAuthStore } from '~/stores/auth'
 import { useCampersStore } from '~/stores/campers'
 import { collection, getDocs } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase'
-import { Calendar, Bell, Clock, Heart, Sparkles } from 'lucide-vue-next'
+import { Calendar, Bell, Clock, Heart, Sparkles, AlertCircle } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const auth = useAuthStore()
@@ -176,11 +175,9 @@ const wrongCode = ref(false)
 const hasMounted = ref(false)
 const isLoading = ref(true)
 
-// Firebase 实时数据
+// 数据源
 const announcements = ref([])
 const dbSchedules = ref([])
-
-// === 用于存储“已读”通知的 ID 列表 ===
 const readAnnouncements = ref([])
 
 const unreadCount = computed(() => {
@@ -202,32 +199,50 @@ const angelTarget = computed(() => {
   return campersStore.getCamperById(auth.user.secret_angel_id)
 })
 
-// === 重点修改：智能获取"最近即将发生"的 3 个活动 ===
 const mySchedule = computed(() => {
   const now = new Date().getTime()
 
-  // 1. 过滤出还未结束的活动（简单以活动开始时间 + 1小时作为缓冲期）
   let upcoming = dbSchedules.value.filter(s => {
-    // 拼接成标准日期格式并转成时间戳
     const eventTime = new Date(`${s.date}T${s.time}`).getTime()
-    // 保留过去 1 小时内的活动（代表正在进行中）和所有未来的活动
     return eventTime >= now - (60 * 60 * 1000) 
   })
 
-  // 如果所有活动都结束了（比如营会最后一天结束之后），就显示整个表的最后 3 个
   if (upcoming.length === 0 && dbSchedules.value.length > 0) {
     upcoming = dbSchedules.value.slice(-3)
   }
 
-  // 2. 取前三个，并且限制最多 3 个
   return upcoming.slice(0, 3).map(s => ({
     id: s.id,
     time: s.time,
     name: s.name || s.title || 'Untitled Event', 
     day: s.date,
-    description: s.description || '' 
+    notes: s.notes || '' // 新增：映射 Notes 字段
   }))
 })
+
+function timeAgo(timestamp, fallbackDate) {
+  if (!timestamp) return fallbackDate || '';
+
+  const now = Date.now();
+  const seconds = Math.floor((now - timestamp) / 1000);
+
+  if (seconds < 60) return 'Just now';
+  
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+  
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hr${hours > 1 ? 's' : ''} ago`;
+  
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+
+  return new Date(timestamp).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
 
 function tryReveal() {
   wrongCode.value = false
@@ -239,7 +254,6 @@ function tryReveal() {
   }
 }
 
-// 点击已读事件
 function markAsRead(id) {
   if (!readAnnouncements.value.includes(id)) {
     readAnnouncements.value.push(id)
@@ -249,41 +263,74 @@ function markAsRead(id) {
 
 const quickLinks = [
   { to: '/games', label: 'nav.games', emoji: '🎮' },
-  // { to: '/messages', label: 'nav.messages', emoji: '💬' },
-  // { to: '/letters', label: 'nav.letters', emoji: '💌' },
-  // { to: '/friends', label: 'nav.friends', emoji: '👥' },
   { to: '/profile', label: 'nav.profile', emoji: '👤' },
 ]
+
+// === 数据处理函数 ===
+function processAnnouncements(data) {
+  const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+  const nowTime = Date.now();
+  
+  let valid = data.filter(ann => {
+    const annTime = ann.createdAt || (ann.date ? new Date(ann.date).getTime() : 0);
+    return (nowTime - annTime) <= TWO_DAYS_MS;
+  });
+
+  valid.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+  announcements.value = valid
+}
+
+function processSchedules(data) {
+  data.sort((a, b) => new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime())
+  dbSchedules.value = data
+}
 
 onMounted(async () => {
   const db = useDb()
   
+  // 1. 读取已读记录
   const storedRead = localStorage.getItem(`read_announcements_${auth.user?.id}`)
-  if (storedRead) {
-    readAnnouncements.value = JSON.parse(storedRead)
+  if (storedRead) readAnnouncements.value = JSON.parse(storedRead)
+
+  // 2. 极速加载：如果有本地缓存，瞬间渲染画面！(0毫秒延迟)
+  const cachedAnn = localStorage.getItem('cache_announcements')
+  const cachedSched = localStorage.getItem('cache_schedules')
+  
+  if (cachedAnn && cachedSched) {
+    processAnnouncements(JSON.parse(cachedAnn))
+    processSchedules(JSON.parse(cachedSched))
+    isLoading.value = false // 立即关闭 Loading 动画
   }
   
+  // 3. 后台同步：并行向 Firebase 请求最新数据 (不阻塞用户)
   if (db) {
     try {
-      // 1. 获取公告
-      const annSnap = await getDocs(collection(db, "announcements"))
-      let fetchedAnnouncements = annSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      announcements.value = fetchedAnnouncements.reverse()
-
-      // 2. 获取行程表
-      const schedSnap = await getDocs(collection(db, "schedules"))
-      let fetchedSchedules = schedSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      // 优化点：使用 Promise.all 让公告和行程表同时下载！
+      const [annSnap, schedSnap] = await Promise.all([
+        getDocs(collection(db, "announcements")),
+        getDocs(collection(db, "schedules"))
+      ])
       
-      // 确保拉取下来的行程表已经严格按时间从小到大排好序
-      fetchedSchedules.sort((a, b) => new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime())
-      dbSchedules.value = fetchedSchedules
+      const fetchedAnnouncements = annSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      const fetchedSchedules = schedSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+
+      // 更新本地缓存
+      localStorage.setItem('cache_announcements', JSON.stringify(fetchedAnnouncements))
+      localStorage.setItem('cache_schedules', JSON.stringify(fetchedSchedules))
+
+      // 更新界面为最新数据
+      processAnnouncements(fetchedAnnouncements)
+      processSchedules(fetchedSchedules)
 
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
+    } finally {
+      isLoading.value = false
+      hasMounted.value = true
     }
+  } else {
+    isLoading.value = false
+    hasMounted.value = true
   }
-
-  isLoading.value = false
-  hasMounted.value = true
 })
 </script>

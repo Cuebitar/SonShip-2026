@@ -134,7 +134,6 @@ const authLinks = [
 
 const adminLinks = [
   { to: '/admin/dashboard', label: 'nav.adminDashboard' }, 
-  { to: '/admin/users', label: 'nav.manageSchedule' }, // 示例：用户管理
 ]
 
 const isCamp = computed(() => {
@@ -165,14 +164,14 @@ const mobileExtra = computed(() => {
   if (isAdmin.value) {
     return [
       { to: '/admin/profile', label: 'nav.profile' },
-      { to: '/admin/settings', label: 'nav.settings' }
+      // { to: '/admin/settings', label: 'nav.settings' }
     ]
   }
   
   return [
     { to: '/profile', label: 'nav.profile' },
     { to: '/games', label: 'nav.games' },
-    { to: '/letters', label: 'nav.letters' },
+    // { to: '/letters', label: 'nav.letters' },
   ]
 })
 
@@ -189,7 +188,7 @@ const userMenu = computed(() => {
     { to: '/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
     { to: '/profile', label: 'nav.profile', icon: User },
     { to: '/games', label: 'nav.games', icon: Gamepad2 },
-    { to: '/letters', label: 'nav.letters', icon: Mail },
+    // { to: '/letters', label: 'nav.letters', icon: Mail },
     { to: '/schedule', label: 'nav.schedule', icon: Calendar },
   ]
 })
