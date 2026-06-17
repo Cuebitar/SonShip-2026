@@ -101,13 +101,16 @@
 </template>
 
 <script setup>
+
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from '#imports'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import Logo from '../Logo.vue'
 import Firelight from '../../assets/firelight.svg'
-import { ChevronDown, Menu, X, LogOut, LayoutDashboard, User, Users, Gamepad2, MessageCircle, Mail, Calendar, Image } from 'lucide-vue-next'
+import { ChevronDown, Menu, X, LogOut, LayoutDashboard, User, Users, Gamepad2, MessageCircle, Mail, Calendar, Image, ShieldAlert } from 'lucide-vue-next'
+
+const isAdmin = computed(() => hydrated.value && auth.isLoggedIn && auth.user?.is_admin === true)
 
 const { t, locale, setLocale } = useI18n()
 const auth = useAuthStore()
@@ -129,26 +132,67 @@ const authLinks = [
   { to: '/schedule', label: 'nav.schedule' },
 ]
 
+const adminLinks = [
+  { to: '/admin/dashboard', label: 'nav.adminDashboard' }, 
+  { to: '/admin/users', label: 'nav.manageSchedule' }, // 示例：用户管理
+]
+
 const isCamp = computed(() => {
   if (!hydrated.value) return false
   const now = new Date()
   const campStart = new Date('2026-08-29 00:00:00')
   return now >= campStart
 })
-const navLinks = computed(() => hydrated.value && auth.isLoggedIn ? [...publicLinks.slice(0,2), ...authLinks] : publicLinks)
-const mobileExtra = computed(() => hydrated.value && auth.isLoggedIn ? [
-  { to: '/profile', label: 'nav.profile' },
-  { to: '/games', label: 'nav.games' },
-  { to: '/letters', label: 'nav.letters' },
-] : [])
 
-const userMenu = [
-  { to: '/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
-  { to: '/profile', label: 'nav.profile', icon: User },
-  { to: '/games', label: 'nav.games', icon: Gamepad2 },
-  { to: '/letters', label: 'nav.letters', icon: Mail },
-  { to: '/schedule', label: 'nav.schedule', icon: Calendar },
-]
+const navLinks = computed(() => {
+  // === 完全保留你原本的逻辑作为基础 ===
+  const defaultLinks = hydrated.value && auth.isLoggedIn 
+    ? [...publicLinks.slice(0,2), ...authLinks] 
+    : publicLinks;
+
+ // ✅ 统一使用 isAdmin.value 进行判断
+ if (isAdmin.value) {
+    return [...publicLinks.slice(0,2), ...adminLinks];
+  }
+
+  // 否则返回你原本的逻辑
+  return defaultLinks;
+})
+
+const mobileExtra = computed(() => {
+  if (!hydrated.value || !auth.isLoggedIn) return []
+  
+  if (isAdmin.value) {
+    return [
+      { to: '/admin/profile', label: 'nav.profile' },
+      { to: '/admin/settings', label: 'nav.settings' }
+    ]
+  }
+  
+  return [
+    { to: '/profile', label: 'nav.profile' },
+    { to: '/games', label: 'nav.games' },
+    { to: '/letters', label: 'nav.letters' },
+  ]
+})
+
+const userMenu = computed(() => {
+  if (isAdmin.value) {
+    return [
+      { to: '/admin/dashboard', label: 'nav.adminDashboard', icon: ShieldAlert },
+      { to: '/admin/users', label: 'nav.manageSchedule', icon: Users },
+      { to: '/profile', label: 'nav.profile', icon: User },
+    ]
+  }
+
+  return [
+    { to: '/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
+    { to: '/profile', label: 'nav.profile', icon: User },
+    { to: '/games', label: 'nav.games', icon: Gamepad2 },
+    { to: '/letters', label: 'nav.letters', icon: Mail },
+    { to: '/schedule', label: 'nav.schedule', icon: Calendar },
+  ]
+})
 
 function toggleLang() {
   setLocale(locale.value === 'en' ? 'zh' : 'en')
