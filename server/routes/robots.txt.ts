@@ -1,16 +1,17 @@
 import { normalizeSiteUrl } from '~/lib/site'
 
-const privatePaths = [
-  '/admin',
-  '/dashboard',
-  '/friends',
-  '/games',
-  '/letters',
-  '/login',
-  '/messages',
-  '/profile',
-  '/schedule'
-]
+const allowedPaths = ['/', '/about', '/register']
+
+const userAgents = ['*', 'GPTBot', 'Claude-Web', 'PerplexityBot']
+
+function buildCrawlRules(): string[] {
+  return [
+    'Disallow: /',
+    ...allowedPaths.map((path) =>
+      path === '/' ? 'Allow: /$' : `Allow: ${path}$`
+    ),
+  ]
+}
 
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig(event)
@@ -19,19 +20,11 @@ export default defineEventHandler((event) => {
   setHeader(event, 'content-type', 'text/plain; charset=utf-8')
 
   return [
-    'User-agent: *',
-    'Allow: /',
-    ...privatePaths.map((path) => `Disallow: ${path}`),
-    '',
-    'User-agent: GPTBot',
-    'Allow: /',
-    '',
-    'User-agent: Claude-Web',
-    'Allow: /',
-    '',
-    'User-agent: PerplexityBot',
-    'Allow: /',
-    '',
-    `Sitemap: ${siteUrl}/sitemap.xml`
+    ...userAgents.flatMap((agent) => [
+      `User-agent: ${agent}`,
+      ...buildCrawlRules(),
+      '',
+    ]),
+    `Sitemap: ${siteUrl}/sitemap.xml`,
   ].join('\n')
 })

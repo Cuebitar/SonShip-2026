@@ -25,26 +25,26 @@
             <div class="divider" />
             <div class="space-y-3">
               <p class="input-label">💰 {{ t('register.fee') }}</p>
-              <div class="p-4 rounded-xl border border-primary/30 bg-primary/10 flex items-center justify-between shadow-warm shadow-primary/5">
+              <div :class="currentTier === 'early' ? 'p-4 rounded-xl border border-primary/30 bg-primary/10 shadow-warm shadow-primary/5' : 'p-3 rounded-lg border border-primary/10 bg-dark/50 opacity-50'" class="flex items-center justify-between transition-colors">
                 <div>
-                  <p class="font-heading font-bold text-sm text-primary">{{ t('register.early_bird') }}</p>
+                  <p :class="currentTier === 'early' ? 'text-primary' : 'text-tertiary'" class="font-heading font-bold text-sm">{{ t('register.early_bird') }}</p>
                   <p class="text-xs text-tertiary/70 mt-1">before 31th May</p>
                 </div>
-                <p class="font-heading text-primary font-bold text-2xl">RM 200</p>
+                <p :class="currentTier === 'early' ? 'text-2xl' : 'text-xl'" class="font-heading text-primary font-bold">RM 200</p>
               </div>
-              <div class="p-3 rounded-lg border border-primary/10 bg-dark/50 flex items-center justify-between hover:border-primary/20 transition-colors">
+              <div :class="currentTier === 'normal' ? 'p-4 rounded-xl border border-primary/30 bg-primary/10 shadow-warm shadow-primary/5' : 'p-3 rounded-lg border border-primary/10 bg-dark/50 opacity-50'" class="flex items-center justify-between transition-colors">
                 <div>
-                  <p class="font-heading font-bold text-sm text-tertiary">{{ t('register.normal') }}</p>
+                  <p :class="currentTier === 'normal' ? 'text-primary' : 'text-tertiary'" class="font-heading font-bold text-sm">{{ t('register.normal') }}</p>
                   <p class="text-xs text-tertiary/50 mt-1">before 30th June</p>
                 </div>
-                <p class="font-heading text-primary font-bold text-xl">RM 230</p>
+                <p :class="currentTier === 'normal' ? 'text-2xl' : 'text-xl'" class="font-heading text-primary font-bold">RM 230</p>
               </div>
-              <div class="p-3 rounded-lg border border-primary/10 bg-dark/50 flex items-center justify-between hover:border-primary/20 transition-colors">
+              <div :class="currentTier === 'late' ? 'p-4 rounded-xl border border-primary/30 bg-primary/10 shadow-warm shadow-primary/5' : 'p-3 rounded-lg border border-primary/10 bg-dark/50 opacity-50'" class="flex items-center justify-between transition-colors">
                 <div>
-                  <p class="font-heading font-bold text-sm text-tertiary">{{ t('register.super_late_bird') }}</p>
+                  <p :class="currentTier === 'late' ? 'text-primary' : 'text-tertiary'" class="font-heading font-bold text-sm">{{ t('register.super_late_bird') }}</p>
                   <p class="text-xs text-tertiary/50 mt-1">from 1st July</p>
                 </div>
-                <p class="font-heading text-primary font-bold text-xl">RM 280</p>
+                <p :class="currentTier === 'late' ? 'text-2xl' : 'text-xl'" class="font-heading text-primary font-bold">RM 280</p>
               </div>
               <p class="font-body text-xs text-tertiary/50 !mt-4">{{ t('register.fee_note') }}</p>
             </div>
@@ -299,6 +299,13 @@ import { buildCanonicalUrl, normalizeSiteUrl } from '~/lib/site'
 const { t, locale } = useI18n()
 
 const campersStore = useCampersStore();
+
+const currentTier = computed(() => {
+  const now = new Date()
+  if (now < new Date('2026-06-01')) return 'early'
+  if (now < new Date('2026-07-01')) return 'normal'
+  return 'late'
+})
 const loading        = ref(false)
 const showSuccess    = ref(false)
 const submitError    = ref('')
