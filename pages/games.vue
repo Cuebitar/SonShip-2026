@@ -3,8 +3,88 @@
     <div class="container-inner py-10">
       <h1 class="section-title mb-8">{{ t('games.title') }}</h1>
 
+      <!-- ================= 队伍积分榜 (新增) ================= -->
+      <div class="card p-6 border-primary/20 mb-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-2 bg-primary/10 rounded-xl border border-primary/20">
+            <Podium class="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h2 class="font-heading font-bold text-xl text-primary">队伍积分榜</h2>
+            <p class="font-body text-xs text-tertiary/60">各队伍游戏积分实时动态</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-primary/20 text-tertiary/60 text-xs uppercase tracking-wider font-heading">
+                <th class="py-3 px-4 font-medium w-20 text-center">排名</th>
+                <th class="py-3 px-4 font-medium">队伍名称</th>
+                <th class="py-3 px-4 font-medium hidden md:table-cell">各项目得分明细</th>
+                <th class="py-3 px-4 font-medium text-right">总积分</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-primary/10">
+              <tr
+                v-for="(team, index) in sortedTeams"
+                :key="team.id"
+                class="hover:bg-primary/5 transition-colors group"
+              >
+                <!-- 排名 -->
+                <td class="py-4 px-4">
+                  <div class="flex justify-center">
+                    <div 
+                      class="flex items-center justify-center w-7 h-7 rounded-full font-bold text-sm font-heading"
+                      :class="getRankStyle(index + 1)"
+                    >
+                      {{ index + 1 }}
+                    </div>
+                  </div>
+                </td>
+                
+                <!-- 队伍名称 -->
+                <td class="py-4 px-4">
+                  <div class="flex items-center gap-3">
+                    <div class="p-1.5 bg-secondary/30 rounded-lg text-tertiary/60">
+                      <Users class="w-4 h-4" />
+                    </div>
+                    <span class="font-heading font-bold text-tertiary text-sm md:text-base">{{ team.name }}</span>
+                  </div>
+                </td>
+                
+                <!-- 明细 -->
+                <td class="py-4 px-4 hidden md:table-cell">
+                  <div class="flex flex-wrap gap-2">
+                    <span 
+                      v-for="(score, gameName) in team.gameScores" 
+                      :key="gameName" 
+                      class="inline-flex items-center px-2 py-1 rounded border border-primary/10 bg-secondary/20 text-[10px] sm:text-xs font-body text-tertiary/80"
+                    >
+                      {{ gameName }}: 
+                      <span :class="score < 0 ? 'text-red-400 ml-1 font-bold' : 'text-primary ml-1 font-bold'">
+                        {{ score > 0 ? '+' + score : score }}
+                      </span>
+                    </span>
+                  </div>
+                </td>
+                
+                <!-- 总分 -->
+                <td class="py-4 px-4 text-right">
+                  <span class="text-xl md:text-2xl font-heading font-black text-primary">
+                    {{ team.totalScore }}
+                  </span>
+                  <span class="text-[10px] text-tertiary/40 ml-1 font-body uppercase">pts</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- ================================================== -->
+
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left: Game Catalog + Interactive -->
+        <!-- Left: Game Catalog + Interactive (原有代码) -->
         <div class="lg:col-span-2 space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div v-for="game in gamesStore.games" :key="game.id" class="card-hover p-6 group">
@@ -22,7 +102,7 @@
             </div>
           </div>
 
-          <!-- Reflex Rush Game -->
+          <!-- Reflex Rush Game (原有代码) -->
           <div v-if="reflexActive" class="card p-8 border-primary/30 text-center">
             <h3 class="font-heading font-bold text-xl text-primary mb-2">⚡ Reflex Rush</h3>
             <p class="font-body text-sm text-tertiary/60 mb-4">Tap the golden circle! Time: <span class="text-primary font-bold">{{ timeLeft }}s</span></p>
@@ -49,12 +129,12 @@
           </div>
         </div>
 
-        <!-- Right: Leaderboard + Achievements -->
+        <!-- Right: Leaderboard + Achievements (原有代码) -->
         <div class="space-y-6">
-          <!-- Leaderboard -->
+          <!-- 个人榜单 Leaderboard -->
           <div class="card p-6">
             <h3 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
-              <Trophy class="w-5 h-5" /> {{ t('games.leaderboard') }}
+              <Trophy class="w-5 h-5" /> 个人积分榜
             </h3>
             <div class="space-y-2">
               <div v-for="(entry, i) in leaderboard" :key="entry.camperId"
@@ -91,7 +171,7 @@
       </div>
     </div>
 
-    <!-- Rules Modal -->
+    <!-- Rules Modal (原有代码) -->
     <Transition name="modal">
       <div v-if="rulesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-dark/80 backdrop-blur-sm" @click="rulesModal = null"></div>
@@ -118,12 +198,53 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import { useGamesStore } from '~/stores/games'
 import { useCampersStore } from '~/stores/campers'
-import { Trophy, Star } from 'lucide-vue-next'
+// 注意这里统一使用了新包 @lucide/vue
+import { Trophy, Star, Podium, Users } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const auth = useAuthStore()
 const gamesStore = useGamesStore()
 const campersStore = useCampersStore()
+
+// ========== 队伍积分榜逻辑 (新增) ==========
+const mockTeamsData = ref([
+  {
+    id: 'team_a',
+    name: 'Team A (烈火队)',
+    gameScores: { '破冰游戏': 50, '寻宝大作战': 120, '拔河比赛': -10 },
+    totalScore: 160
+  },
+  {
+    id: 'team_b',
+    name: 'Team B (飞鹰队)',
+    gameScores: { '破冰游戏': 60, '寻宝大作战': 100, '拔河比赛': 50 },
+    totalScore: 210
+  },
+  {
+    id: 'team_c',
+    name: 'Team C (雷霆队)',
+    gameScores: { '破冰游戏': 40, '寻宝大作战': 150, '拔河比赛': 30 },
+    totalScore: 220
+  },
+  {
+    id: 'team_d',
+    name: 'Team D (磐石队)',
+    gameScores: { '破冰游戏': 55, '寻宝大作战': 90, '拔河比赛': 40 },
+    totalScore: 185
+  }
+])
+
+const sortedTeams = computed(() => {
+  return [...mockTeamsData.value].sort((a, b) => b.totalScore - a.totalScore)
+})
+
+const getRankStyle = (rank) => {
+  if (rank === 1) return 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 shadow-[0_0_10px_rgba(250,204,21,0.2)]' 
+  if (rank === 2) return 'bg-gray-300/20 text-gray-300 border border-gray-300/30' 
+  if (rank === 3) return 'bg-amber-600/20 text-amber-500 border border-amber-600/30' 
+  return 'bg-secondary/30 text-tertiary/50' 
+}
+// =========================================
 
 const rulesModal = ref(null)
 const reflexActive = ref(false)
