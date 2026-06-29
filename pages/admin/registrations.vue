@@ -382,7 +382,7 @@ const sortedRecords = computed(() => {
   });
 });
 
-const registrationCount = computed(() => records.value.length == 0 ? 0 : records.value.length - 1);
+const registrationCount = computed(() => records.value.length == 0 ? 0 : records.value.filter(r => r.status !== 'Rejected').length - 1);
 const registrationSpotsLeft = computed(() => Math.max(registrationLimit - registrationCount.value, 0));
 const registrationProgress = computed(() => {
   if (registrationLimit === 0) return 0;
