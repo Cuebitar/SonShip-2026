@@ -266,126 +266,131 @@
       <!-- TAB 4: MANAGE GAMES MARK                   -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'marks'" class="space-y-8">
-        <div>
-          <h2 class="font-heading font-bold text-xl text-white">Manage Games Mark</h2>
-          <p class="text-xs text-tertiary/60 mt-1">Record scores for teams. The system automatically calculates total scores and independent leaderboards.</p>
+  <div>
+    <h2 class="font-heading font-bold text-xl text-white">Manage Games Mark</h2>
+    <p class="text-xs text-tertiary/60 mt-1">Record scores for teams. The system automatically calculates total scores and independent leaderboards.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- 左侧：加分/减分主操作面板 -->
+    <div class="lg:col-span-2 space-y-6">
+      <div class="card p-6 border-primary/20 bg-primary/5">
+        <h3 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
+          <Gamepad2 class="w-5 h-5" /> Score Entry Console
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <!-- 修改 1：变成 Checkbox 多选列表 -->
+          <div>
+            <label class="block text-xs font-bold text-primary/80 mb-1.5 uppercase">1. Select Team(s)</label>
+            <div class="bg-dark border border-white/10 rounded-xl p-3 max-h-[160px] overflow-y-auto grid grid-cols-2 gap-2">
+              <label v-for="team in teamsList" :key="team.name" class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-1.5 rounded transition-colors">
+                <!-- 绑定到一个数组 selectedScoreTeams -->
+                <input 
+                  type="checkbox" 
+                  :value="team.name" 
+                  v-model="selectedScoreTeams" 
+                  class="w-4 h-4 rounded border-white/20 bg-dark/50 text-primary focus:ring-primary focus:ring-offset-dark" 
+                />
+                <span class="text-sm text-white truncate">{{ team.name }}</span>
+              </label>
+            </div>
+            <!-- 小提示：显示当前选中了多少组 -->
+            <p class="text-[10px] text-tertiary/60 mt-1 text-right">
+              {{ selectedScoreTeams.length }} team(s) selected
+            </p>
+          </div>
+          
+          <!-- 游戏选择保持不变 -->
+          <div>
+            <label class="block text-xs font-bold text-primary/80 mb-1.5 uppercase">2. Select Game</label>
+            <select v-model="selectedScoreGame" class="input py-2.5 bg-dark border-white/10 text-white w-full">
+              <option v-for="game in GAME_NAMES" :key="game" :value="game">{{ game }}</option>
+            </select>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <!-- 左侧：加分/减分主操作面板 -->
-          <div class="lg:col-span-2 space-y-6">
-            <div class="card p-6 border-primary/20 bg-primary/5">
-              <h3 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
-                <Gamepad2 class="w-5 h-5" /> Score Entry Console
-              </h3>
-              
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label class="block text-xs font-bold text-primary/80 mb-1.5 uppercase">1. Select Team</label>
-                  <select v-model="selectedScoreTeam" class="input py-2.5 bg-dark border-white/10 text-white w-full">
-                    <option value="" disabled>-- Select a team --</option>
-                    <option v-for="team in teamsList" :key="team.name" :value="team.name">{{ team.name }}</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-primary/80 mb-1.5 uppercase">2. Select Game</label>
-                  <select v-model="selectedScoreGame" class="input py-2.5 bg-dark border-white/10 text-white w-full">
-                    <option v-for="game in GAME_NAMES" :key="game" :value="game">{{ game }}</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- 快捷分值调整按钮 -->
-              <div v-if="selectedScoreTeam" class="space-y-4">
-                <label class="block text-xs font-bold text-primary/80 uppercase">3. Adjust Score (Current Game: <span class="text-white">{{ selectedScoreGame }}</span>)</label>
-                <div class="flex flex-wrap gap-3">
-                  <button @click="adjustMark(50)" class="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-xl text-sm font-bold hover:bg-green-500/30 transition-all flex-1 text-center">+50 Pts</button>
-                  <button @click="adjustMark(10)" class="px-4 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl text-sm font-bold hover:bg-green-500/20 transition-all flex-1 text-center">+10 Pts</button>
-                  <button @click="adjustMark(-10)" class="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold hover:bg-red-500/20 transition-all flex-1 text-center">-10 Pts</button>
-                  <button @click="adjustMark(-50)" class="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl text-sm font-bold hover:bg-red-500/30 transition-all flex-1 text-center">-50 Pts</button>
-                </div>
-
-                <!-- 自定义分值输入 -->
-                <div class="flex gap-2 items-center pt-2">
-                  <input v-model.number="customMarkValue" type="number" class="input py-2 bg-dark/60 text-sm" placeholder="Custom score (e.g. 25 or -15)" />
-                  <button @click="adjustMark(customMarkValue)" class="btn-primary py-2 px-5 text-sm w-auto shrink-0">Submit</button>
-                </div>
-              </div>
-              <div v-else class="text-sm text-tertiary/40 italic text-center py-6 border border-dashed border-white/10 rounded-xl">
-                Please select a team above to activate scoring controls.
-              </div>
-            </div>
-
-            <!-- 数据大盘表格明细 -->
-            <div class="card p-0 overflow-x-auto">
-              <table class="w-full text-left border-collapse text-sm">
-                <thead>
-                  <tr class="border-b border-white/10 bg-white/5 font-heading text-primary">
-                    <th class="p-4">Team</th>
-                    <th v-for="game in GAME_NAMES" :key="game" class="p-4 font-normal text-xs">{{ game }}</th>
-                    <th class="p-4 text-right">Total Score</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5 font-body">
-                  <tr v-for="team in teamsList" :key="team.name" class="hover:bg-white/5">
-                    <td class="p-4 font-bold text-white">{{ team.name }}</td>
-                    <td v-for="game in GAME_NAMES" :key="game" class="p-4 text-tertiary">
-                      {{ getGameScore(team.name, game) }}
-                    </td>
-                    <td class="p-4 text-right text-primary font-bold font-heading text-base">
-                      {{ getTeamTotalScore(team.name) }}
-                    </td>
-                  </tr>
-                  <tr v-if="teamsList.length === 0">
-                    <td :colspan="GAME_NAMES.length + 2" class="p-8 text-center text-tertiary italic text-xs">No teams available. Create teams first.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <!-- 修改 2：根据数组长度判断是否显示加分按钮 -->
+        <div v-if="selectedScoreTeams.length > 0" class="space-y-4">
+          <label class="block text-xs font-bold text-primary/80 uppercase">
+            3. Adjust Score (Current Game: <span class="text-white">{{ selectedScoreGame }}</span>)
+          </label>
+          <div class="flex flex-wrap gap-3">
+            <button @click="adjustMark(50)" class="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-xl text-sm font-bold hover:bg-green-500/30 transition-all flex-1 text-center">+50 Pts</button>
+            <button @click="adjustMark(10)" class="px-4 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl text-sm font-bold hover:bg-green-500/20 transition-all flex-1 text-center">+10 Pts</button>
+            <button @click="adjustMark(-10)" class="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold hover:bg-red-500/20 transition-all flex-1 text-center">-10 Pts</button>
+            <button @click="adjustMark(-50)" class="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl text-sm font-bold hover:bg-red-500/30 transition-all flex-1 text-center">-50 Pts</button>
           </div>
 
-          <!-- 右侧：动态独立排行榜展现 -->
-          <div class="space-y-6">
-            <!-- 独立排行榜选择切换器 -->
-            <div class="card p-4 border border-white/10">
-              <label class="block text-xs font-bold text-primary mb-2 uppercase">📊 Switch Leaderboard View</label>
-              <select v-model="activeLeaderboardView" class="w-full bg-dark border border-white/10 rounded-xl px-3 py-2 text-sm text-tertiary focus:text-white outline-none">
-                <option value="Total">🏆 Total Score Leaderboard</option>
-                <option v-for="game in GAME_NAMES" :key="game" :value="game">🎮 {{ game }} Leaderboard</option>
-              </select>
-            </div>
-
-            <!-- 排行榜数据渲染卡片 -->
-            <div class="card p-5 border border-white/5 bg-white/5">
-              <h3 class="font-heading font-black text-sm text-primary uppercase tracking-wider mb-4 border-b border-white/5 pb-2">
-                {{ activeLeaderboardView === 'Total' ? '🏆 Overall Leaderboard' : `🎮 ${activeLeaderboardView} Ranking` }}
-              </h3>
-              
-              <div class="space-y-2">
-                <div 
-                  v-for="(rank, idx) in sortedLeaderboardData" 
-                  :key="rank.teamName"
-                  class="flex items-center justify-between p-2.5 rounded-xl bg-dark/40 border border-white/5"
-                >
-                  <div class="flex items-center gap-3">
-                    <span 
-                      class="w-5 h-5 rounded-full flex items-center justify-center font-heading text-xs font-bold"
-                      :class="idx === 0 ? 'bg-yellow-400 text-dark font-black' : idx === 1 ? 'bg-slate-300 text-dark' : idx === 2 ? 'bg-amber-600 text-white' : 'text-tertiary/40'"
-                    >
-                      {{ idx + 1 }}
-                    </span>
-                    <span class="text-sm text-white font-bold truncate max-w-[120px]">{{ rank.teamName }}</span>
-                  </div>
-                  <span class="font-heading font-bold text-sm text-primary">{{ rank.score }} <span class="text-[9px] text-tertiary/40 uppercase">pts</span></span>
-                </div>
-                <div v-if="sortedLeaderboardData.length === 0" class="text-center py-6 text-xs text-tertiary/30 italic">
-                  No ranking data available yet.
-                </div>
-              </div>
-            </div>
+          <!-- 自定义分值输入 -->
+          <div class="flex gap-2 items-center pt-2">
+            <input v-model.number="customMarkValue" type="number" class="input py-2 bg-dark/60 text-sm" placeholder="Custom score (e.g. 25 or -15)" />
+            <button @click="adjustMark(customMarkValue)" class="btn-primary py-2 px-5 text-sm w-auto shrink-0">Submit</button>
           </div>
+        </div>
+        <div v-else class="text-sm text-tertiary/40 italic text-center py-6 border border-dashed border-white/10 rounded-xl">
+          Please select at least one team above to activate scoring controls.
         </div>
       </div>
+
+      <!-- 下方表格渲染保持完全不变 -->
+      <div class="card p-0 overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-white/10 bg-white/5 font-heading text-primary">
+              <th class="p-4">Team</th>
+              <th v-for="game in GAME_NAMES" :key="game" class="p-4 font-normal text-xs">{{ game }}</th>
+              <th class="p-4 text-right">Total Score</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 font-body">
+            <tr v-for="team in teamsList" :key="team.name" class="hover:bg-white/5">
+              <td class="p-4 font-bold text-white">{{ team.name }}</td>
+              <td v-for="game in GAME_NAMES" :key="game" class="p-4 text-tertiary">
+                {{ getGameScore(team.name, game) }}
+              </td>
+              <td class="p-4 text-right text-primary font-bold font-heading text-base">
+                {{ getTeamTotalScore(team.name) }}
+              </td>
+            </tr>
+            <tr v-if="teamsList.length === 0">
+              <td :colspan="GAME_NAMES.length + 2" class="p-8 text-center text-tertiary italic text-xs">No teams available. Create teams first.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 右侧：排行榜渲染保持不变 -->
+    <div class="space-y-6">
+      <div class="card p-4 border border-white/10">
+        <label class="block text-xs font-bold text-primary mb-2 uppercase">📊 Switch Leaderboard View</label>
+        <select v-model="activeLeaderboardView" class="w-full bg-dark border border-white/10 rounded-xl px-3 py-2 text-sm text-tertiary focus:text-white outline-none">
+          <option value="Total">🏆 Total Score Leaderboard</option>
+          <option v-for="game in GAME_NAMES" :key="game" :value="game">🎮 {{ game }} Leaderboard</option>
+        </select>
+      </div>
+
+      <div class="card p-5 border border-white/5 bg-white/5">
+        <h3 class="font-heading font-black text-sm text-primary uppercase tracking-wider mb-4 border-b border-white/5 pb-2">
+          {{ activeLeaderboardView === 'Total' ? '🏆 Overall Leaderboard' : `🎮 ${activeLeaderboardView} Ranking` }}
+        </h3>
+        <div class="space-y-2">
+          <div v-for="(rank, idx) in sortedLeaderboardData" :key="rank.teamName" class="flex items-center justify-between p-2.5 rounded-xl bg-dark/40 border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="w-5 h-5 rounded-full flex items-center justify-center font-heading text-xs font-bold" :class="idx === 0 ? 'bg-yellow-400 text-dark font-black' : idx === 1 ? 'bg-slate-300 text-dark' : idx === 2 ? 'bg-amber-600 text-white' : 'text-tertiary/40'">
+                {{ idx + 1 }}
+              </span>
+              <span class="text-sm text-white font-bold truncate max-w-[120px]">{{ rank.teamName }}</span>
+            </div>
+            <span class="font-heading font-bold text-sm text-primary">{{ rank.score }} <span class="text-[9px] text-tertiary/40 uppercase">pts</span></span>
+          </div>
+          <div v-if="sortedLeaderboardData.length === 0" class="text-center py-6 text-xs text-tertiary/30 italic">No ranking data available yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
       
     </section>
 
@@ -582,7 +587,7 @@ const calendarEvents = ref([])
 const GAME_NAMES = ['破冰游戏', '寻宝大作战', '竞技拔河', '终极密室']; 
 const firebaseScores = ref([]); 
 
-const selectedScoreTeam = ref('');
+const selectedScoreTeams = ref([]);
 const selectedScoreGame = ref('破冰游戏');
 const customMarkValue = ref(null);
 const activeLeaderboardView = ref('Total'); 
@@ -924,47 +929,52 @@ function getTeamTotalScore(teamName) {
 async function adjustMark(value) {
   const val = parseInt(value);
   if (isNaN(val) || val === 0) return alert('请输入有效的非零整数分值！');
-  if (!selectedScoreTeam.value) return;
+  if (!selectedScoreTeams.value || selectedScoreTeams.value.length === 0) return;
+  if (!selectedScoreGame.value) return alert('请选择要加分的游戏！');
 
   const db = useDb();
   if (!db) return;
 
-  const teamName = selectedScoreTeam.value;
   const gameName = selectedScoreGame.value;
 
-  const currentScore = getGameScore(teamName, gameName);
-  const newGameScore = currentScore + val;
-
-  const updatedScoresMap = {};
-  GAME_NAMES.forEach(g => {
-    updatedScoresMap[g] = g === gameName ? newGameScore : getGameScore(teamName, g);
-  });
-  const newTotalScore = Object.values(updatedScoresMap).reduce((sum, score) => sum + score, 0);
-
-  const payload = {
-    teamName: teamName,
-    scores: updatedScoresMap,
-    totalScore: newTotalScore,
-    updatedAt: Date.now()
-  };
-
   try {
-    hasMounted.value = false;
-    await setDoc(doc(db, "game_scores", teamName), payload);
+    // ❌ 删掉这行：hasMounted.value = false;
+
+    await Promise.all(selectedScoreTeams.value.map(async (teamName) => {
+      const currentScore = getGameScore(teamName, gameName);
+      const newGameScore = currentScore + val;
+
+      const updatedScoresMap = {};
+      GAME_NAMES.forEach(g => {
+        updatedScoresMap[g] = g === gameName ? newGameScore : getGameScore(teamName, g);
+      });
+      const newTotalScore = Object.values(updatedScoresMap).reduce((sum, score) => sum + score, 0);
+
+      const payload = {
+        teamName: teamName,
+        scores: updatedScoresMap,
+        totalScore: newTotalScore,
+        updatedAt: Date.now()
+      };
+
+      await setDoc(doc(db, "game_scores", teamName), payload);
+      
+      const existIdx = firebaseScores.value.findIndex(s => s.id === teamName);
+      if (existIdx > -1) {
+        firebaseScores.value[existIdx] = { id: teamName, ...payload };
+      } else {
+        firebaseScores.value.push({ id: teamName, ...payload });
+      }
+    }));
     
-    const existIdx = firebaseScores.value.findIndex(s => s.id === teamName);
-    if (existIdx > -1) {
-      firebaseScores.value[existIdx] = { id: teamName, ...payload };
-    } else {
-      firebaseScores.value.push({ id: teamName, ...payload });
-    }
-    
+    selectedScoreTeams.value = [];
     customMarkValue.value = null; 
+    
   } catch (err) {
     console.error('Error saving score:', err);
-  } finally {
-    hasMounted.value = true;
-  }
+    alert('加分过程中发生错误，请重试');
+  } 
+  // ❌ 删掉 finally 区块里面的：hasMounted.value = true;
 }
 
 const sortedLeaderboardData = computed(() => {
