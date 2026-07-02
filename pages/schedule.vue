@@ -47,11 +47,11 @@
                 </div>
               </div>
               
-              <button @click="toggleBook(slot.id)"
+              <!-- <button @click="toggleBook(slot.id)"
                 class="flex-shrink-0 transition-all"
                 :class="isBooked(slot.id) ? 'btn-primary btn-sm' : 'btn-ghost btn-sm'">
                 {{ isBooked(slot.id) ? '✓ ' + t('schedule.book') + 'ed' : t('schedule.book') }}
-              </button>
+              </button> -->
             </div>
           </div>
 
@@ -134,10 +134,10 @@ const myBookedSlots = computed(() => {
   })
 })
 
-function toggleBook(id) {
-  if (isBooked(id)) scheduleStore.unbook(auth.user.id, id)
-  else scheduleStore.book(auth.user.id, id)
-}
+// function toggleBook(id) {
+//   if (isBooked(id)) scheduleStore.unbook(auth.user.id, id)
+//   else scheduleStore.book(auth.user.id, id)
+// }
 
 onMounted(async () => {
   await scheduleStore.initSchedule()
