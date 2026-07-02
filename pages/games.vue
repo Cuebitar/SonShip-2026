@@ -1,17 +1,21 @@
 <template>
-  <div class="page-container bg-dark">
+  <div class="page-container bg-dark min-h-screen">
     <div class="container-inner py-10">
       <h1 class="section-title mb-8">{{ t('games.title') }}</h1>
 
-      <!-- ================= 队伍积分榜 (新增) ================= -->
       <div class="card p-6 border-primary/20 mb-8">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="p-2 bg-primary/10 rounded-xl border border-primary/20">
-            <Podium class="w-6 h-6 text-primary" />
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-primary/10 rounded-xl border border-primary/20">
+              <Award class="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h2 class="font-heading font-bold text-xl text-primary">队伍积分榜</h2>
+              <p class="font-body text-xs text-tertiary/60">各队伍游戏积分实时动态更新</p>
+            </div>
           </div>
-          <div>
-            <h2 class="font-heading font-bold text-xl text-primary">队伍积分榜</h2>
-            <p class="font-body text-xs text-tertiary/60">各队伍游戏积分实时动态</p>
+          <div class="flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 px-2 py-1 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> LIVE
           </div>
         </div>
 
@@ -31,7 +35,6 @@
                 :key="team.id"
                 class="hover:bg-primary/5 transition-colors group"
               >
-                <!-- 排名 -->
                 <td class="py-4 px-4">
                   <div class="flex justify-center">
                     <div 
@@ -43,7 +46,6 @@
                   </div>
                 </td>
                 
-                <!-- 队伍名称 -->
                 <td class="py-4 px-4">
                   <div class="flex items-center gap-3">
                     <div class="p-1.5 bg-secondary/30 rounded-lg text-tertiary/60">
@@ -53,7 +55,6 @@
                   </div>
                 </td>
                 
-                <!-- 明细 -->
                 <td class="py-4 px-4 hidden md:table-cell">
                   <div class="flex flex-wrap gap-2">
                     <span 
@@ -66,10 +67,10 @@
                         {{ score > 0 ? '+' + score : score }}
                       </span>
                     </span>
+                    <span v-if="Object.keys(team.gameScores).length === 0" class="text-xs text-tertiary/40 italic">暂无得分记录</span>
                   </div>
                 </td>
                 
-                <!-- 总分 -->
                 <td class="py-4 px-4 text-right">
                   <span class="text-xl md:text-2xl font-heading font-black text-primary">
                     {{ team.totalScore }}
@@ -77,14 +78,17 @@
                   <span class="text-[10px] text-tertiary/40 ml-1 font-body uppercase">pts</span>
                 </td>
               </tr>
+
+              <tr v-if="sortedTeams.length === 0">
+                <td colspan="4" class="py-12 text-center text-tertiary/50 text-sm italic">
+                  正在同步战况或暂无数据...
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <!-- ================================================== -->
-
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left: Game Catalog + Interactive (原有代码) -->
         <div class="lg:col-span-2 space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div v-for="game in gamesStore.games" :key="game.id" class="card-hover p-6 group">
@@ -102,7 +106,6 @@
             </div>
           </div>
 
-          <!-- Reflex Rush Game (原有代码) -->
           <div v-if="reflexActive" class="card p-8 border-primary/30 text-center">
             <h3 class="font-heading font-bold text-xl text-primary mb-2">⚡ Reflex Rush</h3>
             <p class="font-body text-sm text-tertiary/60 mb-4">Tap the golden circle! Time: <span class="text-primary font-bold">{{ timeLeft }}s</span></p>
@@ -129,9 +132,7 @@
           </div>
         </div>
 
-        <!-- Right: Leaderboard + Achievements (原有代码) -->
         <div class="space-y-6">
-          <!-- 个人榜单 Leaderboard -->
           <div class="card p-6">
             <h3 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
               <Trophy class="w-5 h-5" /> 个人积分榜
@@ -153,7 +154,6 @@
             </div>
           </div>
 
-          <!-- My Achievements -->
           <div class="card p-6">
             <h3 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
               <Star class="w-5 h-5" /> {{ t('games.achievements') }}
@@ -171,7 +171,6 @@
       </div>
     </div>
 
-    <!-- Rules Modal (原有代码) -->
     <Transition name="modal">
       <div v-if="rulesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-dark/80 backdrop-blur-sm" @click="rulesModal = null"></div>
@@ -193,49 +192,52 @@
 <script setup>
 definePageMeta({ requiresAuth: true, ssr: false })
 
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import { useGamesStore } from '~/stores/games'
 import { useCampersStore } from '~/stores/campers'
-// 注意这里统一使用了新包 @lucide/vue
-import { Trophy, Star, Podium, Users } from 'lucide-vue-next'
+// Firebase 和实时监听所需引入
+import { collection, onSnapshot } from 'firebase/firestore'
+import { useDb } from '~/composable/firebase'
+
+// 注：将未知的 Podium 图标换成了更为通用的 Award，避免报错
+import { Trophy, Star, Award, Users } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const auth = useAuthStore()
 const gamesStore = useGamesStore()
 const campersStore = useCampersStore()
 
-// ========== 队伍积分榜逻辑 (新增) ==========
-const mockTeamsData = ref([
-  {
-    id: 'team_a',
-    name: 'Team A (烈火队)',
-    gameScores: { '破冰游戏': 50, '寻宝大作战': 120, '拔河比赛': -10 },
-    totalScore: 160
-  },
-  {
-    id: 'team_b',
-    name: 'Team B (飞鹰队)',
-    gameScores: { '破冰游戏': 60, '寻宝大作战': 100, '拔河比赛': 50 },
-    totalScore: 210
-  },
-  {
-    id: 'team_c',
-    name: 'Team C (雷霆队)',
-    gameScores: { '破冰游戏': 40, '寻宝大作战': 150, '拔河比赛': 30 },
-    totalScore: 220
-  },
-  {
-    id: 'team_d',
-    name: 'Team D (磐石队)',
-    gameScores: { '破冰游戏': 55, '寻宝大作战': 90, '拔河比赛': 40 },
-    totalScore: 185
-  }
-])
+// ========== 实时队伍积分榜逻辑 ==========
+const firebaseScores = ref([])
+let unsubscribeScores = null // 用于存储 Firebase 实时监听的取消函数
 
+onMounted(() => {
+  const db = useDb()
+  if (db) {
+    // 开启实时监听 (onSnapshot)，只要数据库数据有变，此处 firebaseScores 就会自动更新
+    unsubscribeScores = onSnapshot(collection(db, "game_scores"), (snap) => {
+      firebaseScores.value = snap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+    })
+  }
+})
+
+// 根据获取的 Firebase 真实数据组装排行榜
 const sortedTeams = computed(() => {
-  return [...mockTeamsData.value].sort((a, b) => b.totalScore - a.totalScore)
+  const teams = firebaseScores.value.map(scoreDoc => {
+    return {
+      id: scoreDoc.id,
+      name: scoreDoc.teamName || scoreDoc.id,
+      gameScores: scoreDoc.scores || {},
+      totalScore: scoreDoc.totalScore || 0
+    }
+  })
+  // 从大到小降序排列
+  return teams.sort((a, b) => b.totalScore - a.totalScore)
 })
 
 const getRankStyle = (rank) => {
@@ -290,7 +292,12 @@ function scheduleCircle() {
 function tapCircle() { circleVisible.value = false; gameScore.value += 10; gameTaps.value++; scheduleCircle() }
 function missClick() { gameScore.value = Math.max(0, gameScore.value - 5) }
 
-onUnmounted(() => { clearInterval(gameTimer); clearTimeout(circleTimer) })
+onUnmounted(() => { 
+  clearInterval(gameTimer); 
+  clearTimeout(circleTimer);
+  // 当用户离开页面时，关闭监听，节省性能
+  if (unsubscribeScores) unsubscribeScores();
+})
 </script>
 
 <style scoped>

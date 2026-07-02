@@ -5,7 +5,7 @@
       <div class="container-inner relative z-10">
         <p class="font-body text-tertiary/60 text-xs md:text-sm mb-1">Admin Control Panel</p>
         <h1 class="font-heading font-black text-2xl md:text-4xl text-primary mb-2">Content Management</h1>
-        <p class="font-body text-tertiary text-sm md:text-base">Manage announcements and camp schedules</p>
+        <p class="font-body text-tertiary text-sm md:text-base">Manage announcements, camp schedules, teams and game marks</p>
       </div>
     </section>
 
@@ -27,6 +27,21 @@
           <CalendarIcon class="w-4 h-4" />
           Plan Calendar
         </button>
+        <button 
+          @click="activeTab = 'teams'"
+          :class="['px-5 py-2.5 rounded-xl font-heading font-bold text-sm transition-all flex items-center gap-2 flex-1 md:flex-none justify-center', 
+                  activeTab === 'teams' ? 'bg-primary text-dark' : 'bg-white/5 text-tertiary hover:bg-white/10']">
+          <Users class="w-4 h-4" />
+          Manage Teams
+        </button>
+        <!-- 新增：Manage Marks 标签 -->
+        <button 
+          @click="activeTab = 'marks'"
+          :class="['px-5 py-2.5 rounded-xl font-heading font-bold text-sm transition-all flex items-center gap-2 flex-1 md:flex-none justify-center', 
+                  activeTab === 'marks' ? 'bg-primary text-dark' : 'bg-white/5 text-tertiary hover:bg-white/10']">
+          <Trophy class="w-4 h-4" />
+          Manage Marks
+        </button>
       </div>
 
       <!-- ========================================== -->
@@ -40,7 +55,6 @@
           </button>
         </div>
 
-        <!-- Desktop Table (Hidden on mobile) -->
         <div class="card p-0 overflow-x-auto hidden md:block">
           <table class="w-full text-left border-collapse min-w-[600px]">
             <thead>
@@ -71,7 +85,6 @@
           </table>
         </div>
 
-        <!-- Mobile Cards (Hidden on desktop) -->
         <div class="md:hidden space-y-3">
           <div v-if="announcements.length === 0" class="card p-6 text-center text-tertiary text-sm">
             No announcements found.
@@ -96,9 +109,7 @@
       <!-- TAB 2: CALENDAR SCHEDULE                   -->
       <!-- ========================================== -->
       <div v-if="activeTab === 'calendar'" class="space-y-4">
-        
         <div class="flex flex-col gap-4 mb-4">
-          <!-- Title & Add Button -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h2 class="font-heading font-bold text-lg md:text-xl text-white">Camp Schedule</h2>
             <button @click="openCalModal()" class="btn-primary btn-sm flex items-center justify-center gap-2 w-full sm:w-auto">
@@ -106,7 +117,6 @@
             </button>
           </div>
           
-          <!-- Filters (Mobile Friendly) -->
           <div class="flex flex-wrap items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
             <div class="flex items-center gap-2 flex-1 min-w-[120px]">
               <label class="text-xs font-bold text-primary">Day:</label>
@@ -125,7 +135,6 @@
           </div>
         </div>
 
-        <!-- Desktop Table (Hidden on small screens) -->
         <div class="card p-0 overflow-x-auto hidden lg:block">
           <table class="w-full text-left border-collapse min-w-[800px]">
             <thead>
@@ -166,15 +175,12 @@
           </table>
         </div>
 
-        <!-- Mobile Cards (Hidden on desktop) -->
         <div class="lg:hidden space-y-3">
           <div v-if="filteredCalendarEvents.length === 0" class="card p-6 text-center text-tertiary text-sm">
             No scheduled events match your filters.
           </div>
           <div v-for="event in filteredCalendarEvents" :key="'mob-' + event.id" class="card p-4 bg-white/5 border border-white/10 relative overflow-hidden">
-            <!-- Left accent line -->
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary/50"></div>
-            
             <div class="flex justify-between items-start mb-3">
               <div class="pr-2">
                 <h3 class="font-bold text-white text-sm">{{ event.name }}</h3>
@@ -185,7 +191,6 @@
                 <button @click="deleteCalendarEvent(event.id)" class="text-red-400 p-1.5"><Trash2 class="w-3.5 h-3.5" /></button>
               </div>
             </div>
-
             <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2 pt-2 border-t border-white/5">
               <div class="text-xs text-tertiary flex items-center gap-1">
                 <MapPin class="w-3.5 h-3.5 text-tertiary/50"/> {{ event.location || 'TBA' }}
@@ -194,13 +199,194 @@
                 <Clock class="w-3.5 h-3.5 text-tertiary/50"/> {{ event.duration }} mins
               </div>
             </div>
-
             <div v-if="event.notes" class="mt-3 text-[11px] text-red-400 flex items-start gap-1 bg-red-500/10 px-2 py-1.5 rounded w-fit">
               <AlertCircle class="w-3.5 h-3.5 shrink-0" /> <span class="leading-tight">{{ event.notes }}</span>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: MANAGE TEAMS                        -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'teams'" class="space-y-6">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="font-heading font-bold text-lg md:text-xl text-white">Manage Teams</h2>
+            <p class="text-sm text-tertiary/60 font-body mt-1">Review existing teams or create a new one.</p>
+          </div>
+          <button type="button" @click="addNewTeam" class="btn-primary py-2 px-4 text-sm w-auto flex items-center gap-2">
+            <Plus class="w-4 h-4" /> Add Team
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="team in teamsList" :key="team.name" class="card p-5 border border-white/10 bg-white/5 flex flex-col justify-between min-h-[220px]">
+            <div>
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+                <h3 class="text-lg font-heading font-bold text-primary truncate" :title="team.name">{{ team.name }}</h3>
+                <button 
+                  type="button"
+                  @click="editTeam(team)" 
+                  class="px-2.5 py-1.5 bg-white/5 rounded-lg text-tertiary hover:text-primary hover:bg-white/10 transition-all flex items-center gap-1.5 text-xs font-bold"
+                >
+                  <Edit2 class="w-3.5 h-3.5" /> Manage
+                </button>
+              </div>
+
+              <!-- 队伍成员预览 -->
+              <div class="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                <div 
+                  v-for="member in team.members" 
+                  :key="member.id" 
+                  class="flex items-center justify-between bg-dark/40 rounded-lg px-3 py-1.5"
+                >
+                  <span class="text-xs font-body text-tertiary truncate">{{ member.fullName }}</span>
+                  <span v-if="member.gender" class="text-[9px] uppercase bg-white/10 px-1.5 py-0.5 rounded text-tertiary/60">{{ member.gender }}</span>
+                </div>
+                <div v-if="team.members.length === 0" class="text-xs text-tertiary/40 italic py-4 text-center">
+                  No members assigned yet.
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-xs text-tertiary/50">
+              <span>Total Members</span>
+              <strong class="text-white font-heading font-bold bg-white/5 px-2 py-0.5 rounded">{{ team.members.length }}</strong>
+            </div>
+          </div>
+
+          <div v-if="teamsList.length === 0" class="col-span-full card p-12 text-center text-tertiary/40 italic">
+            No teams formed yet. Click "Add Team" to create one.
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: MANAGE GAMES MARK                   -->
+      <!-- ========================================== -->
+      <div v-if="activeTab === 'marks'" class="space-y-8">
+        <div>
+          <h2 class="font-heading font-bold text-xl text-white">Manage Games Mark</h2>
+          <p class="text-xs text-tertiary/60 mt-1">Record scores for teams. The system automatically calculates total scores and independent leaderboards.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- 左侧：加分/减分主操作面板 -->
+          <div class="lg:col-span-2 space-y-6">
+            <div class="card p-6 border-primary/20 bg-primary/5">
+              <h3 class="font-heading font-bold text-primary mb-4 flex items-center gap-2">
+                <Gamepad2 class="w-5 h-5" /> Score Entry Console
+              </h3>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label class="block text-xs font-bold text-primary/80 mb-1.5 uppercase">1. Select Team</label>
+                  <select v-model="selectedScoreTeam" class="input py-2.5 bg-dark border-white/10 text-white w-full">
+                    <option value="" disabled>-- Select a team --</option>
+                    <option v-for="team in teamsList" :key="team.name" :value="team.name">{{ team.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-primary/80 mb-1.5 uppercase">2. Select Game</label>
+                  <select v-model="selectedScoreGame" class="input py-2.5 bg-dark border-white/10 text-white w-full">
+                    <option v-for="game in GAME_NAMES" :key="game" :value="game">{{ game }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 快捷分值调整按钮 -->
+              <div v-if="selectedScoreTeam" class="space-y-4">
+                <label class="block text-xs font-bold text-primary/80 uppercase">3. Adjust Score (Current Game: <span class="text-white">{{ selectedScoreGame }}</span>)</label>
+                <div class="flex flex-wrap gap-3">
+                  <button @click="adjustMark(50)" class="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-xl text-sm font-bold hover:bg-green-500/30 transition-all flex-1 text-center">+50 Pts</button>
+                  <button @click="adjustMark(10)" class="px-4 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl text-sm font-bold hover:bg-green-500/20 transition-all flex-1 text-center">+10 Pts</button>
+                  <button @click="adjustMark(-10)" class="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold hover:bg-red-500/20 transition-all flex-1 text-center">-10 Pts</button>
+                  <button @click="adjustMark(-50)" class="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl text-sm font-bold hover:bg-red-500/30 transition-all flex-1 text-center">-50 Pts</button>
+                </div>
+
+                <!-- 自定义分值输入 -->
+                <div class="flex gap-2 items-center pt-2">
+                  <input v-model.number="customMarkValue" type="number" class="input py-2 bg-dark/60 text-sm" placeholder="Custom score (e.g. 25 or -15)" />
+                  <button @click="adjustMark(customMarkValue)" class="btn-primary py-2 px-5 text-sm w-auto shrink-0">Submit</button>
+                </div>
+              </div>
+              <div v-else class="text-sm text-tertiary/40 italic text-center py-6 border border-dashed border-white/10 rounded-xl">
+                Please select a team above to activate scoring controls.
+              </div>
+            </div>
+
+            <!-- 数据大盘表格明细 -->
+            <div class="card p-0 overflow-x-auto">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="border-b border-white/10 bg-white/5 font-heading text-primary">
+                    <th class="p-4">Team</th>
+                    <th v-for="game in GAME_NAMES" :key="game" class="p-4 font-normal text-xs">{{ game }}</th>
+                    <th class="p-4 text-right">Total Score</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 font-body">
+                  <tr v-for="team in teamsList" :key="team.name" class="hover:bg-white/5">
+                    <td class="p-4 font-bold text-white">{{ team.name }}</td>
+                    <td v-for="game in GAME_NAMES" :key="game" class="p-4 text-tertiary">
+                      {{ getGameScore(team.name, game) }}
+                    </td>
+                    <td class="p-4 text-right text-primary font-bold font-heading text-base">
+                      {{ getTeamTotalScore(team.name) }}
+                    </td>
+                  </tr>
+                  <tr v-if="teamsList.length === 0">
+                    <td :colspan="GAME_NAMES.length + 2" class="p-8 text-center text-tertiary italic text-xs">No teams available. Create teams first.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 右侧：动态独立排行榜展现 -->
+          <div class="space-y-6">
+            <!-- 独立排行榜选择切换器 -->
+            <div class="card p-4 border border-white/10">
+              <label class="block text-xs font-bold text-primary mb-2 uppercase">📊 Switch Leaderboard View</label>
+              <select v-model="activeLeaderboardView" class="w-full bg-dark border border-white/10 rounded-xl px-3 py-2 text-sm text-tertiary focus:text-white outline-none">
+                <option value="Total">🏆 Total Score Leaderboard</option>
+                <option v-for="game in GAME_NAMES" :key="game" :value="game">🎮 {{ game }} Leaderboard</option>
+              </select>
+            </div>
+
+            <!-- 排行榜数据渲染卡片 -->
+            <div class="card p-5 border border-white/5 bg-white/5">
+              <h3 class="font-heading font-black text-sm text-primary uppercase tracking-wider mb-4 border-b border-white/5 pb-2">
+                {{ activeLeaderboardView === 'Total' ? '🏆 Overall Leaderboard' : `🎮 ${activeLeaderboardView} Ranking` }}
+              </h3>
+              
+              <div class="space-y-2">
+                <div 
+                  v-for="(rank, idx) in sortedLeaderboardData" 
+                  :key="rank.teamName"
+                  class="flex items-center justify-between p-2.5 rounded-xl bg-dark/40 border border-white/5"
+                >
+                  <div class="flex items-center gap-3">
+                    <span 
+                      class="w-5 h-5 rounded-full flex items-center justify-center font-heading text-xs font-bold"
+                      :class="idx === 0 ? 'bg-yellow-400 text-dark font-black' : idx === 1 ? 'bg-slate-300 text-dark' : idx === 2 ? 'bg-amber-600 text-white' : 'text-tertiary/40'"
+                    >
+                      {{ idx + 1 }}
+                    </span>
+                    <span class="text-sm text-white font-bold truncate max-w-[120px]">{{ rank.teamName }}</span>
+                  </div>
+                  <span class="font-heading font-bold text-sm text-primary">{{ rank.score }} <span class="text-[9px] text-tertiary/40 uppercase">pts</span></span>
+                </div>
+                <div v-if="sortedLeaderboardData.length === 0" class="text-center py-6 text-xs text-tertiary/30 italic">
+                  No ranking data available yet.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     </section>
 
     <section v-else class="container-inner mt-8 text-center py-20">
@@ -210,6 +396,66 @@
     <!-- ========================================== -->
     <!-- MODALS                                     -->
     <!-- ========================================== -->
+
+    <!-- Team Modal (Checkbox 升级版) -->
+    <Transition name="modal">
+      <div v-if="showTeamModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-dark/80 backdrop-blur-sm" @click="showTeamModal = false"></div>
+        
+        <div class="relative card w-full max-w-lg p-6 shadow-2xl border border-primary/30 bg-dark">
+          <div class="pb-4 border-b border-white/10 mb-5">
+            <h3 class="font-heading font-black text-xl text-primary">
+              {{ isEditingExistingTeam ? 'Edit Team: ' + modalTeamName : 'Create New Team' }}
+            </h3>
+          </div>
+
+          <div class="space-y-4">
+            <input 
+              v-model="modalTeamName" 
+              type="text" 
+              class="w-full bg-dark/50 border border-white/10 rounded-xl px-4 py-2.5 text-white font-bold"
+              placeholder="Team Name"
+            />
+
+            <input 
+              v-model="teamModalSearch" 
+              type="text" 
+              class="w-full bg-dark/50 border border-white/10 rounded-xl px-4 py-2 text-sm text-white"
+              placeholder="🔍 Search campers..."
+            />
+
+            <div class="border border-white/10 rounded-xl bg-white/5 max-h-[40vh] overflow-y-auto">
+              <label class="flex items-center gap-3 p-3 border-b border-white/10 hover:bg-white/5 cursor-pointer">
+                <input type="checkbox" @change="toggleSelectAll" :checked="allSelected" class="accent-primary" />
+                <span class="text-sm font-bold text-primary">Select All</span>
+              </label>
+              
+              <label 
+                v-for="camper in filteredModalCampers" 
+                :key="camper.id" 
+                class="flex items-center gap-3 p-3 hover:bg-white/5 cursor-pointer border-b border-white/5 last:border-0"
+              >
+                <input 
+                  type="checkbox" 
+                  :value="camper.id" 
+                  v-model="selectedCamperIds" 
+                  class="accent-primary w-4 h-4"
+                />
+                <div class="flex flex-col">
+                  <span class="text-sm text-white font-bold">{{ camper.fullName }}</span>
+                  <span class="text-[10px] text-tertiary">{{ camper.group || 'Unassigned' }}</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 mt-6">
+            <button @click="showTeamModal = false" class="text-sm text-tertiary hover:text-white transition-colors">Cancel</button>
+            <button @click="saveTeamModal" class="btn-primary px-6 py-2 text-sm">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
 
     <!-- Announcement Modal -->
     <Transition name="modal">
@@ -283,7 +529,6 @@
               <input v-model="calForm.location" type="text" class="input w-full py-2 bg-dark/50 text-sm" placeholder="e.g. Main Hall" />
             </div>
 
-            <!-- 删除了 Short Description 输入框，仅保留 Notes -->
             <div class="sm:col-span-2">
               <label class="block text-xs font-bold text-primary/80 mb-1 text-red-400">Important Notes (User must read)</label>
               <textarea v-model="calForm.notes" rows="2" class="input w-full py-2 bg-dark/50 border-red-500/30 focus:border-red-500/50 text-sm" placeholder="e.g. Please bring your Bible and jacket."></textarea>
@@ -314,12 +559,16 @@ definePageMeta({ requiresAuth: true, ssr: false })
 import { ref, computed, reactive, onMounted } from 'vue'
 import { useRouter } from '#imports'
 import { useAuthStore } from '~/stores/auth'
-import { Bell, Calendar as CalendarIcon, Plus, Edit, Trash2, AlertCircle, MapPin, Clock } from 'lucide-vue-next'
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore'
+import { useCampersStore } from '~/stores/campers'
+// 新增引入了 Trophy 和 Gamepad2
+import { Bell, Calendar as CalendarIcon, Plus, Edit, Trash2, AlertCircle, MapPin, Clock, Users, Edit2, X, Trophy, Gamepad2 } from 'lucide-vue-next'
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase' 
 
 const auth = useAuthStore()
+const campersStore = useCampersStore() 
 const router = useRouter()
+
 const hasMounted = ref(false)
 const isSaving = ref(false)
 const activeTab = ref('announcements') 
@@ -327,6 +576,57 @@ const activeTab = ref('announcements')
 const announcements = ref([])
 const calendarEvents = ref([])
 
+// ==========================================
+// 🎮 游戏分数管理专属状态 (Marks)
+// ==========================================
+const GAME_NAMES = ['破冰游戏', '寻宝大作战', '竞技拔河', '终极密室']; 
+const firebaseScores = ref([]); 
+
+const selectedScoreTeam = ref('');
+const selectedScoreGame = ref('破冰游戏');
+const customMarkValue = ref(null);
+const activeLeaderboardView = ref('Total'); 
+
+// ==========================================
+// 初始化数据加载
+// ==========================================
+onMounted(async () =>  {
+  if (!auth.user?.is_admin) {
+    return router.replace('/dashboard')
+  }
+
+  const db = useDb()
+  try {
+    const promises = [campersStore.initCampers()] 
+
+    if (db) {
+      promises.push(
+        getDocs(collection(db, "announcements")).then(snap => {
+          announcements.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+          announcements.value.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+        }),
+        getDocs(collection(db, "schedules")).then(snap => {
+          calendarEvents.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+          calendarEvents.value.sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`))
+        }),
+        // 加载分数数据
+        getDocs(collection(db, "game_scores")).then(snap => {
+          firebaseScores.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        })
+      )
+    }
+
+    await Promise.all(promises)
+  } catch (error) {
+    console.error("Error fetching data:", error)
+  }
+
+  hasMounted.value = true
+})
+
+// ==========================================
+// CALENDAR & ANNOUNCEMENTS LOGIC
+// ==========================================
 const filterDay = ref('All')
 const filterLocation = ref('All')
 
@@ -351,60 +651,19 @@ const filteredCalendarEvents = computed(() => {
 function formatPublishTime(timestamp, fallbackDate) {
   if (!timestamp) return fallbackDate || '';
   return new Date(timestamp).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true
   });
 }
 
-onMounted(async () =>  {
-  if (!auth.user?.is_admin) {
-    return router.replace('/dashboard')
-  }
-
-  const db = useDb()
-  if (db) {
-    try {
-      const annSnapshot = await getDocs(collection(db, "announcements"))
-      announcements.value = annSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      announcements.value.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
-
-      const calSnapshot = await getDocs(collection(db, "schedules"))
-      calendarEvents.value = calSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      
-      calendarEvents.value.sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`))
-    } catch (error) {
-      console.error("Error fetching data:", error)
-    }
-  }
-
-  hasMounted.value = true
-})
-
-// === 弹窗状态 ===
 const showAnnModal = ref(false)
 const annForm = reactive({ id: null, title: '', description: '', date: '', createdAt: null })
-
 const showCalModal = ref(false)
-// 移除了 description
 const calForm = reactive({ 
-  id: null, 
-  name: '', 
-  day: 'Day 1', 
-  date: '2026-08-28', 
-  time: '', 
-  location: '', 
-  duration: 60, 
-  notes: '', 
-  notifyChange: false 
+  id: null, name: '', day: 'Day 1', date: '2026-08-28', 
+  time: '', location: '', duration: 60, notes: '', notifyChange: false 
 })
 
-// ==========================================
-// ANNOUNCEMENT METHODS
-// ==========================================
 function openAnnModal(ann = null) {
   if (ann) Object.assign(annForm, ann)
   else Object.assign(annForm, { id: null, title: '', description: '', date: '', createdAt: null })
@@ -413,27 +672,17 @@ function openAnnModal(ann = null) {
 
 async function saveAnnouncement() {
   if (!annForm.title || !annForm.description) return alert("Title and Description are required!")
-  
   const db = useDb()
   if (!db) return
   isSaving.value = true
-  
   const formattedDate = new Date().toLocaleString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true 
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true 
   })
-
   const payload = {
-    title: annForm.title,
-    description: annForm.description,
+    title: annForm.title, description: annForm.description,
     date: annForm.id ? annForm.date : formattedDate,
     createdAt: annForm.id ? (annForm.createdAt || Date.now()) : Date.now()
   }
-
   try {
     if (annForm.id) {
       await updateDoc(doc(db, "announcements", annForm.id), payload)
@@ -443,7 +692,6 @@ async function saveAnnouncement() {
       const docRef = await addDoc(collection(db, "announcements"), payload)
       announcements.value.unshift({ id: docRef.id, ...payload }) 
     }
-    
     announcements.value.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
     showAnnModal.value = false
   } catch (error) {
@@ -465,24 +713,12 @@ async function deleteAnnouncement(id) {
   }
 }
 
-// ==========================================
-// CALENDAR METHODS
-// ==========================================
 function openCalModal(event = null) {
   if (event) {
     Object.assign(calForm, event, { notifyChange: false }) 
   } else {
-    // 移除了 description
     Object.assign(calForm, { 
-      id: null, 
-      name: '', 
-      day: 'Day 1', 
-      date: '2026-08-28', 
-      time: '14:00', 
-      location: '', 
-      duration: 60, 
-      notes: '', 
-      notifyChange: false 
+      id: null, name: '', day: 'Day 1', date: '2026-08-28', time: '14:00', location: '', duration: 60, notes: '', notifyChange: false 
     })
   }
   showCalModal.value = true
@@ -490,22 +726,13 @@ function openCalModal(event = null) {
 
 async function saveCalendar() {
   if (!calForm.name || !calForm.date || !calForm.time) return alert("Name, Date, and Time are required!")
-
   const db = useDb()
   if (!db) return
   isSaving.value = true
-
-  // 移除了 description
   const payload = {
-    name: calForm.name,
-    day: calForm.day,
-    date: calForm.date,
-    time: calForm.time,
-    location: calForm.location,
-    duration: Number(calForm.duration),
-    notes: calForm.notes
+    name: calForm.name, day: calForm.day, date: calForm.date, time: calForm.time,
+    location: calForm.location, duration: Number(calForm.duration), notes: calForm.notes
   }
-
   try {
     if (calForm.id) {
       await updateDoc(doc(db, "schedules", calForm.id), payload)
@@ -515,7 +742,6 @@ async function saveCalendar() {
       const docRef = await addDoc(collection(db, "schedules"), payload)
       calendarEvents.value.push({ id: docRef.id, ...payload })
     }
-    
     calendarEvents.value.sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`))
     showCalModal.value = false
   } catch (error) {
@@ -536,6 +762,222 @@ async function deleteCalendarEvent(id) {
     console.error("Error deleting event:", error)
   }
 }
+
+// ==========================================
+// MANAGE TEAMS LOGIC 
+// ==========================================
+
+const records = computed(() =>
+  campersStore.campers.map((c) => ({
+    id               : c.id,
+    fullName         : c.name,
+    gender           : c.gender,
+    group            : c.group || "",
+    status           : c.status,
+    room_name        : c.room_name,
+    transport        : c.transport,
+    preferred_language: c.preferred_language,
+    secret_identity  : c.secret_identity,
+    secretAngel      : c.secret_angel?.id ?? '',
+    iceBreakingTarget: c.ice_breaking?.target ?? '',
+    iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
+  }))
+);
+
+const showTeamModal = ref(false);
+const modalTeamName = ref('');
+const teamModalSearch = ref('');
+const selectedCamperIds = ref([]);
+const isEditingExistingTeam = ref(false);
+const originalTeamName = ref('');
+const manualEmptyTeams = ref([]);
+
+const teamsList = computed(() => {
+  const map = new Map();
+  records.value.forEach(record => {
+    if (record.group) {
+      if (!map.has(record.group)) { map.set(record.group, { name: record.group, members: [] }); }
+      map.get(record.group).members.push(record);
+    }
+  });
+  manualEmptyTeams.value.forEach(tName => {
+    if (!map.has(tName)) { map.set(tName, { name: tName, members: [] }); }
+  });
+  return Array.from(map.values());
+});
+
+const filteredModalCampers = computed(() => {
+  if (!teamModalSearch.value.trim()) return records.value;
+  const query = teamModalSearch.value.toLowerCase();
+  return records.value.filter(c => c.fullName.toLowerCase().includes(query));
+});
+
+function addNewTeam() {
+  isEditingExistingTeam.value = false;
+  originalTeamName.value = '';
+  modalTeamName.value = '';
+  teamModalSearch.value = '';
+  selectedCamperIds.value = [];
+  showTeamModal.value = true;
+}
+
+function editTeam(team) {
+  isEditingExistingTeam.value = true;
+  originalTeamName.value = team.name;
+  modalTeamName.value = team.name;
+  teamModalSearch.value = '';
+  selectedCamperIds.value = team.members.map(m => m.id);
+  showTeamModal.value = true;
+}
+
+const allSelected = computed(() => {
+  return filteredModalCampers.value.length > 0 && 
+         selectedCamperIds.value.length === filteredModalCampers.value.length;
+});
+
+function toggleSelectAll(event) {
+  if (event.target.checked) {
+    const ids = filteredModalCampers.value.map(c => c.id);
+    selectedCamperIds.value = [...new Set([...selectedCamperIds.value, ...ids])];
+  } else {
+    const ids = filteredModalCampers.value.map(c => c.id);
+    selectedCamperIds.value = selectedCamperIds.value.filter(id => !ids.includes(id));
+  }
+}
+
+async function saveTeamModal() {
+  const targetTeamName = modalTeamName.value.trim();
+  if (!targetTeamName) return alert('Please enter a team name!');
+
+  hasMounted.value = false; 
+
+  if (isEditingExistingTeam.value && targetTeamName !== originalTeamName.value) {
+    const oldMembers = records.value.filter(r => r.group === originalTeamName.value);
+    for (const om of oldMembers) {
+      if (!selectedCamperIds.value.includes(om.id)) await updateCamperGroupInDB(om, '');
+    }
+    manualEmptyTeams.value = manualEmptyTeams.value.filter(n => n !== originalTeamName.value);
+  }
+
+  for (const camper of records.value) {
+    if (selectedCamperIds.value.includes(camper.id)) {
+      if (camper.group !== targetTeamName) await updateCamperGroupInDB(camper, targetTeamName);
+    } else {
+      if (camper.group === targetTeamName || (isEditingExistingTeam.value && camper.group === originalTeamName.value)) {
+        await updateCamperGroupInDB(camper, '');
+      }
+    }
+  }
+
+  if (selectedCamperIds.value.length === 0) {
+    if (!manualEmptyTeams.value.includes(targetTeamName)) manualEmptyTeams.value.push(targetTeamName);
+  } else {
+    manualEmptyTeams.value = manualEmptyTeams.value.filter(n => n !== targetTeamName);
+  }
+
+  // 修复了 db 未定义的问题
+  const db = useDb();
+  if (db) {
+    await setDoc(doc(db, "teams", targetTeamName), {
+      teamName: targetTeamName,
+      updatedAt: new Date(),
+      memberCount: selectedCamperIds.value.length
+    });
+  }
+
+  showTeamModal.value = false;
+  hasMounted.value = true; 
+}
+
+async function updateCamperGroupInDB(record, newGroupName) {
+  const updateInfo = {
+    status            : record.status,
+    group             : newGroupName,
+    room_name         : record.room_name,
+    transport         : record.transport,
+    preferred_language: record.preferred_language,
+    secret_identity   : record.secret_identity,
+    secret_angel      : record.secretAngel,
+    ice_breaking      : { riddle: record.iceBreakingRiddle, target: record.iceBreakingTarget },
+    id                : record.id,
+  }
+  await campersStore.updateCamper(updateInfo);
+}
+
+// ==========================================
+// 📊 分数运算与排行榜核心算法 (Marks Methods)
+// ==========================================
+
+function getGameScore(teamName, gameName) {
+  const record = firebaseScores.value.find(s => s.id === teamName);
+  if (record && record.scores && record.scores[gameName] !== undefined) {
+    return record.scores[gameName];
+  }
+  return 0; 
+}
+
+function getTeamTotalScore(teamName) {
+  const record = firebaseScores.value.find(s => s.id === teamName);
+  return record?.totalScore || 0;
+}
+
+async function adjustMark(value) {
+  const val = parseInt(value);
+  if (isNaN(val) || val === 0) return alert('请输入有效的非零整数分值！');
+  if (!selectedScoreTeam.value) return;
+
+  const db = useDb();
+  if (!db) return;
+
+  const teamName = selectedScoreTeam.value;
+  const gameName = selectedScoreGame.value;
+
+  const currentScore = getGameScore(teamName, gameName);
+  const newGameScore = currentScore + val;
+
+  const updatedScoresMap = {};
+  GAME_NAMES.forEach(g => {
+    updatedScoresMap[g] = g === gameName ? newGameScore : getGameScore(teamName, g);
+  });
+  const newTotalScore = Object.values(updatedScoresMap).reduce((sum, score) => sum + score, 0);
+
+  const payload = {
+    teamName: teamName,
+    scores: updatedScoresMap,
+    totalScore: newTotalScore,
+    updatedAt: Date.now()
+  };
+
+  try {
+    hasMounted.value = false;
+    await setDoc(doc(db, "game_scores", teamName), payload);
+    
+    const existIdx = firebaseScores.value.findIndex(s => s.id === teamName);
+    if (existIdx > -1) {
+      firebaseScores.value[existIdx] = { id: teamName, ...payload };
+    } else {
+      firebaseScores.value.push({ id: teamName, ...payload });
+    }
+    
+    customMarkValue.value = null; 
+  } catch (err) {
+    console.error('Error saving score:', err);
+  } finally {
+    hasMounted.value = true;
+  }
+}
+
+const sortedLeaderboardData = computed(() => {
+  const view = activeLeaderboardView.value;
+  const mapped = teamsList.value.map(team => {
+    return {
+      teamName: team.name,
+      score: view === 'Total' ? getTeamTotalScore(team.name) : getGameScore(team.name, view)
+    };
+  });
+  return mapped.sort((a, b) => b.score - a.score);
+});
+
 </script>
 
 <style scoped>
