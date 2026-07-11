@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container bg-[#0f1015] min-h-screen p-4 md:p-8 text-white/80 font-sans selection:bg-yellow-500/30">
+  <div class="page-container bg-dark min-h-screen p-4 md:p-8 text-white/80 font-sans selection:bg-yellow-500/30">
     <div class="max-w-[1400px] mx-auto space-y-6">
       
       <!-- ==================== 1. HERO BANNER ==================== -->
@@ -15,12 +15,18 @@
         <!-- 渐变遮罩 -->
         <div class="absolute inset-0 bg-gradient-to-r from-[#111216] via-[#111216]/60 to-[#111216]/40"></div>
         
-        <div class="relative z-10 flex flex-col xl:flex-row justify-between p-8 md:p-10 gap-8">
+        <!-- 调整了手机端的 padding (p-6) 让整体呼吸感更好 -->
+        <div class="relative z-10 flex flex-col xl:flex-row justify-between p-6 md:p-10 gap-8">
+          
           <!-- Left Info -->
-          <div class="flex flex-col justify-center">
+          <!-- 🟢 修复1：加上了 mt-4 lg:mt-0，让手机端的名字部分稍微往下推一点 -->
+          <div class="flex flex-col justify-center mt-12 lg:mt-20">
             <p class="text-white/60 mb-1">Good Morning,</p>
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">
-              {{ auth.user?.name || 'Camper' }} <span class="wave">👋</span>
+            
+            <!-- 🟢 修复2：加上 flex flex-wrap items-center gap-3，让名字和👋完全水平对齐 -->
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight flex flex-wrap items-center gap-3">
+              <span>{{ auth.user?.name || 'Camper' }}</span>
+              <span class="wave pb-1">👋</span>
             </h1>
             <p class="text-white/50 text-sm mb-6">Welcome back! Ready for a blessed day?</p>
             
@@ -46,19 +52,21 @@
           </div>
 
           <!-- Right: Countdown Card -->
-          <div class="xl:w-[400px] bg-[#1a1b23]/80 backdrop-blur-md rounded-2xl border border-white/10 p-6 flex flex-col justify-center shadow-xl">
+          <!-- 🟢 修复3：加上 w-full 确保在手机端占满宽度，视觉更平衡 -->
+          <div class="xl:w-[400px] w-full bg-[#1a1b23]/80 backdrop-blur-md rounded-2xl border border-white/10 p-6 flex flex-col justify-center shadow-xl">
             <!-- 标题 Container (Yellow) -->
             <div class="flex justify-between items-center mb-6 bg-gradient-to-r from-yellow-500/20 to-yellow-500/5 border border-yellow-500/20 px-4 py-3 rounded-xl">
-               <div>
-                 <h3 class="font-bold flex items-center gap-2 mb-0.5 text-yellow-500">
-                   <Sun class="w-5 h-5" /> DAY 1
-                 </h3>
-                 <p class="text-yellow-500/60 text-xs">Registration begins in</p>
-               </div>
-               <Send class="w-6 h-6 text-yellow-500 opacity-80" />
+              <div>
+                <h3 class="font-bold flex items-center gap-2 mb-0.5 text-yellow-500">
+                  <Sun class="w-5 h-5" /> DAY 1
+                </h3>
+                <p class="text-yellow-500/60 text-xs">Registration begins in</p>
+              </div>
+              <Send class="w-6 h-6 text-yellow-500 opacity-80" />
             </div>
 
-            <div class="flex items-center gap-4 text-3xl font-bold text-white mb-8 px-2">
+            <!-- 🟢 修复4：将 gap-4 改成了 gap-6，加上了 justify-center 完美居中倒计时 -->
+            <div class="flex items-center justify-center gap-6 text-3xl font-bold text-white mb-8 w-full">
               <div class="flex flex-col items-center">
                 <span>{{ countdown.hrs }}</span>
                 <span class="text-[10px] text-white/40 font-normal mt-1">HRS</span>
@@ -83,93 +91,94 @@
       </div>
 
       <!-- ==================== 2. STATS ROW ==================== -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Stat 1 -->
-        <div class="bg-[#15161c] border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-[#1a1b23] transition-colors">
-          <div class="w-12 h-12 rounded-full border border-yellow-500/20 bg-yellow-500/5 text-yellow-500 flex items-center justify-center shrink-0">
-            <Calendar class="w-5 h-5" />
-          </div>
-          <div>
-            <p class="text-white/40 text-xs mb-0.5">Today's Events</p>
-            <p class="text-xl font-bold text-white leading-none">{{ todayTotalEvents }}</p>
-            <p class="text-[10px] text-white/30 mt-1">Events scheduled</p>
-          </div>
-        </div>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        <!-- Stat 2 -->
-        <div @click="isGroupModalOpen = true" class="bg-[#15161c] border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-[#1a1b23] transition-colors cursor-pointer group">
-          <div class="w-12 h-12 rounded-full border border-purple-500/20 bg-purple-500/5 text-purple-400 flex items-center justify-center shrink-0 group-hover:bg-purple-500/10 transition-colors">
-            <Users class="w-5 h-5" />
-          </div>
-          <div>
-            <p class="text-white/40 text-xs mb-0.5">Group Members</p>
-            <p class="text-xl font-bold text-white leading-none">{{ myGroupMembers.length || 0 }}</p>
-            <p class="text-[10px] text-white/30 mt-1">Click to view team</p>
-          </div>
-        </div>
-
-        <!-- ==================== 队友列表弹窗 (Group Modal) ==================== -->
-        <div v-if="isGroupModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0f1015]/80 backdrop-blur-sm" @click.self="isGroupModalOpen = false">
-          <div class="bg-[#15161c] border border-white/10 rounded-3xl p-6 w-full max-w-sm shadow-2xl transform transition-all">
-            <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/5">
-              <div>
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                  <Users class="w-5 h-5 text-purple-400" /> {{ auth.user?.group || 'My Group' }}
-                </h3>
-                <p class="text-xs text-white/40 mt-1">Your assigned teammates</p>
-              </div>
-              <button @click="isGroupModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-white/50 hover:bg-white/10 hover:text-white transition-colors">
-                ✕
-              </button>
+          <!-- Stat 1: Today's Events -->
+          <div class="bg-[#15161c] border border-white/5 rounded-2xl p-5 hover:bg-[#1a1b23] transition-colors flex flex-col justify-between">
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-500/5 border border-yellow-500/20 px-3 py-1.5 rounded-xl mb-4 w-fit">
+              <Calendar class="w-4 h-4 text-yellow-500" />
+              <span class="text-xs font-bold text-yellow-500">Today's Events</span>
             </div>
-            
-            <div class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 -mr-2">
-              <div v-for="member in myGroupMembers" :key="member.id" class="flex items-center gap-3 bg-[#1a1b23] border border-white/5 rounded-xl p-3 hover:border-purple-500/30 transition-colors">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 text-purple-400 flex items-center justify-center text-lg shrink-0 border border-white/5">
-                  {{ member.avatar || '👤' }}
-                </div>
-                <div class="flex-1">
-                  <p class="text-sm font-bold text-white flex items-center gap-2">
-                    {{ member.name || member.fullName }}
-                    <span v-if="member.id === auth.user.id" class="text-[9px] font-bold bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded uppercase tracking-wider">
-                      You
-                    </span>
-                  </p>
-                  <p v-if="member.gender" class="text-[10px] text-white/40 mt-0.5 uppercase tracking-wide">{{ member.gender }}</p>
-                </div>
-              </div>
-              <div v-if="myGroupMembers.length === 0" class="text-center py-6 text-white/40 text-sm italic">
-                No members found in your group.
-              </div>
+            <div>
+              <p class="text-3xl font-bold text-white leading-none">{{ todayTotalEvents }}</p>
+              <p class="text-[11px] text-white/40 mt-2">Events scheduled</p>
             </div>
           </div>
-        </div>
+          
+          <!-- Stat 2: Group Members -->
+          <div @click="isGroupModalOpen = true" class="bg-[#15161c] border border-white/5 rounded-2xl p-5 hover:border-yellow-500/30 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-500/5 border border-yellow-500/20 px-3 py-1.5 rounded-xl mb-4 w-fit group-hover:bg-yellow-500/20 transition-colors">
+              <Users class="w-4 h-4 text-yellow-500" />
+              <span class="text-xs font-bold text-yellow-500">Group Members</span>
+            </div>
+            <div>
+              <p class="text-3xl font-bold text-white leading-none">{{ myGroupMembers.length || 0 }}</p>
+              <p class="text-[11px] text-yellow-500/70 mt-2 group-hover:text-yellow-500 transition-colors">Click to view team →</p>
+            </div>
+          </div>
 
-        <!-- Stat 3 -->
-        <div class="bg-[#15161c] border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-[#1a1b23] transition-colors">
-          <div class="w-12 h-12 rounded-full border border-red-500/20 bg-red-500/5 text-red-400 flex items-center justify-center shrink-0">
-            <Heart class="w-5 h-5" />
+          <!-- ==================== 队友列表弹窗 (Group Modal) ==================== -->
+          <div v-if="isGroupModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0f1015]/80 backdrop-blur-sm" @click.self="isGroupModalOpen = false">
+            <div class="bg-[#15161c] border border-white/10 rounded-3xl p-6 w-full max-w-sm shadow-2xl transform transition-all">
+              <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/5">
+                <div>
+                  <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <Users class="w-5 h-5 text-yellow-500" /> {{ auth.user?.group || 'My Group' }}
+                  </h3>
+                  <p class="text-xs text-white/40 mt-1">Your assigned teammates</p>
+                </div>
+                <button @click="isGroupModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-white/50 hover:bg-white/10 hover:text-white transition-colors">
+                  ✕
+                </button>
+              </div>
+              
+              <div class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2 -mr-2">
+                <div v-for="member in myGroupMembers" :key="member.id" class="flex items-center gap-3 bg-[#1a1b23] border border-white/5 rounded-xl p-3 hover:border-yellow-500/30 transition-colors">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 text-yellow-500 flex items-center justify-center text-lg shrink-0 border border-yellow-500/20">
+                    {{ member.avatar || '👤' }}
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-bold text-white flex items-center gap-2">
+                      {{ member.name || member.fullName }}
+                      <span v-if="member.id === auth.user.id" class="text-[9px] font-bold bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                        You
+                      </span>
+                    </p>
+                    <p v-if="member.gender" class="text-[10px] text-white/40 mt-0.5 uppercase tracking-wide">{{ member.gender }}</p>
+                  </div>
+                </div>
+                <div v-if="myGroupMembers.length === 0" class="text-center py-6 text-white/40 text-sm italic">
+                  No members found in your group.
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <p class="text-white/40 text-xs mb-0.5">Secret Angel</p>
-            <p class="text-lg font-bold text-white leading-none">Assigned</p>
-            <p class="text-[10px] text-white/30 mt-1">Reveal on Night 1</p>
+
+          <!-- Stat 3: Secret Angel -->
+          <div class="bg-[#15161c] border border-white/5 rounded-2xl p-5 hover:bg-[#1a1b23] transition-colors flex flex-col justify-between">
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-500/5 border border-yellow-500/20 px-3 py-1.5 rounded-xl mb-4 w-fit">
+              <Heart class="w-4 h-4 text-yellow-500" />
+              <span class="text-xs font-bold text-yellow-500">Secret Angel</span>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-white leading-none">Assigned</p>
+              <p class="text-[11px] text-white/40 mt-2">Reveal on Night 1</p>
+            </div>
+          </div>
+
+          <!-- Stat 4: Announcements -->
+          <div class="bg-[#15161c] border border-white/5 rounded-2xl p-5 hover:bg-[#1a1b23] transition-colors flex flex-col justify-between">
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-500/5 border border-yellow-500/20 px-3 py-1.5 rounded-xl mb-4 w-fit">
+              <Megaphone class="w-4 h-4 text-yellow-500" />
+              <span class="text-xs font-bold text-yellow-500">Announcements</span>
+            </div>
+            <div>
+              <p class="text-3xl font-bold text-white leading-none">{{ unreadCount }}</p>
+              <p class="text-[11px] text-white/40 mt-2">Unread updates</p>
+            </div>
           </div>
         </div>
-
-        <!-- Stat 4 -->
-        <div class="bg-[#15161c] border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-[#1a1b23] transition-colors">
-          <div class="w-12 h-12 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-400 flex items-center justify-center shrink-0">
-            <Megaphone class="w-5 h-5" />
-          </div>
-          <div>
-            <p class="text-white/40 text-xs mb-0.5">Announcements</p>
-            <p class="text-xl font-bold text-white leading-none">{{ unreadCount }}</p>
-            <p class="text-[10px] text-white/30 mt-1">Unread updates</p>
-          </div>
-        </div>
-      </div>
-
+      
       <!-- ==================== 3. MAIN CONTENT GRID ==================== -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
