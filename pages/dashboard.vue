@@ -259,9 +259,6 @@
             <h2 class="font-bold flex items-center gap-2 text-yellow-500">
               <Megaphone class="w-5 h-5 text-red-400" /> Announcements
             </h2>
-            <button class="text-xs text-white/40 hover:text-yellow-500 flex items-center gap-1 transition-colors">
-              View All <ChevronRight class="w-3 h-3" />
-            </button>
           </div>
 
           <div v-if="isLoading" class="text-center py-10 text-white/30 text-sm animate-pulse">
