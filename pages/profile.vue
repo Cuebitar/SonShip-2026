@@ -1,40 +1,51 @@
 <template>
   <div class="page-container bg-dark">
-    <div class="container-inner py-10 max-w-4xl mx-auto px-4">
+    <!-- Banner Image (新增的顶部风景图) -->
+    <!-- 请将 url 替换为你实际的背景图路径 -->
+    <div class="w-full h-48 bg-cover bg-center" 
+     :style="{ backgroundImage: `linear-gradient(to bottom, transparent, var(--color-bg-dark, #111)), url(${firecamp})` }">
+    </div>
+    <div class="container-inner max-w-7xl mx-auto px-4 -mt-20 relative z-10 pb-10">
 
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-8 gap-2">
-        <h1 class="section-title truncate">{{ t('profile.title') }}</h1>
+      <!-- Header (保留了你原本的翻译和按钮类名) -->
+      <div class="flex items-end justify-between mb-8 gap-2">
+        <div>
+          <h1 class="section-title truncate text-4xl mb-1">{{ t('profile.title') }}</h1>
+          <p class="font-body text-tertiary/70 text-sm">Manage your camp profile and important information</p>
+        </div>
         <div class="flex-shrink-0">
-          <button v-if="!editing" @click="editing = true" class="btn-secondary btn-sm">
+          <button v-if="!editing" @click="editing = true" class="btn-secondary btn-sm flex items-center gap-2">
             <Pencil class="w-4 h-4" /> {{ t('profile.edit') }}
           </button>
           <div v-else class="flex gap-2">
-            <button @click="save" class="btn-primary btn-sm">
+            <button @click="save" class="btn-primary btn-sm flex items-center gap-2">
               <Save class="w-4 h-4" /> {{ t('profile.save') }}
             </button>
-            <button @click="cancel" class="btn-ghost btn-sm">
+            <button @click="cancel" class="btn-ghost btn-sm flex items-center gap-2">
               <X class="w-4 h-4" /> {{ t('profile.cancel') }}
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Main grid: left fixed, right flexible -->
-      <div class="grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)] gap-6">
+      <!-- Main grid: 三列布局以匹配设计图 -->
+      <div class="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_280px] gap-6">
 
-        <!-- Left: Avatar + QR -->
-        <div class="space-y-4 min-w-0">
-          <div class="card p-6 text-center overflow-hidden">
-            <div class="text-6xl mb-3">{{ profile.avatar }}</div>
+        <!-- Left: Avatar + QR (保留大头像和原本的变量) -->
+        <div class="card p-6 flex flex-col items-center text-center relative overflow-hidden h-full">
+          <div class="relative z-10 w-full">
+            <h2 class="font-heading font-bold text-lg text-primary mb-1">Hello, Camper! 👋</h2>
+            <p class="font-body text-xs text-tertiary/70 mb-6">Ready for your next adventure?</p>
+
+            <!-- 保留原本的大头像 -->
+            <div class="text-6xl mb-4">{{ profile.avatar }}</div>
+            
             <h2 class="font-heading font-bold text-lg text-tertiary truncate">{{ profile.name }}</h2>
-            <p class="font-body text-sm text-primary truncate">{{ profile.group }}</p>
-          </div>
+            <p class="font-body text-sm text-primary truncate font-semibold mb-8">{{ profile.group }}</p>
 
-          <div class="card p-6 text-center overflow-hidden">
             <h3 class="font-heading font-bold text-primary mb-3 text-sm">{{ t('profile.qr_title') }}</h3>
             <div class="qr-wrapper mx-auto mb-3"
-              style="width:100px;height:100px;background:#F6E9D7;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px">
+              style="width:120px;height:120px;background:#F6E9D7;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px">
               <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;width:100%">
                 <div v-for="cell in qrPattern" :key="cell.id"
                   :style="`background:${cell.filled ? '#3A2620' : '#F6E9D7'};border-radius:1px;aspect-ratio:1`">
@@ -44,15 +55,21 @@
             <p class="font-heading font-black text-xl text-primary">{{ profile.campCode }}</p>
             <p class="font-body text-xs text-tertiary/50 mt-1 leading-tight">{{ t('profile.qr_subtitle') }}</p>
           </div>
+          
+          <!-- 底部风景剪影装饰 (可通过 CSS 或 img 实现) -->
+          <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
         </div>
 
-        <!-- Right: Info cards -->
+        <!-- Middle: Info cards (保留原本的类名与结构，加入 Icon) -->
         <div class="space-y-5 min-w-0">
-
+          
           <!-- Personal -->
           <div class="card p-6 overflow-hidden">
-            <h3 class="font-heading font-bold text-primary mb-4">{{ t('profile.personal') }}</h3>
-            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+            <div class="flex items-center gap-3 mb-5">
+              <User class="w-5 h-5 text-primary" />
+              <h3 class="font-heading font-bold text-primary">{{ t('profile.personal') }}</h3>
+            </div>
+            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
               <div class="min-w-0">
                 <label class="input-label">{{ t('common.name') }}</label>
                 <input v-if="editing" v-model="draft.name" class="input w-full min-w-0" />
@@ -76,42 +93,51 @@
 
           <!-- Emergency Contact -->
           <div class="card p-6 overflow-hidden">
-            <h3 class="font-heading font-bold text-primary mb-4">{{ t('profile.emergency') }}</h3>
-            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+            <div class="flex items-center gap-3 mb-5">
+              <Phone class="w-5 h-5 text-primary" />
+              <h3 class="font-heading font-bold text-primary">{{ t('profile.emergency') }}</h3>
+            </div>
+            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
               <div class="min-w-0">
                 <label class="input-label">Name</label>
                 <input v-if="editing" v-model="draft.emergency.name" class="input w-full min-w-0" />
-                <p v-else class="font-body text-tertiary truncate">{{ profile.emergency?.name }}</p>
+                <p v-else class="font-body text-tertiary truncate">{{ profile.emergency?.name || '-' }}</p>
               </div>
               <div class="min-w-0">
                 <label class="input-label">Phone</label>
                 <input v-if="editing" v-model="draft.emergency.phone" class="input w-full min-w-0" />
-                <p v-else class="font-body text-tertiary truncate">{{ profile.emergency?.phone }}</p>
+                <p v-else class="font-body text-tertiary truncate">{{ profile.emergency?.phone || '-' }}</p>
               </div>
               <div class="min-w-0">
                 <label class="input-label">Relation</label>
                 <input v-if="editing" v-model="draft.emergency.relationship" class="input w-full min-w-0" />
-                <p v-else class="font-body text-tertiary truncate">{{ profile.emergency?.relationship }}</p>
+                <p v-else class="font-body text-tertiary truncate">{{ profile.emergency?.relationship || '-' }}</p>
               </div>
             </div>
           </div>
 
           <!-- Medical -->
           <div class="card p-6 overflow-hidden">
-            <h3 class="font-heading font-bold text-primary mb-4">{{ t('profile.medical') }}</h3>
-            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+            <div class="flex items-center gap-3 mb-5">
+              <Heart class="w-5 h-5 text-primary" />
+              <h3 class="font-heading font-bold text-primary">{{ t('profile.medical') }}</h3>
+            </div>
+            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
               <div v-for="field in ['allergies', 'medications', 'conditions']" :key="field" class="min-w-0">
                 <label class="input-label capitalize">{{ field }}</label>
                 <input v-if="editing" v-model="draft.medicalInfo[field]" class="input w-full min-w-0" />
-                <p v-else class="font-body text-tertiary truncate">{{ profile.medicalInfo?.[field] }}</p>
+                <p v-else class="font-body text-tertiary truncate">{{ profile.medicalInfo?.[field] || '-' }}</p>
               </div>
             </div>
           </div>
 
           <!-- Preferences -->
           <div class="card p-6 overflow-hidden">
-            <h3 class="font-heading font-bold text-primary mb-4">{{ t('profile.preferences') }}</h3>
-            <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-5">
+              <Utensils class="w-5 h-5 text-primary" />
+              <h3 class="font-heading font-bold text-primary">{{ t('profile.preferences') }}</h3>
+            </div>
+            <div class="min-w-0 w-full sm:w-1/2">
               <label class="input-label">Dietary Preference</label>
               <select v-if="editing" v-model="draft.dietary" class="input w-full min-w-0">
                 <option>No restrictions</option>
@@ -120,11 +146,62 @@
                 <option>Halal</option>
                 <option>Gluten-free</option>
               </select>
-              <p v-else class="font-body text-tertiary">{{ profile.dietary }}</p>
+              <p v-else class="font-body text-tertiary">{{ profile.dietary || '-' }}</p>
             </div>
           </div>
 
         </div>
+
+        <!-- Right: Quick Info (新增的第三列，使用你的 .card 样式) -->
+        <div class="card p-6 overflow-hidden h-fit relative">
+          <div class="flex items-center gap-3 mb-6 relative z-10">
+            <Tent class="w-5 h-5 text-primary" />
+            <h3 class="font-heading font-bold text-primary">Quick Info</h3>
+          </div>
+          
+          <div class="space-y-6 relative z-10">
+            <div class="flex gap-4 items-start">
+              <CalendarDays class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
+              <div class="flex flex-col min-w-0">
+                <span class="input-label mb-0.5">Member Since</span>
+                <span class="font-body text-tertiary truncate">May 2024</span>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <IdCard class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
+              <div class="flex flex-col min-w-0">
+                <span class="input-label mb-0.5">Member ID</span>
+                <span class="font-body text-tertiary truncate">CMP-2024-006</span>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <Mountain class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
+              <div class="flex flex-col min-w-0">
+                <span class="input-label mb-0.5">Total Trips</span>
+                <span class="font-body text-tertiary truncate">3</span>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <MapPin class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
+              <div class="flex flex-col min-w-0">
+                <span class="input-label mb-0.5">Favourite Spot</span>
+                <span class="font-body text-tertiary truncate">Pine Hill Campsite</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Share Button (Bottom Right) -->
+          <button class="absolute bottom-5 right-5 w-10 h-10 rounded-full flex items-center justify-center bg-black/20 hover:bg-black/40 text-primary transition-colors z-10 backdrop-blur-sm">
+            <Share class="w-4 h-4" />
+          </button>
+
+          <!-- 底部风景剪影装饰 -->
+          <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -137,7 +214,12 @@ import { ref, computed, reactive, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
 import { useCampersStore } from '~/stores/campers'
-import { Pencil, Save, X } from 'lucide-vue-next'
+// 确保引入了新增的图标
+import { 
+  Pencil, Save, X, User, Phone, Heart, Utensils, 
+  Tent, CalendarDays, IdCard, Mountain, MapPin, Share 
+} from 'lucide-vue-next'
+import firecamp from '~/assets/background/campFire.jpg'
 
 const { t } = useI18n()
 const auth = useAuthStore()
@@ -158,27 +240,25 @@ function startEdit() {
   draft.name = p.name ?? ''
   draft.phone = p.phone ?? ''
   draft.dietary = p.dietary ?? ''
-  // Assign individually to avoid overwriting the reactive reference
+  
   draft.emergency.name = p.emergency?.name ?? ''
   draft.emergency.phone = p.emergency?.phone ?? ''
   draft.emergency.relationship = p.emergency?.relationship ?? ''
+  
   draft.medicalInfo.allergies = p.medicalInfo?.allergies ?? ''
   draft.medicalInfo.medications = p.medicalInfo?.medications ?? ''
   draft.medicalInfo.conditions = p.medicalInfo?.conditions ?? ''
 }
 
 function save() {
-  // Resolve the target: prefer the store record, fall back to auth.user
   const camper = campersStore.getCamperById(auth.user?.id)
   const target = camper ?? auth.user
 
   if (target) {
-    // Write flat fields
     target.name = draft.name
     target.phone = draft.phone
     target.dietary = draft.dietary
 
-    // Write nested fields individually so Vue tracks each property
     if (!target.emergency) target.emergency = {}
     target.emergency.name = draft.emergency.name
     target.emergency.phone = draft.emergency.phone
@@ -189,8 +269,6 @@ function save() {
     target.medicalInfo.medications = draft.medicalInfo.medications
     target.medicalInfo.conditions = draft.medicalInfo.conditions
   }
-
-  // Saved — return to view mode
   editing.value = false
 }
 
@@ -198,7 +276,6 @@ function cancel() {
   editing.value = false
 }
 
-// Generate a simple QR-like pattern from campCode
 const qrPattern = computed(() => {
   const code = profile.value?.campCode || 'SC001'
   let seed = code.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
