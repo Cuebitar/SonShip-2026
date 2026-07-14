@@ -1,171 +1,131 @@
 <template>
-  <div class="page-container bg-[#0a0a0d] min-h-screen text-white pb-20">
-    <div class="container-inner py-8">
+  <div class="page-container bg-[#0a0a0d] min-h-screen text-white pb-20 font-sans">
+    
+    <!-- 背景氛围 -->
+    <div class="absolute top-0 left-0 w-full h-[500px] bg-[url('~/assets/background/campFire.jpg')] bg-cover bg-center opacity-20 pointer-events-none mask-image-b"></div>
+    <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#0a0a0d]/50 via-[#0a0a0d]/80 to-[#0a0a0d] pointer-events-none"></div>
+
+    <div class="container-inner relative z-10 py-12">
       
-      <!-- 1. 顶部 Banner -->
-      <div class="relative w-full h-40 md:h-52 rounded-3xl overflow-hidden mb-8 border border-white/5 flex flex-col justify-center px-8 md:px-12">
-        <div class="absolute inset-0 bg-[url('~/assets/background/campFire.jpg')] bg-cover bg-center opacity-30"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
-        <h1 class="relative z-10 text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">营会游戏</h1>
-        <p class="relative z-10 text-white/70 font-medium">参与游戏，赢取积分，登上排行榜，成为营会之王！</p>
+      <!-- 1. 页面标题 -->
+      <div class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-3 tracking-wide">
+          营会游戏
+        </h1>
+        <p class="text-white/60 font-medium">团队协作，挑战任务，赢取积分，登上排行榜！</p>
       </div>
 
-      <!-- 主体布局: 左侧 (内容) + 右侧 (个人面板) -->
-      <div class="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-8">
+      <!-- 2. 团队积分榜 -->
+      <div class="bg-[#111218]/80 backdrop-blur-xl rounded-3xl border border-white/5 p-6 md:p-10 mb-16 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-yellow-500/10 blur-[100px] pointer-events-none"></div>
         
-        <!-- 左侧区域 -->
-        <div class="space-y-8">
-          
-          <!-- 队伍积分榜 -->
-          <div class="bg-[#15161c] rounded-3xl border border-white/5 p-6 md:p-8">
-            <div class="flex items-center justify-between mb-6">
-              <div class="flex items-center gap-3">
-                <Trophy class="w-7 h-7 text-yellow-500" />
-                <div>
-                  <h2 class="font-black text-xl text-white">队伍积分榜</h2>
-                  <p class="text-xs text-white/40">各队伍游戏积分实时动态更新</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 text-[10px] font-bold text-red-400 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> LIVE
-              </div>
+        <div class="flex items-start justify-between mb-12 relative z-10">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-yellow-500/20 to-transparent border border-yellow-500/30">
+              <Trophy class="w-6 h-6 text-yellow-500" />
             </div>
+            <div>
+              <h2 class="font-black text-2xl text-white tracking-wide">团队积分榜</h2>
+              <p class="text-xs text-white/50 mt-1">实时更新，每 30 秒会更新</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-bold text-red-400 bg-red-500/10 px-3 py-1.5 rounded-full border border-red-500/20">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> LIVE
+          </div>
+        </div>
 
-            <!-- 队伍列表 (Top Teams) -->
-            <div class="space-y-4">
-              <div v-for="(team, index) in sortedTeams.slice(0, 3)" :key="team.id" 
-                class="flex items-center gap-4 p-4 rounded-2xl bg-[#1a1b23]/50 border border-white/5 transition-all">
-                <!-- 排名图标 -->
-                <div class="w-12 h-12 flex items-center justify-center shrink-0">
-                  <span v-if="index === 0" class="text-3xl">🥇</span>
-                  <span v-else-if="index === 1" class="text-3xl">🥈</span>
-                  <span v-else-if="index === 2" class="text-3xl">🥉</span>
-                  <span v-else class="font-bold text-xl text-white/30">#{{ index + 1 }}</span>
-                </div>
-                
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-bold text-lg text-white truncate">{{ team.name }}</h3>
-                  <div class="flex flex-wrap gap-2 mt-2">
-                    <span v-for="(score, gameName) in team.gameScores" :key="gameName" 
-                      class="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/60">
-                      {{ gameName }} <span class="text-yellow-500 font-bold ml-1">+{{ score }}</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="text-right shrink-0">
-                  <p class="text-3xl font-black text-white leading-none">{{ team.totalScore }}</p>
-                  <p class="text-[10px] text-white/40 font-bold uppercase mt-1">pts</p>
-                </div>
+        <!-- 领奖台 -->
+        <div v-if="sortedTeams.length > 0" class="flex flex-col md:flex-row items-end justify-center gap-6 md:gap-8 mb-12 relative z-10">
+          <!-- 第二名 -->
+          <div v-if="sortedTeams[1]" class="order-2 md:order-1 w-full md:w-[30%] bg-gradient-to-b from-[#1a1c29] to-[#111218] border border-gray-400/30 rounded-2xl p-6 relative flex flex-col items-center text-center pt-12">
+            <div class="absolute -top-4 left-6 w-8 h-10 bg-gradient-to-b from-gray-300 to-gray-500 flex items-center justify-center font-bold text-black clip-ribbon shadow-lg">2</div>
+            <Shield class="w-8 h-8 text-gray-400 mb-3" />
+            <h3 class="text-lg font-bold text-white">{{ sortedTeams[1].name }}</h3>
+            <p class="text-3xl font-black text-gray-300 mb-4">{{ sortedTeams[1].totalScore }} <span class="text-[10px] font-normal text-white/40">PTS</span></p>
+            <div class="w-full border-t border-white/5 pt-4 mt-auto">
+              <div class="flex flex-wrap justify-center gap-1.5 max-h-[70px] overflow-y-auto custom-scrollbar">
+                <span v-for="(score, name) in sortedTeams[1].gameScores" :key="name" class="inline-flex text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/70">
+                  {{ name }}: <span :class="score < 0 ? 'text-red-400' : 'text-gray-300'">{{ score > 0 ? '+'+score : score }}</span>
+                </span>
               </div>
             </div>
           </div>
-
-          <!-- 游戏卡片网格 -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div v-for="game in gamesStore.games" :key="game.id" 
-              class="relative bg-[#15161c] rounded-3xl border border-white/5 p-6 hover:border-yellow-500/30 transition-all overflow-hidden group">
-              <!-- 卡片背景装饰 -->
-              <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              
-              <div class="relative z-10">
-                <span class="text-4xl mb-4 block">{{ game.emoji }}</span>
-                <span class="inline-block px-2 py-1 rounded-md bg-white/5 text-[10px] uppercase tracking-wider text-white/50 mb-3">{{ game.type }}</span>
-                <h3 class="font-bold text-lg text-white mb-2">{{ game.name }}</h3>
-                <p class="text-xs text-white/50 mb-6 line-clamp-2">{{ game.description }}</p>
-                <div class="flex gap-3">
-                  <button @click="startReflex" class="flex-1 bg-yellow-500 text-black font-bold py-2 rounded-xl hover:bg-yellow-400 transition-colors">开始游戏</button>
-                  <button @click="viewRules(game)" class="px-4 bg-white/5 rounded-xl text-white/70 hover:bg-white/10 transition-colors">规则</button>
-                </div>
+          <!-- 第一名 -->
+          <div v-if="sortedTeams[0]" class="order-1 md:order-2 w-full md:w-[35%] bg-gradient-to-b from-[#2a2215] to-[#111218] border border-yellow-500/50 rounded-2xl p-6 relative flex flex-col items-center text-center z-20 md:-translate-y-4 pt-14">
+            <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-12 h-14 bg-gradient-to-b from-yellow-300 to-yellow-600 flex items-center justify-center font-black text-xl text-black clip-ribbon-center shadow-lg shadow-yellow-500/50">1</div>
+            <Crown class="w-12 h-12 text-yellow-500 mb-4" />
+            <h3 class="text-2xl font-black text-white">{{ sortedTeams[0].name }}</h3>
+            <p class="text-5xl font-black text-yellow-500 mb-6">{{ sortedTeams[0].totalScore }} <span class="text-xs font-normal text-white/60">PTS</span></p>
+            <div class="w-full border-t border-yellow-500/20 pt-5 mt-auto">
+              <div class="flex flex-wrap justify-center gap-1.5 max-h-[90px] overflow-y-auto custom-scrollbar">
+                <span v-for="(score, name) in sortedTeams[0].gameScores" :key="name" class="inline-flex text-[10px] px-2 py-1 rounded bg-yellow-500/10 border border-yellow-500/20 text-white/80">
+                  {{ name }}: <span :class="score < 0 ? 'text-red-400' : 'text-yellow-400'">{{ score > 0 ? '+'+score : score }}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- 第三名 -->
+          <div v-if="sortedTeams[2]" class="order-3 w-full md:w-[30%] bg-gradient-to-b from-[#241a16] to-[#111218] border border-orange-700/50 rounded-2xl p-6 relative flex flex-col items-center text-center pt-12">
+            <div class="absolute -top-4 right-6 w-8 h-10 bg-gradient-to-b from-orange-400 to-orange-700 flex items-center justify-center font-bold text-black clip-ribbon shadow-lg">3</div>
+            <Shield class="w-8 h-8 text-orange-500 mb-3" />
+            <h3 class="text-lg font-bold text-white">{{ sortedTeams[2].name }}</h3>
+            <p class="text-3xl font-black text-orange-500 mb-4">{{ sortedTeams[2].totalScore }} <span class="text-[10px] font-normal text-white/40">PTS</span></p>
+            <div class="w-full border-t border-white/5 pt-4 mt-auto">
+              <div class="flex flex-wrap justify-center gap-1.5 max-h-[70px] overflow-y-auto custom-scrollbar">
+                <span v-for="(score, name) in sortedTeams[2].gameScores" :key="name" class="inline-flex text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/70">
+                  {{ name }}: <span :class="score < 0 ? 'text-red-400' : 'text-orange-400'">{{ score > 0 ? '+'+score : score }}</span>
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 右侧个人面板 -->
-        <div class="space-y-6">
-          
-          <!-- Profile Card -->
-          <div class="bg-[#15161c] rounded-3xl border border-white/5 p-6">
-            <div class="flex items-center gap-4 mb-6">
-              <div class="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center text-2xl border border-yellow-500/20">
-                {{ auth.user?.avatar || '👤' }}
-              </div>
-              <div>
-                <h3 class="font-bold text-lg text-white">{{ auth.user?.name }}</h3>
-                <p class="text-sm text-yellow-500 font-medium">队长</p>
-              </div>
+        <!-- 排名 4+ -->
+        <div v-if="sortedTeams.length > 3" class="space-y-3 pt-6 border-t border-white/10 relative z-10">
+          <div v-for="(team, i) in sortedTeams.slice(3)" :key="team.id" class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#1a1b23]/50 border border-white/5">
+            <div class="flex items-center gap-4 w-full md:w-[200px]">
+              <span class="text-xl font-bold text-white/30 w-6 text-center">{{ i + 4 }}</span>
+              <span class="font-bold text-white text-sm">{{ team.name }}</span>
             </div>
-            
-            <div class="mb-4">
-              <div class="flex justify-between text-xs mb-2">
-                <span class="text-white/40">Lv.12</span>
-                <span class="text-white/60">75%</span>
-              </div>
-              <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-yellow-500 w-[75%] rounded-full"></div>
-              </div>
+            <div class="flex-1 flex flex-wrap gap-1.5">
+              <span v-for="(score, name) in team.gameScores" :key="name" class="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/60">
+                {{ name }}: <span class="text-yellow-500 font-bold">{{ score > 0 ? '+'+score : score }}</span>
+              </span>
             </div>
-
-            <div class="bg-[#1a1b23] rounded-2xl p-4 border border-white/5 text-center">
-              <p class="text-white/40 text-xs mb-1">我的总积分</p>
-              <p class="text-3xl font-black text-white flex items-center justify-center gap-2">
-                <Star class="w-6 h-6 text-yellow-500" /> {{ auth.user?.totalScore || 860 }} pts
-              </p>
-              <p class="text-xs text-yellow-500/80 mt-2">3rd <span class="text-green-500">↑</span></p>
-            </div>
-          </div>
-
-          <!-- 个人排行榜 -->
-          <div class="bg-[#15161c] rounded-3xl border border-white/5 p-6">
-             <h3 class="font-bold text-white mb-4 flex items-center gap-2">
-               <Trophy class="w-5 h-5 text-yellow-500" /> 个人积分榜
-             </h3>
-             <div class="space-y-3">
-               <div v-for="(entry, i) in leaderboard" :key="entry.camperId" 
-                 class="flex items-center gap-3 p-2 rounded-xl"
-                 :class="entry.camperId === auth.user?.id ? 'bg-yellow-500/10' : ''">
-                 <span class="w-6 text-center font-bold" :class="i < 3 ? 'text-yellow-500' : 'text-white/30'">{{ i + 1 }}</span>
-                 <span class="text-lg">{{ getCamper(entry.camperId)?.avatar }}</span>
-                 <span class="flex-1 text-sm text-white/80">{{ getCamper(entry.camperId)?.name }}</span>
-                 <span class="font-bold text-white">{{ entry.score }}</span>
-               </div>
-             </div>
+            <div class="text-right"><span class="text-xl font-black text-yellow-500">{{ team.totalScore }}</span><span class="text-[10px] text-white/30 ml-1">PTS</span></div>
           </div>
         </div>
       </div>
 
-      <!-- 规则弹窗 (保持原样) -->
-      <Transition name="modal">
-        <div v-if="rulesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="rulesModal = null"></div>
-          <div class="relative bg-[#15161c] border border-white/10 p-8 max-w-md w-full rounded-3xl">
-            <h3 class="font-bold text-xl text-white mb-4">{{ rulesModal.emoji }} {{ rulesModal.name }}</h3>
-            <p class="text-sm text-white/60 mb-6">{{ rulesModal.description }}</p>
-            <button @click="rulesModal = null" class="w-full py-3 bg-yellow-500 text-black font-bold rounded-xl">Got it!</button>
+      <!-- 3. 游戏挑战 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+        <div v-for="game in gamesStore.games" :key="game.id" class="bg-[#111218] rounded-2xl border border-white/5 p-6 flex flex-col hover:border-yellow-500/30 transition-all">
+          <div class="h-40 relative flex items-center justify-center mb-6">
+            <span class="text-6xl">{{ game.emoji }}</span>
           </div>
+          <h3 class="font-bold text-lg text-white mb-2">{{ game.name }}</h3>
+          <p class="text-xs text-white/50 mb-6 flex-1">{{ game.description }}</p>
+          <div class="mb-4">
+            <p v-if="game.points" class="text-2xl font-black text-yellow-500">{{ game.points }} <span class="text-xs font-normal text-white/40">PTS</span></p>
+            <div v-else class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500 text-sm font-bold border border-yellow-500/20">
+              <Trophy class="w-4 h-4" /> 依据表现评分
+            </div>
+          </div>
+          <button @click="viewRules(game)" class="w-full border border-white/10 bg-white/5 text-white/70 font-bold py-3 rounded-xl hover:bg-white/10 transition-colors">查看规则</button>
         </div>
-      </Transition>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-definePageMeta({ requiresAuth: true, ssr: false })
-
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useAuthStore } from '~/stores/auth'
 import { useGamesStore } from '~/stores/games'
-import { useCampersStore } from '~/stores/campers'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase'
-import { Trophy, Star, Award, Users } from 'lucide-vue-next'
+import { Trophy, Shield, Crown, Gamepad2, ChevronRight } from 'lucide-vue-next'
 
-const auth = useAuthStore()
 const gamesStore = useGamesStore()
-const campersStore = useCampersStore()
-
-// Firebase 数据监听
 const firebaseScores = ref([])
 let unsubscribeScores = null
 
@@ -180,28 +140,20 @@ onMounted(() => {
 
 const sortedTeams = computed(() => {
   return firebaseScores.value
-    .map(doc => ({
-      id: doc.id,
-      name: doc.teamName || doc.id,
-      gameScores: doc.scores || {},
-      totalScore: doc.totalScore || 0
-    }))
+    .map(doc => ({ id: doc.id, name: doc.teamName || doc.id, gameScores: doc.scores || {}, totalScore: doc.totalScore || 0 }))
     .sort((a, b) => b.totalScore - a.totalScore)
 })
 
 const rulesModal = ref(null)
-const leaderboard = computed(() => gamesStore.getLeaderboard().slice(0, 10))
-const getCamper = (id) => campersStore.getCamperById(id)
-
 function viewRules(game) { rulesModal.value = game }
-function startReflex() { /* 保持原逻辑 */ }
 
-onUnmounted(() => {
-  if (unsubscribeScores) unsubscribeScores()
-})
+onUnmounted(() => { if (unsubscribeScores) unsubscribeScores() })
 </script>
 
 <style scoped>
-.modal-enter-active, .modal-leave-active { transition: all 0.25s ease; }
-.modal-enter-from, .modal-leave-to { opacity: 0; }
+.mask-image-b { mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); }
+.clip-ribbon { clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%); }
+.clip-ribbon-center { clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
 </style>

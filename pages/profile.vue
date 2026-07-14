@@ -1,13 +1,14 @@
 <template>
   <div class="page-container bg-dark">
-    <!-- Banner Image (新增的顶部风景图) -->
-    <!-- 请将 url 替换为你实际的背景图路径 -->
+    <!-- Banner Image (顶部风景图) -->
     <div class="w-full h-48 bg-cover bg-center" 
      :style="{ backgroundImage: `linear-gradient(to bottom, transparent, var(--color-bg-dark, #111)), url(${firecamp})` }">
     </div>
-    <div class="container-inner max-w-7xl mx-auto px-4 -mt-20 relative z-10 pb-10">
+    
+    <!-- 调整 1：将 max-w-7xl 改为 max-w-5xl，让整个版面更紧凑并完美居中 -->
+    <div class="container-inner max-w-5xl mx-auto px-4 -mt-20 relative z-10 pb-10">
 
-      <!-- Header (保留了你原本的翻译和按钮类名) -->
+      <!-- Header -->
       <div class="flex items-end justify-between mb-8 gap-2">
         <div>
           <h1 class="section-title truncate text-4xl mb-1">{{ t('profile.title') }}</h1>
@@ -28,16 +29,15 @@
         </div>
       </div>
 
-      <!-- Main grid: 三列布局以匹配设计图 -->
-      <div class="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_280px] gap-6">
+      <!-- 调整 2：改为两列布局 (左侧 280px，右侧自适应) -->
+      <div class="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] gap-8">
 
-        <!-- Left: Avatar + QR (保留大头像和原本的变量) -->
+        <!-- Left: Avatar + QR -->
         <div class="card p-6 flex flex-col items-center text-center relative overflow-hidden h-full">
           <div class="relative z-10 w-full">
             <h2 class="font-heading font-bold text-lg text-primary mb-1">Hello, Camper! 👋</h2>
             <p class="font-body text-xs text-tertiary/70 mb-6">Ready for your next adventure?</p>
 
-            <!-- 保留原本的大头像 -->
             <div class="text-6xl mb-4">{{ profile.avatar }}</div>
             
             <h2 class="font-heading font-bold text-lg text-tertiary truncate">{{ profile.name }}</h2>
@@ -56,11 +56,10 @@
             <p class="font-body text-xs text-tertiary/50 mt-1 leading-tight">{{ t('profile.qr_subtitle') }}</p>
           </div>
           
-          <!-- 底部风景剪影装饰 (可通过 CSS 或 img 实现) -->
           <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
         </div>
 
-        <!-- Middle: Info cards (保留原本的类名与结构，加入 Icon) -->
+        <!-- Right: Info cards -->
         <div class="space-y-5 min-w-0">
           
           <!-- Personal -->
@@ -151,57 +150,6 @@
           </div>
 
         </div>
-
-        <!-- Right: Quick Info (新增的第三列，使用你的 .card 样式) -->
-        <div class="card p-6 overflow-hidden h-fit relative">
-          <div class="flex items-center gap-3 mb-6 relative z-10">
-            <Tent class="w-5 h-5 text-primary" />
-            <h3 class="font-heading font-bold text-primary">Quick Info</h3>
-          </div>
-          
-          <div class="space-y-6 relative z-10">
-            <div class="flex gap-4 items-start">
-              <CalendarDays class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
-              <div class="flex flex-col min-w-0">
-                <span class="input-label mb-0.5">Member Since</span>
-                <span class="font-body text-tertiary truncate">May 2024</span>
-              </div>
-            </div>
-
-            <div class="flex gap-4 items-start">
-              <IdCard class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
-              <div class="flex flex-col min-w-0">
-                <span class="input-label mb-0.5">Member ID</span>
-                <span class="font-body text-tertiary truncate">CMP-2024-006</span>
-              </div>
-            </div>
-
-            <div class="flex gap-4 items-start">
-              <Mountain class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
-              <div class="flex flex-col min-w-0">
-                <span class="input-label mb-0.5">Total Trips</span>
-                <span class="font-body text-tertiary truncate">3</span>
-              </div>
-            </div>
-
-            <div class="flex gap-4 items-start">
-              <MapPin class="w-5 h-5 text-tertiary/50 mt-0.5 shrink-0" />
-              <div class="flex flex-col min-w-0">
-                <span class="input-label mb-0.5">Favourite Spot</span>
-                <span class="font-body text-tertiary truncate">Pine Hill Campsite</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Share Button (Bottom Right) -->
-          <button class="absolute bottom-5 right-5 w-10 h-10 rounded-full flex items-center justify-center bg-black/20 hover:bg-black/40 text-primary transition-colors z-10 backdrop-blur-sm">
-            <Share class="w-4 h-4" />
-          </button>
-
-          <!-- 底部风景剪影装饰 -->
-          <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
-        </div>
-
       </div>
     </div>
   </div>
