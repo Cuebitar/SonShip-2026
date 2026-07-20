@@ -1,7 +1,7 @@
 <template>
-  <div class="page-container min-h-screen flex items-center justify-center bg-dark p-4">
-    <div class="w-full max-w-md">
-      <!-- Brand -->
+    <div class="page-container bg-dark min-h-screen w-full flex items-center justify-center p-4 overflow-x-hidden">
+      <div class="w-full max-w-md mx-auto">
+              <!-- Brand -->
       <div class="text-center mb-8 sm:pt-16">
         <span class="text-3xl">🔥</span>
         <Logo size="3xl" />
@@ -192,6 +192,16 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 强制页面初始化时透明，直到 Vue 完成渲染 */
+.page-container {
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
 .modal-enter-active, .modal-leave-active { transition: all 0.25s ease; }
 .modal-enter-from, .modal-leave-to { opacity: 0; }
 </style>

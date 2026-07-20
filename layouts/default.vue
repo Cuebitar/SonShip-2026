@@ -1,19 +1,22 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-[#0f1015]">
     <AppNavbar />
-    <main>
+    <main 
+      class="transition-all duration-300 ease-out min-h-screen"
+      :class="navStore.isExpanded ? 'lg:pl-[260px]' : 'lg:pl-[80px]'"
+    >
       <slot />
     </main>
-    <AppFooter v-if="showFooter" />
   </div>
 </template>
 
 <script setup>
-const route = useRoute()
-const showFooter = computed(() => route.path !== '/login' && route.path !== '/register')
+import { useNavStore } from '~/stores/nav'
+const navStore = useNavStore()
 </script>
 
 <style>
+/* 保持你的转场动画 */
 .page-enter-active,
 .page-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;

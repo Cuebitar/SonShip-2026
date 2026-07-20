@@ -156,7 +156,7 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useActivitiesStore } from '~/stores/activities'
+// import { useActivitiesStore } from '~/stores/activities'
 import { ArrowRight, ChevronDown } from 'lucide-vue-next'
 import Logo from '~/components/Logo.vue'
 import Firelight from '../assets/firelight.svg'
