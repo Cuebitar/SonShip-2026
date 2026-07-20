@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper Functions ───────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ─── Campers Collection (Public Read) ───────────────────────────
+    match /campers/{camperId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ─── Game State (Public Read, Auth Write) ────────────────────────
+    // game_state/ice_breaking is read on the login page before auth
+    match /game_state/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // ─── All Other Collections (Auth Required) ───────────────────────
+    match /{collection}/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ─── Nested Subcollections (Auth Required) ───────────────────────
+    match /{collection}/{docId}/{subcollection=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+  }
+}

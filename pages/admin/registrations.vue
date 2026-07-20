@@ -8,8 +8,44 @@
       </div>
     </section>
 
-    <!-- Content -->
+    <!-- Ice-Breaking Game Control -->
     <section class="container-inner mt-8">
+      <div class="card mb-6 p-5 border border-primary/30 bg-primary/5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary/80 mb-1">🎭 Ice-Breaking Game</p>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full"
+                :class="iceStore.gameState.active ? 'bg-green-400 animate-pulse' : 'bg-white/20'">
+              </span>
+              <span class="font-heading text-lg font-black text-white">
+                Round {{ iceStore.gameState.round }} — {{ iceStore.gameState.label }}
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="(label, round) in iceStore.ROUND_LABELS"
+              :key="round"
+              @click="iceStore.setRound(Number(round))"
+              :class="[
+                'px-4 py-2 rounded-full font-heading text-sm font-bold transition-all',
+                iceStore.gameState.round === Number(round)
+                  ? 'bg-primary text-dark shadow-warm'
+                  : 'bg-white/5 text-tertiary hover:bg-white/10'
+              ]">
+              {{ round }}: {{ label }}
+            </button>
+          </div>
+        </div>
+        <p class="text-xs text-tertiary/50 mt-3">
+          Round 0 = nothing. Round 1 = riddle + validation password.
+        </p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <section class="container-inner mt-0">
       <div class="card mb-6 p-5 border border-primary/20 bg-primary/5">
         <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
@@ -88,6 +124,11 @@
               <td class="p-4">
                 <div class="font-bold text-white">{{ record.fullName }}</div>
                 <div class="text-xs text-tertiary/70">{{ record.email }}</div>
+                <button @click.stop="copyUrl(record)"
+                  class="flex items-center gap-1 text-xs mt-1 transition-colors"
+                  :class="copiedId === record.id ? 'text-green-400' : 'text-primary/50 hover:text-primary'">
+                  <span>{{ copiedId === record.id ? '✓ Copied' : '🔗 Copy URL' }}</span>
+                </button>
               </td>
               <td class="p-4 text-tertiary text-sm">{{ record.phone || '-' }}</td>
               <td class="p-4 text-tertiary text-sm">{{ record.registrationTime }}</td>
@@ -107,6 +148,7 @@
                   {{ record.status }}
                 </span>
               </td>
+              <td class="p-4 text-sm text-tertiary">{{ record.iceBreakingTarget2Name }}</td>
               <td class="p-4 text-right">
                 <button @click="openModal(record)" class="btn-primary py-1.5 px-3 text-xs w-auto min-w-0">
                   View / Edit
@@ -179,6 +221,42 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Ice-Breaking -->
+              <div>
+                <h4 class="font-heading font-bold text-primary mb-3 text-sm uppercase tracking-widest border-b border-primary/20 pb-2">🎭 Ice-Breaking</h4>
+                <div class="space-y-3 text-sm">
+                  <!-- Login URL -->
+                  <div class="flex flex-col gap-1">
+                    <span class="text-tertiary/70 text-xs">Login URL (share with camper)</span>
+                    <div class="flex items-center gap-2 bg-white/5 p-2 rounded">
+                      <span class="text-primary/80 text-xs font-mono truncate flex-1">{{ selectedRecord.loginUrl }}</span>
+                      <button @click="copyUrl(selectedRecord)"
+                        class="text-xs font-bold shrink-0 transition-colors px-2 py-0.5 rounded"
+                        :class="copiedId === selectedRecord.id ? 'text-green-400 bg-green-400/10' : 'text-primary hover:bg-primary/10'">
+                        {{ copiedId === selectedRecord.id ? '✓ Copied' : 'Copy' }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Round previews -->
+                  <div class="flex flex-col gap-1">
+                    <span class="text-tertiary/70 text-xs">What this camper sees each round:</span>
+                    <div class="space-y-2 mt-1">
+                      <!-- Round 1: Riddle — uses target2 -->
+                      <div class="border border-primary/20 rounded-lg p-3">
+                        <div class="flex items-center gap-2 mb-2">
+                          <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                          <span class="text-xs font-bold text-primary/70 uppercase tracking-wider">Round 1 — Riddle</span>
+                          <span class="ml-auto text-xs text-tertiary/50">{{ selectedRecord.iceBreakingTarget2Name }}</span>
+                        </div>
+                        <p v-if="selectedTarget2Riddle" class="text-xs text-tertiary leading-relaxed line-clamp-4 whitespace-pre-line">{{ selectedTarget2Riddle }}</p>
+                        <p v-else class="text-xs text-tertiary/40 italic">No riddle set yet.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Editable Fields -->
@@ -239,10 +317,10 @@
                 </div>
 
                 <div class="col-span-2">
-                  <label class="block text-xs font-bold text-primary/80 mb-1">Ice Breaking Target</label>
-                  <select v-model="editForm.iceBreakingTarget" class="input py-2 bg-dark/50">
+                  <label class="block text-xs font-bold text-primary/80 mb-1">Riddle Target <span class="text-tertiary/40">(find by riddle)</span></label>
+                  <select v-model="editForm.iceBreakingTarget2" class="input py-2 bg-dark/50">
                     <option value="">None</option>
-                    <option v-for="user in recordOptions" :key="user.id" :value="user.fullName">
+                    <option v-for="user in recordOptions" :key="user.id" :value="user.id">
                       {{ user.fullName }}
                     </option>
                   </select>
@@ -265,8 +343,9 @@
 <script setup>
 definePageMeta({ requiresAuth: true })
 
-import { ref, computed, reactive, onMounted } from 'vue';
+import { ref, computed, reactive, onMounted, onUnmounted } from 'vue';
 import { useCampersStore } from '~/stores/campers';
+import { useIceBreakingStore } from '~/stores/iceBreaking';
 import { useI18n } from 'vue-i18n'
 import moment from 'moment';
 const { t } = useI18n()
@@ -280,6 +359,7 @@ const sortKey = ref('registrationTime');
 const sortDirection = ref('desc');
 
 const campersStore = useCampersStore();
+const iceStore = useIceBreakingStore();
 const registrationLimit = 70;
 const sortableColumns = [
   { key: 'fullName', label: 'Name' },
@@ -290,7 +370,8 @@ const sortableColumns = [
   { key: 'preferred_language', label: 'Language' },
   { key: 'group', label: 'Group' },
   { key: 'room_name', label: 'Room' },
-  { key: 'status', label: 'Status' }
+  { key: 'status', label: 'Status' },
+  { key: 'iceBreakingTarget2Name', label: '🎯 Riddle Target' },
 ];
 
 const LANGUAGE_LABELS = { zh: '简体中文', en: 'English' }
@@ -300,20 +381,31 @@ function languageLabel(code) {
   return LANGUAGE_LABELS[code] || code
 }
 
-onMounted(async () =>  {
+onMounted(async () => {
   await campersStore.initCampers();
+  iceStore.subscribeGameState();
   hasMounted.value = true;
 })
 
+onUnmounted(() => {
+  iceStore.unsubscribeGameState();
+})
+
+function resolveTargetName(target) {
+  if (!target) return '—'
+  // Firestore DocumentReference stored in Pinia — has an .id property
+  if (typeof target === 'object' && target.id) {
+    const found = campersStore.campers.find(c => c.id === target.id)
+    return found?.name || target.id
+  }
+  // Stored as plain string (name written by admin dropdown)
+  return String(target) || '—'
+}
+
 // Map from pinia store campers
 const records = computed(() =>
-  campersStore.campers.map((c, index) => {
-    console.log(c)
-    const hour = (8 + (index % 10)).toString().padStart(2, '0');
-    const minute = ((index * 13) % 60).toString().padStart(2, '0');
-    const day = (1 + (index % 15)).toString().padStart(2, '0');
-    const month = (1 + (index % 12)).toString().padStart(2, '0');
-    const registrationTime = `2026-${month}-${day} ${hour}:${minute}`;
+  campersStore.campers.map((c) => {
+    const rawTarget2 = c.ice_breaking?.target2 ?? null
     return {
       id               : c.id,
       fullName         : c.name,
@@ -331,8 +423,10 @@ const records = computed(() =>
       status           : c.status,
       secret_identity  : c.secret_identity,
       secretAngel      : c.secret_angel?.id ?? '',
-      iceBreakingTarget: c.ice_breaking?.target ?? '',
+      iceBreakingTarget2: rawTarget2,
+      iceBreakingTarget2Name: resolveTargetName(rawTarget2),
       iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
+      loginUrl         : `${import.meta.client ? window.location.origin : ''}/login?id=${c.id}`,
       group            : c.group || "",
       room_name        : c.room_name || "",
       registrationTime: c.registrationTime ? new Date(c.registrationTime).toLocaleString('en-UK', {
@@ -400,6 +494,24 @@ const formatedIC = computed(() => {
 });
 
 const selectedRecord = ref(null);
+const copiedId = ref('');
+
+// Riddle of this camper's round-2 target (what they see during round 2)
+const selectedTarget2Riddle = computed(() => {
+  const t2Id = selectedRecord.value?.iceBreakingTarget2?.id
+  if (!t2Id) return ''
+  const t2 = campersStore.campers.find(c => c.id === t2Id)
+  return t2?.ice_breaking?.riddle || ''
+})
+
+async function copyUrl(record) {
+  if (!import.meta.client) return
+  const url = record.loginUrl || `${window.location.origin}/login?id=${record.id}`
+  await navigator.clipboard.writeText(url)
+  copiedId.value = record.id
+  setTimeout(() => { copiedId.value = '' }, 2000)
+}
+
 const editForm = reactive({
   status           : '',
   group            : '',
@@ -408,7 +520,7 @@ const editForm = reactive({
   preferred_language: '',
   secret_identity  : '',
   secretAngel      : '',
-  iceBreakingTarget: '',
+  iceBreakingTarget2: '',
   iceBreakingRiddle: ''
 });
 
@@ -421,7 +533,7 @@ function openModal(record) {
   editForm.preferred_language = record.preferred_language || '';
   editForm.secret_identity   = record.secret_identity || '';
   editForm.secretAngel       = record.secretAngel || '';
-  editForm.iceBreakingTarget = record.iceBreakingTarget || '';
+  editForm.iceBreakingTarget2 = record.iceBreakingTarget2?.id || '';
   editForm.iceBreakingRiddle = record.iceBreakingRiddle || '';
 }
 
@@ -461,7 +573,7 @@ async function saveChanges() {
       secret_angel: editForm.secretAngel,
       ice_breaking: {
         riddle: editForm.iceBreakingRiddle,
-        target: editForm.iceBreakingTarget
+        target2: editForm.iceBreakingTarget2,
       },
       id: selectedRecord.value.id,
     }

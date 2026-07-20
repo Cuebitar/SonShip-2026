@@ -121,7 +121,6 @@ export const useCampersStore = defineStore('campers', () => {
       ic: normalizedIc,
       ice_breaking: {
         riddle: '',
-        target: camperRef,
       },
       important_info: camper.important_info || '',
       is_admin: Boolean(camper.is_admin),
@@ -170,6 +169,14 @@ export const useCampersStore = defineStore('campers', () => {
 
     if (typeof payload.secret_angel === 'string' && payload.secret_angel) {
       payload.secret_angel = doc(collection(db, 'campers'), payload.secret_angel)
+    }
+
+    if (payload.ice_breaking) {
+      const ib = { ...payload.ice_breaking }
+      if (typeof ib.target2 === 'string' && ib.target2) {
+        ib.target2 = doc(collection(db, 'campers'), ib.target2)
+      }
+      payload.ice_breaking = ib
     }
 
     delete payload.id

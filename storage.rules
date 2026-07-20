@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ─── Detective Game Clue Documents ──────────────────────────────
+    // Uploaded by admins; read via download URLs (token) or by any
+    // signed-in camper.
+    match /detective-clues/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // ─── Everything Else (Deny) ─────────────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+  }
+}

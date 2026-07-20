@@ -9,8 +9,53 @@
         <p class="font-body text-sm text-tertiary/60 mt-1">{{ t('login.subtitle') }}</p>
       </div>
 
-      <!-- Demo hint -->
-      <div class="card bg-primary/10 border-primary/20 p-3 mb-6 text-center">
+      <!-- ── Ice-Breaking Game Panel (only when ?id= present AND game active) ── -->
+      <template v-if="gameId">
+        <!-- Loading -->
+        <div v-if="iceStore.targetLoading" class="card border-primary/20 p-5 text-center mb-6">
+          <Loader2 class="w-5 h-5 animate-spin text-primary mx-auto" />
+        </div>
+
+        <!-- Active: round 1+ -->
+        <div v-else-if="iceStore.gameState.active" class="mb-6 space-y-3">
+          <!-- Target data not yet loaded -->
+          <div v-if="!iceStore.targetData"
+            class="rounded-2xl border border-white/10 bg-dark/60 p-5 text-center">
+            <p class="font-body text-xs text-tertiary/50">{{ iceStore.targetError || 'Loading…' }}</p>
+          </div>
+
+          <template v-else>
+            <!-- Round 1: Riddle Hunt — riddle + password for target -->
+            <div v-if="iceStore.gameState.round === 1" class="space-y-3">
+              <div class="rounded-2xl border border-white/10 bg-dark/60 p-5">
+                <div v-if="riddleBilingual" class="flex gap-1 mb-3">
+                  <button @click="riddleLang = 0"
+                    :class="['px-2 py-0.5 rounded text-xs font-bold transition-colors',
+                      riddleLang === 0 ? 'bg-primary/20 text-primary' : 'text-tertiary/30 hover:text-tertiary/60']">
+                    EN
+                  </button>
+                  <button @click="riddleLang = 1"
+                    :class="['px-2 py-0.5 rounded text-xs font-bold transition-colors',
+                      riddleLang === 1 ? 'bg-primary/20 text-primary' : 'text-tertiary/30 hover:text-tertiary/60']">
+                    中
+                  </button>
+                </div>
+                <p class="font-body text-sm text-tertiary leading-relaxed whitespace-pre-line">{{ riddleToShow }}</p>
+              </div>
+              <div v-if="iceStore.targetData.password"
+                class="rounded-2xl border border-white/8 bg-white/3 py-4 text-center">
+                <p class="font-mono text-xl text-white/90 tracking-widest select-all">{{ iceStore.targetData.password }}</p>
+              </div>
+            </div>
+
+          </template>
+        </div>
+        <!-- Round 0 / standby: show nothing -->
+      </template>
+      <!-- ── End Game Panel ── -->
+
+      <!-- Demo hint (only when no game panel) -->
+      <div v-if="!gameId" class="card bg-primary/10 border-primary/20 p-3 mb-6 text-center">
         <p class="font-body text-xs text-primary">💡 {{ t('login.demo_hint') }}</p>
       </div>
 
@@ -70,15 +115,17 @@
 <script setup>
 definePageMeta({ guestOnly: true })
 
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from '#imports'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '~/stores/auth'
+import { useIceBreakingStore } from '~/stores/iceBreaking'
 import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
 import Logo from '~/components/Logo.vue'
 
 const { t } = useI18n()
 const auth = useAuthStore()
+const iceStore = useIceBreakingStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -87,6 +134,32 @@ const error = ref('')
 const loading = ref(false)
 const showPw = ref(false)
 const forgotModal = ref(false)
+
+// ?id= query param — the logged-in user's own camper ID
+const gameId = computed(() => {
+  const id = route.query.id
+  return Array.isArray(id) ? id[0] : id || ''
+})
+
+// 0 = English, 1 = Chinese — default to browser language, toggleable
+const riddleLang = ref(0)
+onMounted(() => {
+  if (navigator?.language?.startsWith('zh')) riddleLang.value = 1
+})
+
+const riddleHalves = computed(() => {
+  const riddle = iceStore.targetData?.riddle || ''
+  if (!riddle) return []
+  return riddle.split(/\n\n(?=[一-鿿])/)
+})
+
+const riddleToShow = computed(() => {
+  const halves = riddleHalves.value
+  if (!halves.length) return ''
+  return (halves[riddleLang.value] ?? halves[0]).trim()
+})
+
+const riddleBilingual = computed(() => riddleHalves.value.length > 1)
 
 async function handleLogin() {
   error.value = ''
@@ -98,20 +171,23 @@ async function handleLogin() {
     const redirect = Array.isArray(route.query.redirect)
       ? route.query.redirect[0]
       : route.query.redirect
-
-    const target = redirect || '/dashboard'
-    router.push(target)
+    router.push(redirect || '/dashboard')
   } else {
     error.value = result.error
   }
 }
 
-function socialNotice() {
-  alert('Social login is a demo feature — it\'s not connected to a real provider. Please use email + "sonship123".')
-}
+onMounted(async () => {
+  auth.init()
+  if (gameId.value) {
+    // subscribeGameState and fetchTargetData both wait for Firebase internally
+    iceStore.subscribeGameState()
+    await iceStore.fetchTargetData(gameId.value)
+  }
+})
 
-onMounted(() => {
-  auth.init();
+onUnmounted(() => {
+  iceStore.unsubscribeGameState()
 })
 </script>
 
