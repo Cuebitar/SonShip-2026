@@ -46,11 +46,23 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
       (err) => console.error('[detective] state error', err),
     )
 
+    // Detective scores/reports live on the shared game_scores/{team} doc
+    // (detectiveStages + detectiveReport fields) so they roll into the
+    // cross-game leaderboard instead of a detective-only collection.
     _unsubScores = onSnapshot(
-      collection(db, 'game_detective'),
+      collection(db, 'game_scores'),
       (snap) => {
         const next = {}
-        snap.docs.forEach(d => { next[d.id] = d.data() })
+        snap.docs.forEach(d => {
+          const data = d.data()
+          const stages = data.detectiveStages || {}
+          next[d.id] = {
+            stage3: stages.stage3 ?? 0,
+            stage4: stages.stage4 ?? 0,
+            stage5: stages.stage5 ?? 0,
+            report: data.detectiveReport ?? null,
+          }
+        })
         scores.value = next
         loaded.value = true
       },
@@ -214,20 +226,40 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
     await setDoc(doc(db, 'game_state', 'detective'), patch, { merge: true })
   }
 
+  // Writes the stage scores into game_scores/{groupName}, keeping
+  // scores['The Final Night'] (and totalScore) in sync so this game shows
+  // up correctly on the cross-game leaderboard (pages/games.vue).
   async function upsertGroupScore(groupName, stageData) {
     const db = await waitForDb()
     if (!db) return
-    await setDoc(doc(db, 'game_detective', groupName), { groupName, ...stageData }, { merge: true })
+    const ref = doc(db, 'game_scores', groupName)
+    const snap = await getDoc(ref)
+    const data = snap.exists() ? snap.data() : {}
+
+    const stage3 = stageData.stage3 ?? 0
+    const stage4 = stageData.stage4 ?? 0
+    const stage5 = stageData.stage5 ?? 0
+
+    const scoresMap = { ...(data.scores || {}), 'The Final Night': stage3 + stage4 + stage5 }
+    const totalScore = Object.values(scoresMap).reduce((sum, v) => sum + (Number(v) || 0), 0)
+
+    await setDoc(ref, {
+      teamName: groupName,
+      detectiveStages: { stage3, stage4, stage5 },
+      scores: scoresMap,
+      totalScore,
+      updatedAt: Date.now(),
+    }, { merge: true })
   }
 
   // Final Night's written report: two free-text answers submitted by a team,
-  // stored alongside its stage scores in the same per-team document.
+  // stored alongside its stage scores on the same game_scores/{groupName} doc.
   async function submitReport(groupName, { q1, q2, submittedBy }) {
     const db = await waitForDb()
     if (!db) return
-    await setDoc(doc(db, 'game_detective', groupName), {
-      groupName,
-      report: {
+    await setDoc(doc(db, 'game_scores', groupName), {
+      teamName: groupName,
+      detectiveReport: {
         q1: q1 || '',
         q2: q2 || '',
         submittedBy: submittedBy || null,

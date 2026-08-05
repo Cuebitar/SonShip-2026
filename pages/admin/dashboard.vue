@@ -898,7 +898,9 @@ async function adjustMark(value) {
       GAME_NAMES.forEach(g => { updatedScoresMap[g] = g === gameName ? getGameScore(teamName, gameName) + val : getGameScore(teamName, g); });
       const newTotalScore = Object.values(updatedScoresMap).reduce((sum, score) => sum + score, 0);
       const payload = { teamName: teamName, scores: updatedScoresMap, totalScore: newTotalScore, updatedAt: Date.now() };
-      await setDoc(doc(db, "game_scores", teamName), payload);
+      // merge:true — other games (e.g. detective's stage breakdown/report
+      // fields) live on this same doc and must survive an unrelated mark edit.
+      await setDoc(doc(db, "game_scores", teamName), payload, { merge: true });
       const existIdx = firebaseScores.value.findIndex(s => s.id === teamName);
       if (existIdx > -1) firebaseScores.value[existIdx] = { id: teamName, ...payload };
       else firebaseScores.value.push({ id: teamName, ...payload });
