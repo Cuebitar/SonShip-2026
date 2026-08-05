@@ -15,6 +15,45 @@
         <p class="text-white/60 font-medium">团队协作，挑战任务，赢取积分，登上排行榜！</p>
       </div>
 
+      <!-- 3. 游戏挑战 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10 pb-4">
+
+        <!-- The Final Night (Detective) -->
+        <div class="bg-[#111218] rounded-2xl border border-white/5 p-6 flex flex-col hover:border-yellow-500/30 transition-all">
+          <div class="h-32 relative flex items-center justify-center mb-4">
+            <span class="text-6xl">🔍</span>
+          </div>
+          <h3 class="font-bold text-lg text-white mb-2">The Final Night 终极密室</h3>
+          <p class="text-xs text-white/50 mb-6 flex-1">
+            侦探悬疑游戏。团队通过扫描营地各处的 QR 码 / NFC 标签解锁 5 个阶段的线索，每个线索揭晓前需完成小游戏挑战。
+            Scan QR codes / NFC tags around camp to unlock clues across 5 stages. Each clue is gated behind a mini-game challenge.
+          </p>
+          <NuxtLink
+            to="/detective-report"
+            class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-yellow-500 text-black text-sm font-bold hover:bg-yellow-400 transition-colors"
+          >
+            ✍️ 提交最终报告 / Submit Final Report
+          </NuxtLink>
+        </div>
+
+        <!-- AI City -->
+        <div class="bg-[#111218] rounded-2xl border border-white/5 p-6 flex flex-col hover:border-yellow-500/30 transition-all">
+          <div class="h-32 relative flex items-center justify-center mb-4">
+            <span class="text-6xl">🤖</span>
+          </div>
+          <h3 class="font-bold text-lg text-white mb-2">AI City 人工智能城市</h3>
+          <p class="text-xs text-white/50 mb-6 flex-1">
+            团队治理一座新城市。第一阶段：决定是否部署 5 种 AI 系统。第二阶段：在 6 个任务站完成挑战赚取代币。
+            Your team governs a city. Phase 1: decide whether to deploy 5 AI systems. Phase 2: complete 6 mission stations to earn tokens.
+          </p>
+          <p class="text-xs text-white/40 border-t border-white/5 pt-4">
+            在营地现场跟随主持人参与，分数由工作人员现场记录。
+            <br>Played in person at camp, led by facilitators — scores are recorded live by staff.
+          </p>
+        </div>
+
+      </div>
+
       <!-- 2. 团队积分榜 -->
       <div class="bg-[#111218]/80 backdrop-blur-xl rounded-3xl border border-white/5 p-6 md:p-10 mb-16 shadow-2xl relative overflow-hidden">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-yellow-500/10 blur-[100px] pointer-events-none"></div>
@@ -96,36 +135,16 @@
           </div>
         </div>
       </div>
-
-      <!-- 3. 游戏挑战 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-        <div v-for="game in gamesStore.games" :key="game.id" class="bg-[#111218] rounded-2xl border border-white/5 p-6 flex flex-col hover:border-yellow-500/30 transition-all">
-          <div class="h-40 relative flex items-center justify-center mb-6">
-            <span class="text-6xl">{{ game.emoji }}</span>
-          </div>
-          <h3 class="font-bold text-lg text-white mb-2">{{ game.name }}</h3>
-          <p class="text-xs text-white/50 mb-6 flex-1">{{ game.description }}</p>
-          <div class="mb-4">
-            <p v-if="game.points" class="text-2xl font-black text-yellow-500">{{ game.points }} <span class="text-xs font-normal text-white/40">PTS</span></p>
-            <div v-else class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500 text-sm font-bold border border-yellow-500/20">
-              <Trophy class="w-4 h-4" /> 依据表现评分
-            </div>
-          </div>
-          <button @click="viewRules(game)" class="w-full border border-white/10 bg-white/5 text-white/70 font-bold py-3 rounded-xl hover:bg-white/10 transition-colors">查看规则</button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useGamesStore } from '~/stores/games'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase'
-import { Trophy, Shield, Crown, Gamepad2, ChevronRight } from 'lucide-vue-next'
+import { Trophy, Shield, Crown } from 'lucide-vue-next'
 
-const gamesStore = useGamesStore()
 const firebaseScores = ref([])
 let unsubscribeScores = null
 
@@ -143,9 +162,6 @@ const sortedTeams = computed(() => {
     .map(doc => ({ id: doc.id, name: doc.teamName || doc.id, gameScores: doc.scores || {}, totalScore: doc.totalScore || 0 }))
     .sort((a, b) => b.totalScore - a.totalScore)
 })
-
-const rulesModal = ref(null)
-function viewRules(game) { rulesModal.value = game }
 
 onUnmounted(() => { if (unsubscribeScores) unsubscribeScores() })
 </script>

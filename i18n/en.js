@@ -14,6 +14,9 @@ export default {
         letters: 'Letters',
         schedule: 'Schedule',
         manageSchedule: 'Manage Schedule',
+        registrations: 'Registrations',
+        games: 'Games',
+        settings: 'Settings',
         logout: 'Logout',
     },
     footer: {

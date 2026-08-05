@@ -27,8 +27,8 @@
       </div>
 
       <div v-else>
-        <!-- 日期切换按钮 (手机端使用) -->
-        <div class="flex flex-wrap gap-2 mb-8 lg:hidden">
+        <!-- 日期切换按钮 (手机端使用，滚动时贴顶) -->
+        <div class="sticky top-20 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mb-8 bg-dark/95 backdrop-blur-sm border-b border-white/5 flex flex-wrap gap-2 lg:hidden">
           <button v-for="day in days" :key="day"
             @click="selectDay(day)"
             class="badge cursor-pointer text-sm px-5 py-2 transition-all duration-200"
@@ -45,8 +45,8 @@
             <!-- ---- 桌面版：多天并排区块化时间轴 (自动合并) (lg 以上显示) ---- -->
             <div class="hidden lg:block min-w-[700px]">
               
-              <!-- 表头 -->
-              <div class="flex gap-2 mb-2">
+              <!-- 表头 (滚动时贴顶) -->
+              <div class="sticky top-20 z-40 bg-dark/95 backdrop-blur-sm flex gap-2 mb-2 py-1">
                 <div class="w-24 flex-shrink-0 bg-white/10 rounded-xl flex items-center justify-center py-4 border border-white/5">
                   <span class="font-bold text-sm text-white/80">时间/日期</span>
                 </div>
@@ -168,32 +168,6 @@
 
           <!-- ============ 右侧：日历 / 图例 / 提醒 ============ -->
           <div class="space-y-4">
-            <!-- 迷你日历 -->
-            <div :class="sectionContainer">
-              <div :class="sectionHeader">
-                <div :class="titleWrapper">
-                  <CalendarDays :class="sectionIcon" />
-                  <h4 :class="sectionTitle">日历</h4>
-                </div>
-                <span :class="sectionAction">{{ calendarMonthLabel }}</span>
-              </div>
-              <div class="p-5 pt-4">
-                <div class="grid grid-cols-7 gap-y-1 text-center">
-                  <span v-for="wd in weekdayLabels" :key="wd" class="font-body text-[10px] text-tertiary/30 py-1">{{ wd }}</span>
-                  <template v-for="(cell, idx) in calendarCells" :key="idx">
-                    <div class="flex items-center justify-center py-1">
-                      <span v-if="cell"
-                        @click="handleCalendarClick(cell)"
-                        class="w-6 h-6 flex items-center justify-center rounded-full font-body text-[11px] transition-colors"
-                        :class="[calendarCellClass(cell), isCampDate(cell) ? 'cursor-pointer hover:bg-primary/20 hover:scale-110' : '']">
-                        {{ cell.day }}
-                      </span>
-                    </div>
-                  </template>
-                </div>
-                <p class="text-center text-[10px] text-tertiary/40 mt-3">* 点击营会日期查看详情</p>
-              </div>
-            </div>
 
             <!-- 活动类型图例 -->
             <div :class="sectionContainer">

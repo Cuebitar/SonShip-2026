@@ -14,6 +14,9 @@ export default {
         letters: '信件',
         schedule: '行程',
         manageSchedule: '管理行程',
+        registrations: '报名',
+        settings: '设置',
+        games: '游戏',
         logout: '登出',
     },
     footer: {

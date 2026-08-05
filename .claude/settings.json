@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(qlmanage -t -s 800 -o /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad/E15_LATEST.mp4)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('project_id'\\)\\)\")",
+      "Bash(qlmanage -t -s 800 -o /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad/E16_LATEST.mp4)",
+      "Bash(qlmanage -t -s 800 -o /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad/E26.mp4)",
+      "Bash(python3 -c \"from PIL import Image; im = Image.new\\('RGB',\\(2,2\\)\\); im.save\\('/tmp/test.webp', lossless=True\\); print\\('Pillow webp OK'\\)\")"
+    ]
+  }
+}

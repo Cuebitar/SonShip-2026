@@ -117,6 +117,38 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
     return docRef.id
   }
 
+  async function updateClue(clueId, { stage, title, description, file }) {
+    const db = await waitForDb()
+    if (!db) throw new Error('Firebase not initialized')
+
+    const patch = { stage, title, description }
+
+    if (file) {
+      const storage = useStorageSafe()
+      if (!storage) throw new Error('Firebase not initialized')
+
+      const storagePath = `detective-clues/${Date.now()}-${file.name}`
+      const fileRef = storageRef(storage, storagePath)
+      await uploadBytes(fileRef, file, { contentType: file.type })
+      patch.fileUrl = await getDownloadURL(fileRef)
+      patch.fileName = file.name
+      patch.fileType = file.type
+      patch.storagePath = storagePath
+
+      // Best-effort cleanup of the document being replaced
+      const oldPath = clues.value[clueId]?.storagePath
+      if (oldPath && oldPath !== storagePath) {
+        try {
+          await deleteObject(storageRef(storage, oldPath))
+        } catch (err) {
+          console.warn('[detective] could not delete replaced clue file', err)
+        }
+      }
+    }
+
+    await updateDoc(doc(db, 'game_detective_clues', clueId), patch)
+  }
+
   async function deleteClue(clueId) {
     const db = await waitForDb()
     if (!db) return
@@ -188,6 +220,22 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
     await setDoc(doc(db, 'game_detective', groupName), { groupName, ...stageData }, { merge: true })
   }
 
+  // Final Night's written report: two free-text answers submitted by a team,
+  // stored alongside its stage scores in the same per-team document.
+  async function submitReport(groupName, { q1, q2, submittedBy }) {
+    const db = await waitForDb()
+    if (!db) return
+    await setDoc(doc(db, 'game_detective', groupName), {
+      groupName,
+      report: {
+        q1: q1 || '',
+        q2: q2 || '',
+        submittedBy: submittedBy || null,
+        submittedAt: serverTimestamp(),
+      },
+    }, { merge: true })
+  }
+
   const leaderboard = computed(() =>
     Object.entries(scores.value)
       .map(([name, d]) => ({
@@ -203,7 +251,7 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
   return {
     scores, gameState, loaded, leaderboard,
     clues, cluesLoaded, clueList,
-    subscribe, unsubscribe, setGameState, upsertGroupScore,
-    subscribeClues, addClue, deleteClue, fetchClue, recordClueView, fetchGameState,
+    subscribe, unsubscribe, setGameState, upsertGroupScore, submitReport,
+    subscribeClues, addClue, updateClue, deleteClue, fetchClue, recordClueView, fetchGameState,
   }
 })

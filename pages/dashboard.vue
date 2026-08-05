@@ -188,9 +188,6 @@
               <Image class="w-4 h-4 text-green-400 group-hover:text-yellow-500 transition-colors" /><span class="text-xs text-white/70 group-hover:text-white">Gallery</span>
             </button>
             <button class="bg-[#1a1b23] border border-white/5 hover:border-yellow-500/30 rounded-xl p-3 flex items-center gap-2 transition-colors group">
-              <BookOpen class="w-4 h-4 text-purple-400 group-hover:text-yellow-500 transition-colors" /><span class="text-xs text-white/70 group-hover:text-white">Devotion</span>
-            </button>
-            <button class="bg-[#1a1b23] border border-white/5 hover:border-yellow-500/30 rounded-xl p-3 flex items-center gap-2 transition-colors group">
               <Gift class="w-4 h-4 text-red-400 group-hover:text-yellow-500 transition-colors" /><span class="text-xs text-white/70 group-hover:text-white">Secret Angel</span>
             </button>
           </div>

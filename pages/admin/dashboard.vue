@@ -493,6 +493,7 @@
           </div>
         </div>
       </div>
+
     </section>
 
     <section v-else-if="!hasMounted" class="text-center py-20 text-tertiary animate-pulse">
@@ -514,6 +515,11 @@
             <div>
               <label class="block text-xs font-bold text-primary mb-1">Description</label>
               <textarea v-model="annForm.description" rows="4" class="input w-full bg-dark/50"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1">Announcement Time</label>
+              <input v-model="annForm.publishAt" type="datetime-local" class="input w-full bg-dark/50" />
+              <p class="text-[11px] text-tertiary/50 mt-1">Defaults to now. Set a future time to schedule, or a past time to backdate.</p>
             </div>
           </div>
           <div class="mt-6 flex justify-end gap-3">
@@ -613,7 +619,7 @@ import { ref, computed, reactive, onMounted } from 'vue'
 import { useRouter } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useCampersStore } from '~/stores/campers'
-import { 
+import {
   Bell, Calendar as CalendarIcon, Plus, Edit, Trash2, AlertCircle, 
   MapPin, Clock, Users, Edit2, X, Trophy, Gamepad2, Megaphone, LayoutDashboard,
   Shield, Crown, ChevronRight, Swords, LineChart
@@ -622,7 +628,7 @@ import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, setDoc } from '
 import { useDb } from '~/composable/firebase' 
 
 const auth = useAuthStore()
-const campersStore = useCampersStore() 
+const campersStore = useCampersStore()
 const router = useRouter()
 
 const hasMounted = ref(false)
@@ -646,7 +652,7 @@ function getDayStr(dateStr) {
   return new Date(dateStr).getDate();
 }
 
-const GAME_NAMES = ['破冰游戏', '寻宝大作战', '竞技拔河', '终极密室']; 
+const GAME_NAMES = ['破冰游戏', 'The Final Night', 'AI City'];
 const firebaseScores = ref([]); 
 
 const selectedScoreTeams = ref([]);
@@ -669,7 +675,7 @@ onMounted(async () =>  {
   }
   const db = useDb()
   try {
-    const promises = [campersStore.initCampers()] 
+    const promises = [campersStore.initCampers()]
     if (db) {
       promises.push(
         getDocs(collection(db, "announcements")).then(snap => {
@@ -721,14 +727,21 @@ function formatPublishTime(timestamp, fallbackDate) {
   return new Date(timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
+// datetime-local inputs need "YYYY-MM-DDTHH:mm" in local time (no timezone/seconds)
+function toDatetimeLocal(timestamp) {
+  const d = timestamp ? new Date(timestamp) : new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 const showAnnModal = ref(false)
-const annForm = reactive({ id: null, title: '', description: '', date: '', createdAt: null })
+const annForm = reactive({ id: null, title: '', description: '', date: '', createdAt: null, publishAt: '' })
 const showCalModal = ref(false)
 const calForm = reactive({ id: null, name: '', day: 'Day 1', date: '2026-08-28', time: '', location: '', duration: 60, notes: '', notifyChange: false })
 
 function openAnnModal(ann = null) {
-  if (ann) Object.assign(annForm, ann)
-  else Object.assign(annForm, { id: null, title: '', description: '', date: '', createdAt: null })
+  if (ann) Object.assign(annForm, ann, { publishAt: toDatetimeLocal(ann.createdAt) })
+  else Object.assign(annForm, { id: null, title: '', description: '', date: '', createdAt: null, publishAt: toDatetimeLocal() })
   showAnnModal.value = true
 }
 
@@ -737,8 +750,9 @@ async function saveAnnouncement() {
   const db = useDb()
   if (!db) return
   isSaving.value = true
-  const formattedDate = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })
-  const payload = { title: annForm.title, description: annForm.description, date: annForm.id ? annForm.date : formattedDate, createdAt: annForm.id ? (annForm.createdAt || Date.now()) : Date.now() }
+  const publishTimestamp = annForm.publishAt ? new Date(annForm.publishAt).getTime() : Date.now()
+  const formattedDate = new Date(publishTimestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })
+  const payload = { title: annForm.title, description: annForm.description, date: formattedDate, createdAt: publishTimestamp }
   try {
     if (annForm.id) {
       await updateDoc(doc(db, "announcements", annForm.id), payload)
@@ -897,6 +911,7 @@ const sortedLeaderboardData = computed(() => {
   const view = activeLeaderboardView.value;
   return teamsList.value.map(team => ({ teamName: team.name, score: view === 'Total' ? getTeamTotalScore(team.name) : getGameScore(team.name, view) })).sort((a, b) => b.score - a.score);
 });
+
 </script>
 
 <style scoped>

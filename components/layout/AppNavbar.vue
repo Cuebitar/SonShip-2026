@@ -21,6 +21,17 @@
         </NuxtLink>
       </div>
 
+      <!-- Middle: Guest Top Nav (desktop only) -->
+      <!-- Logged-in users keep their nav in the sidebar; guests see it here instead, since they have no sidebar. -->
+      <nav v-if="hydrated && !auth.isLoggedIn" class="hidden lg:flex flex-1 items-center justify-center gap-1">
+        <NuxtLink v-for="link in sideNavLinks" :key="link.to" :to="link.to"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          :class="$route.path === link.to ? 'text-yellow-500 bg-white/5' : 'text-white/60 hover:text-white hover:bg-white/5'">
+          <component :is="link.icon" class="w-4 h-4" />
+          {{ t(link.label) }}
+        </NuxtLink>
+      </nav>
+
       <!-- Right: Controls -->
       <div class="flex items-center gap-3 lg:gap-5 ml-auto shrink-0">
         <!-- Lang Toggle -->
@@ -120,7 +131,8 @@
     <!-- ==================== 2. LEFT SIDEBAR (Desktop) ==================== -->
     <!-- 注意这里的 top-20 和 bottom-0，让侧边栏只占据顶栏下方的空间 -->
    <!-- ==================== 2. LEFT SIDEBAR (Desktop) ==================== -->
-   <aside 
+   <aside
+      v-if="showSidebar"
       class="fixed left-0 top-20 bottom-0 bg-[#0f1015] border-r border-white/5 hidden lg:flex flex-col z-40 transition-all duration-300 ease-out overflow-hidden"
       :class="navStore.isExpanded ? 'w-[260px]' : 'w-[80px]'"
       @mouseenter="navStore.toggleSidebar(true)"
@@ -257,6 +269,9 @@ onMounted(() => {
 
 const isAdmin = computed(() => hydrated.value && auth.isLoggedIn && auth.user?.is_admin === true)
 
+// Guests get a top nav instead of the sidebar (no persistent app-shell before login).
+const showSidebar = computed(() => hydrated.value && auth.isLoggedIn)
+
 const isCamp = computed(() => {
   if (!hydrated.value) return false
   const now = new Date()
@@ -268,7 +283,8 @@ const sideNavLinks = computed(() => {
   if (isAdmin.value) {
     return [
       { to: '/admin/dashboard', label: 'nav.adminDashboard', icon: ShieldAlert },
-      { to: '/admin/users', label: 'nav.manageSchedule', icon: Users },
+      { to: '/admin/registrations', label: 'nav.registrations', icon: Users },
+      { to: '/admin/games', label: 'nav.games', icon: Gamepad2},
       { to: '/admin/settings', label: 'nav.settings', icon: Settings },
     ]
   }
@@ -278,8 +294,7 @@ const sideNavLinks = computed(() => {
       { to: '/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
       { to: '/schedule', label: 'nav.schedule', icon: Calendar },
       { to: '/games', label: 'nav.games', icon: Gamepad2},
-      { to: '/about', label: 'nav.about', icon: Info }, 
-      { to: '/devotion', label: 'activities.devotion', icon: BookOpen },
+      // { to: '/devotion', label: 'activities.devotion', icon: BookOpen },
       { to: '/profile', label: 'nav.profile', icon: User },
     ]
   }

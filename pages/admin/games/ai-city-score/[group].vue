@@ -31,9 +31,11 @@
           🚀 Deployed path; 2 or fewer follow 🚫 Rejected.
           <template v-if="deployedCount !== null">
             {{ groupName }} deployed <span class="font-bold text-white">{{ deployedCount }}</span> —
-            suggested path: <span class="font-bold text-blue-400">{{ suggestedPath === 'deploy' ? '🚀 Deployed' : '🚫 Rejected' }}</span>.
+            locked path: <span class="font-bold text-blue-400">{{ suggestedPath === 'deploy' ? '🚀 Deployed' : '🚫 Rejected' }}</span>.
           </template>
-          You can override per station below.
+          <template v-else>
+            No Phase 1 Council audit found for this group — defaulting to 🚫 Rejected. Run the audit first if this is wrong.
+          </template>
         </div>
 
         <!-- ── Station accordion (one open at a time) ─────────────── -->
@@ -77,21 +79,20 @@
             <!-- Expanded body -->
             <div v-if="openStation === idx" class="border-t border-white/10 p-4 sm:p-5 space-y-5">
 
-              <!-- Deploy toggle -->
+              <!-- Deploy path (locked in from the Phase 1 Council audit) -->
               <div>
-                <p class="text-xs font-bold text-blue-400/80 mb-2">Did they deploy the AI for this station?</p>
-                <div class="grid grid-cols-2 gap-2">
-                  <button
-                    v-for="p in ['deploy', 'reject']" :key="p"
-                    @click="paths[idx] = p"
-                    class="py-2.5 rounded-xl font-bold text-sm transition-all border"
-                    :class="paths[idx] === p
-                      ? (p === 'deploy' ? 'bg-blue-500/20 text-blue-400 border-blue-500/60' : 'bg-white/15 text-white border-white/40')
-                      : 'bg-white/5 text-tertiary/50 border-white/10 hover:bg-white/10'"
-                  >
-                    {{ p === 'deploy' ? '🚀 Deployed AI' : '🚫 Rejected AI' }}
-                  </button>
+                <p class="text-xs font-bold text-blue-400/80 mb-2">AI path for this station</p>
+                <div
+                  class="py-2.5 rounded-xl font-bold text-sm border text-center"
+                  :class="paths[idx] === 'deploy'
+                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/60'
+                    : 'bg-white/15 text-white border-white/40'"
+                >
+                  {{ paths[idx] === 'deploy' ? '🚀 Deployed AI' : '🚫 Rejected AI' }}
                 </div>
+                <p class="text-[11px] text-tertiary/40 mt-1.5">
+                  Locked in from the Phase 1 Council audit — {{ deployedCount === null ? 'no audit found for this group.' : `deployed ${deployedCount} AI system${deployedCount === 1 ? '' : 's'}.` }}
+                </p>
               </div>
 
               <!-- Cost / meter / time chips -->
@@ -207,7 +208,6 @@ const groupName = decodeURIComponent(route.params.group)
 const team = computed(() => store.teams[groupName])
 
 const stations = ref(Array(MISSIONS.length).fill(0))
-const paths = ref(Array(MISSIONS.length).fill('reject'))
 const openStation = ref(0)
 const saved = ref(false)
 const saving = ref(false)
@@ -232,16 +232,15 @@ const suggestedPath = computed(() =>
   (deployedCount.value ?? 0) >= 3 ? 'deploy' : 'reject',
 )
 
-// Prefill from Firestore once the team doc arrives
+// Every station follows the same path — locked in by the Phase 1 Council
+// audit, not editable per station.
+const paths = computed(() => Array(MISSIONS.length).fill(suggestedPath.value))
+
+// Prefill scores from Firestore once the team doc arrives
 watch(team, (t) => {
   if (prefilled || !t) return
   prefilled = true
   stations.value = [...(t.stations ?? Array(store.STATION_COUNT).fill(0))]
-  if (Array.isArray(t.stationPaths) && t.stationPaths.length === MISSIONS.length) {
-    paths.value = [...t.stationPaths]
-  } else {
-    paths.value = Array(MISSIONS.length).fill(suggestedPath.value)
-  }
 }, { immediate: true })
 
 function stationError(idx) {
