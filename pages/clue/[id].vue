@@ -221,7 +221,6 @@
         </div>
 
         <div class="card p-6 border border-primary/30">
-          <p v-if="clue.description" class="text-white leading-relaxed whitespace-pre-line mb-5">{{ clue.description }}</p>
 
           <template v-if="clue.fileUrl">
             <img
@@ -235,6 +234,13 @@
               :src="clue.fileUrl"
               class="w-full h-[70vh] rounded-xl border border-white/10 bg-white"
             ></iframe>
+            <video
+              v-else-if="isVideo"
+              :src="clue.fileUrl"
+              controls
+              playsinline
+              class="w-full rounded-xl border border-white/10 bg-black"
+            ></video>
           </template>
         </div>
 
@@ -267,6 +273,7 @@ const unlocked = ref(false)
 
 const isImage = computed(() => clue.value?.fileType?.startsWith('image/'))
 const isPdf = computed(() => clue.value?.fileType === 'application/pdf')
+const isVideo = computed(() => clue.value?.fileType?.startsWith('video/'))
 
 // ─── Navigation lockdown ────────────────────────────────────────────
 // This page is a dead end: back button and route-leave both go to /dashboard.
