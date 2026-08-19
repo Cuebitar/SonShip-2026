@@ -6,7 +6,7 @@
       <div class="container-inner flex items-center justify-between">
         <p class="font-heading font-black text-primary text-lg">🔍 The Final Night</p>
         <span v-if="clue" class="px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary/80">
-          Stage {{ clue.stage }}
+          {{ t('clue.stage', { n: clue.stage }) }}
         </span>
       </div>
     </header>
@@ -16,24 +16,24 @@
       <!-- Loading -->
       <div v-if="loading" class="text-center py-24 text-tertiary">
         <p class="text-4xl mb-4 animate-pulse">🕵️</p>
-        <p>Decrypting clue…</p>
+        <p>{{ t('clue.decrypting') }}</p>
       </div>
 
       <!-- Not found -->
       <div v-else-if="notFound" class="text-center py-24">
         <p class="text-5xl mb-4">🚫</p>
-        <h1 class="font-heading font-black text-2xl text-white mb-2">Clue Not Found</h1>
-        <p class="text-tertiary mb-8">This clue doesn't exist or has been removed.</p>
-        <button @click="goDashboard" class="btn-primary w-auto min-w-0 px-8">Back to Dashboard</button>
+        <h1 class="font-heading font-black text-2xl text-white mb-2">{{ t('clue.not_found_title') }}</h1>
+        <p class="text-tertiary mb-8">{{ t('clue.not_found_msg') }}</p>
+        <button @click="goDashboard" class="btn-primary w-auto min-w-0 px-8">{{ t('clue.back_to_dashboard') }}</button>
       </div>
 
       <!-- ── Challenge gauntlet ─────────────────────────────────── -->
       <div v-else-if="!unlocked" class="space-y-6">
 
         <div class="text-center">
-          <p class="text-xs font-bold uppercase tracking-[0.25em] text-primary/60 mb-2">Security Checkpoint 安全检查</p>
-          <h1 class="font-heading font-black text-2xl text-white">Prove you're a real detective</h1>
-          <p class="text-sm text-tertiary mt-1">Clear {{ challenges.length }} challenges to decrypt this clue · 完成挑战才能解锁线索</p>
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-primary/60 mb-2">{{ t('clue.checkpoint') }}</p>
+          <h1 class="font-heading font-black text-2xl text-white">{{ t('clue.prove_detective') }}</h1>
+          <p class="text-sm text-tertiary mt-1">{{ t('clue.clear_challenges', { n: challenges.length }) }}</p>
         </div>
 
         <!-- Progress dots -->
@@ -50,14 +50,14 @@
 
         <div class="card p-6 border border-primary/30" :class="{ 'challenge-shake': shaking }">
           <p class="text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">
-            Challenge {{ challengeIndex + 1 }} / {{ challenges.length }}
+            {{ t('clue.challenge_progress', { current: challengeIndex + 1, total: challenges.length }) }}
           </p>
           <h2 class="font-heading font-black text-xl text-white mb-5">{{ current.title }}</h2>
 
           <!-- Solved flash -->
           <div v-if="solvedFlash" class="text-center py-10">
             <p class="text-5xl mb-3">✅</p>
-            <p class="font-heading font-bold text-green-400 text-xl">Solved!</p>
+            <p class="font-heading font-bold text-green-400 text-xl">{{ t('clue.solved') }}</p>
           </div>
 
           <!-- ── MCQ ── -->
@@ -77,13 +77,13 @@
               </button>
             </div>
             <p v-if="cooldown > 0" class="text-red-400 text-sm font-bold mt-4 text-center">
-              ❌ Wrong answer! Wait {{ cooldown }}s… 答错了，等一下！
+              {{ t('clue.wrong_answer_wait', { s: cooldown }) }}
             </p>
           </div>
 
           <!-- ── Find the impostor emoji ── -->
           <div v-else-if="current.type === 'findEmoji'">
-            <p class="text-tertiary text-sm mb-4">One of these is not like the others. Tap it! 找出不一样的那个！</p>
+            <p class="text-tertiary text-sm mb-4">{{ t('clue.find_impostor_hint') }}</p>
             <div class="grid gap-1.5" :style="{ gridTemplateColumns: `repeat(${current.size}, minmax(0, 1fr))` }">
               <button
                 v-for="(cell, i) in emojiGrid" :key="`${emojiGridKey}-${i}`"
@@ -97,7 +97,7 @@
           <!-- ── Memory sequence ── -->
           <div v-else-if="current.type === 'memory'">
             <p class="text-tertiary text-sm mb-4">
-              {{ memoryPhase === 'show' ? 'Watch the sequence carefully… 记住顺序…' : 'Now repeat the sequence! 重复顺序！' }}
+              {{ memoryPhase === 'show' ? t('clue.memory_watch') : t('clue.memory_repeat') }}
               <span v-if="memoryPhase === 'input'" class="text-primary font-bold ml-1">{{ memoryInput.length }} / {{ memorySequence.length }}</span>
             </p>
             <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto">
@@ -119,8 +119,8 @@
           <!-- ── Hold for exactly N seconds ── -->
           <div v-else-if="current.type === 'hold'">
             <p class="text-tertiary text-sm mb-6 text-center">
-              Hold the button for <span class="text-primary font-bold">exactly {{ current.targetMs / 1000 }} seconds</span>, then release.<br>
-              No timer shown — trust your instincts! 凭感觉按住{{ current.targetMs / 1000 }}秒！
+              {{ t('clue.hold_instruction', { s: current.targetMs / 1000 }) }}<br>
+              {{ t('clue.hold_trust') }}
             </p>
             <div class="flex justify-center">
               <button
@@ -131,7 +131,7 @@
                 class="w-40 h-40 rounded-full font-heading font-black text-xl transition-all select-none touch-none"
                 :class="holding ? 'bg-primary text-dark scale-95 shadow-warm' : 'bg-white/10 text-white hover:bg-white/15'"
               >
-                {{ holding ? 'HOLDING…' : 'HOLD ME' }}
+                {{ holding ? t('clue.hold_holding') : t('clue.hold_me') }}
               </button>
             </div>
             <p v-if="feedback" class="text-red-400 text-sm font-bold mt-6 text-center">{{ feedback }}</p>
@@ -139,7 +139,7 @@
 
           <!-- ── Tap numbers in order ── -->
           <div v-else-if="current.type === 'tapOrder'">
-            <p class="text-tertiary text-sm mb-4">Tap 1 → {{ current.count }} in order. One mistake resets! 按顺序点击数字！</p>
+            <p class="text-tertiary text-sm mb-4">{{ t('clue.tap_order_hint', { n: current.count }) }}</p>
             <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
               <button
                 v-for="n in tapOrderGrid" :key="n"
@@ -155,7 +155,7 @@
 
           <!-- ── Type the phrase ── -->
           <div v-else-if="current.type === 'type'">
-            <p class="text-tertiary text-sm mb-3">Type this phrase exactly:</p>
+            <p class="text-tertiary text-sm mb-3">{{ t('clue.type_instruction') }}</p>
             <p class="font-heading font-bold text-primary text-lg mb-5 select-none">“{{ current.phrase }}”</p>
             <input
               v-model="typeInput"
@@ -163,18 +163,18 @@
               @paste.prevent
               type="text"
               class="input py-3 bg-dark/50 mb-4"
-              placeholder="Type here… (no copy-paste 😉)"
+              :placeholder="t('clue.type_placeholder')"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             />
-            <button @click="checkTyped" class="btn-primary w-full">Submit</button>
+            <button @click="checkTyped" class="btn-primary w-full">{{ t('clue.type_submit') }}</button>
             <p v-if="feedback" class="text-red-400 text-sm font-bold mt-4 text-center">{{ feedback }}</p>
           </div>
 
           <!-- ── Reaction test ── -->
           <div v-else-if="current.type === 'reaction'">
             <p class="text-tertiary text-sm mb-4 text-center">
-              Tap the box the moment it turns <span class="text-green-400 font-bold">green</span>. Too early = restart round!<br>
-              Round {{ reactionRound + 1 }} / {{ current.rounds }}
+              {{ t('clue.reaction_hint') }}<br>
+              {{ t('clue.reaction_round', { current: reactionRound + 1, total: current.rounds }) }}
             </p>
             <button
               @click="tapReaction"
@@ -185,7 +185,7 @@
                 'bg-green-500 text-dark': reactionState === 'go',
               }"
             >
-              {{ reactionState === 'idle' ? 'TAP TO START' : reactionState === 'waiting' ? 'WAIT FOR IT…' : 'TAP NOW!' }}
+              {{ reactionState === 'idle' ? t('clue.reaction_idle') : reactionState === 'waiting' ? t('clue.reaction_waiting') : t('clue.reaction_go') }}
             </button>
             <p v-if="feedback" class="text-red-400 text-sm font-bold mt-4 text-center">{{ feedback }}</p>
           </div>
@@ -193,8 +193,8 @@
           <!-- ── Stroop colour trap ── -->
           <div v-else-if="current.type === 'stroop'">
             <p class="text-tertiary text-sm mb-4 text-center">
-              Tap the <span class="text-primary font-bold">INK COLOUR</span> of the word — NOT what it says!
-              One mistake resets. Round {{ stroopRound + 1 }} / {{ current.rounds }}
+              {{ t('clue.stroop_hint') }}
+              {{ t('clue.reaction_round', { current: stroopRound + 1, total: current.rounds }) }}
             </p>
             <p class="text-center font-heading font-black text-5xl mb-6 select-none" :class="stroopWord.inkClass">
               {{ stroopWord.text }}
@@ -204,7 +204,7 @@
                 v-for="c in STROOP_COLORS" :key="c.name"
                 @click="answerStroop(c.name)"
                 class="px-4 py-3 rounded-xl font-bold bg-white/5 text-white border border-white/10 hover:bg-white/15 transition-all"
-              >{{ c.label }}</button>
+              >{{ t(c.labelKey) }}</button>
             </div>
             <p v-if="feedback" class="text-red-400 text-sm font-bold mt-4 text-center">{{ feedback }}</p>
           </div>
@@ -216,8 +216,8 @@
       <div v-else class="space-y-6">
         <div class="text-center">
           <p class="text-5xl mb-3">🗝️</p>
-          <p class="text-xs font-bold uppercase tracking-[0.25em] text-green-400 mb-2">Clue Unlocked 线索解锁</p>
-          <h1 class="font-heading font-black text-3xl text-primary">{{ clue.title }}</h1>
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-green-400 mb-2">{{ t('clue.unlocked') }}</p>
+          <h1 class="font-heading font-black text-3xl text-primary">{{ clueTitle(clue, locale) }}</h1>
         </div>
 
         <div class="card p-6 border border-primary/30">
@@ -226,7 +226,7 @@
             <img
               v-if="isImage"
               :src="clue.fileUrl"
-              :alt="clue.title"
+              :alt="clueTitle(clue, locale)"
               class="w-full rounded-xl border border-white/10"
             />
             <iframe
@@ -245,7 +245,7 @@
         </div>
 
         <button @click="goDashboard" class="w-full py-3 font-bold text-tertiary hover:text-white transition-colors text-sm">
-          ← Back to Dashboard
+          {{ t('clue.back_to_dashboard_arrow') }}
         </button>
       </div>
 
@@ -257,11 +257,13 @@
 definePageMeta({ requiresAuth: true, layout: false })
 
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useDetectiveGameStore } from '~/stores/detectiveGame'
 import { useAuthStore } from '~/stores/auth'
 import { pickChallenges } from '~/lib/detectiveChallenges'
 
+const { t, locale } = useI18n()
 const route = useRoute()
 const store = useDetectiveGameStore()
 const auth = useAuthStore()
@@ -419,7 +421,7 @@ function setupEmojiGrid() {
 
 function tapEmoji(cell) {
   if (cell === current.value.target) { solve(); return }
-  fail('❌ Not that one! The grid has been reshuffled… 重新找！')
+  fail(t('clue.find_impostor_fail'))
   setupEmojiGrid()
 }
 
@@ -464,7 +466,7 @@ function tapMemory(name) {
   const idx = memoryInput.value.length - 1
   if (memorySequence.value[idx] !== name) {
     memoryPhase.value = 'show'
-    fail('❌ Wrong sequence! Watch again… 记错了，再看一次！')
+    fail(t('clue.memory_fail'))
     setTimeout(startMemory, 900)
     return
   }
@@ -486,7 +488,7 @@ function endHold() {
   const elapsed = performance.now() - holdStart
   const { targetMs, toleranceMs } = current.value
   if (Math.abs(elapsed - targetMs) <= toleranceMs) { solve(); return }
-  fail(`❌ You held for ${(elapsed / 1000).toFixed(2)}s — aim for ${targetMs / 1000}s. Try again!`)
+  fail(t('clue.hold_fail', { actual: (elapsed / 1000).toFixed(2), target: targetMs / 1000 }))
 }
 
 function cancelHold() {
@@ -506,7 +508,7 @@ function setupTapOrder() {
 function tapNumber(n) {
   if (n < tapOrderNext.value) return
   if (n !== tapOrderNext.value) {
-    fail('❌ Wrong number! Back to 1… 错了，重新开始！')
+    fail(t('clue.tap_order_fail'))
     tapOrderNext.value = 1
     return
   }
@@ -521,7 +523,7 @@ function checkTyped() {
   const want = current.value.phrase.trim().toLowerCase()
   const got = typeInput.value.trim().toLowerCase().replace(/\s+/g, ' ')
   if (got === want) { solve(); return }
-  fail('❌ Not quite — check every word! 打错了，再看清楚！')
+  fail(t('clue.type_fail'))
 }
 
 // ── Reaction ──
@@ -541,7 +543,7 @@ function tapReaction() {
   if (reactionState.value === 'waiting') {
     clearTimeout(reactionTimer)
     reactionState.value = 'idle'
-    fail('❌ Too early! Round restarted… 太快了！')
+    fail(t('clue.reaction_fail'))
     return
   }
   // go
@@ -553,10 +555,10 @@ function tapReaction() {
 
 // ── Stroop ──
 const STROOP_COLORS = [
-  { name: 'red', label: 'Red 红', inkClass: 'text-red-500' },
-  { name: 'blue', label: 'Blue 蓝', inkClass: 'text-blue-500' },
-  { name: 'green', label: 'Green 绿', inkClass: 'text-green-500' },
-  { name: 'yellow', label: 'Yellow 黄', inkClass: 'text-yellow-400' },
+  { name: 'red', labelKey: 'clue.color_red', inkClass: 'text-red-500' },
+  { name: 'blue', labelKey: 'clue.color_blue', inkClass: 'text-blue-500' },
+  { name: 'green', labelKey: 'clue.color_green', inkClass: 'text-green-500' },
+  { name: 'yellow', labelKey: 'clue.color_yellow', inkClass: 'text-yellow-400' },
 ]
 const stroopRound = ref(0)
 const stroopWord = ref({ text: '', ink: '', inkClass: '' })
@@ -567,7 +569,7 @@ function nextStroop() {
   while (ink.name === word.name) {
     ink = STROOP_COLORS[Math.floor(Math.random() * STROOP_COLORS.length)]
   }
-  stroopWord.value = { text: word.label.split(' ')[0].toUpperCase(), ink: ink.name, inkClass: ink.inkClass }
+  stroopWord.value = { text: t(word.labelKey).toUpperCase(), ink: ink.name, inkClass: ink.inkClass }
 }
 
 function answerStroop(name) {
@@ -578,7 +580,7 @@ function answerStroop(name) {
     nextStroop()
     return
   }
-  fail('❌ You read the word! Back to round 1… 被骗了，重来！')
+  fail(t('clue.stroop_fail'))
   stroopRound.value = 0
   nextStroop()
 }

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useCampersStore } from './campers'
 import { useFirebase } from '~/composable/firebase'
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null);
     const ready = ref(false);
@@ -119,7 +119,7 @@ export const useAuthStore = defineStore('auth', () => {
             return { success: true, user: user.value }
         } catch (error) {
             console.error(error)
-            return { success: false, error: error.message }
+            return { success: false, error: error.message, code: error.code }
         }
         return { success: false, error: 'Invalid email or password.' }
     }
@@ -134,17 +134,31 @@ export const useAuthStore = defineStore('auth', () => {
         persistUser(null)
     }
 
-    async function changePassword(newPassword) {
+    async function changePassword(currentPassword, newPassword) {
         const firebase = useFirebase()
         if (!firebase) return { success: false, error: 'Firebase not initialized.' }
+        const currentUser = firebase.auth.currentUser
+        if (!currentUser?.email) return { success: false, error: 'Not signed in.' }
         try {
-            await firebase.auth.currentUser.updatePassword(newPassword)
-            user.value.changed_password = true;
+            // updatePassword is a "sensitive" operation — Firebase rejects it with
+            // auth/requires-recent-login unless the session was established very
+            // recently, which isn't true for a session restored from a previous
+            // visit. Re-authenticating right before the change keeps it fresh.
+            const credential = EmailAuthProvider.credential(currentUser.email, currentPassword)
+            await reauthenticateWithCredential(currentUser, credential)
+            await updatePassword(currentUser, newPassword)
+            if (user.value?.id) {
+                // Keep the Firestore camper record in sync — it stores a plaintext
+                // password for admin reference (same convention as registration),
+                // so it must be updated or it goes stale after a real change.
+                await campers.updateCamper({ id: user.value.id, changed_password: true, password: newPassword })
+            }
+            user.value = { ...user.value, changed_password: true, password: newPassword }
             persistUser(user.value)
             return { success: true }
         } catch (error) {
             console.error(error)
-            return { success: false, error: error.message }
+            return { success: false, error: error.message, code: error.code }
         }
     }
 

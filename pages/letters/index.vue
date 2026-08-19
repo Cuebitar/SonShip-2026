@@ -24,7 +24,7 @@
       <div v-if="currentList.length === 0" class="text-center py-20">
         <p class="text-5xl mb-4">💌</p>
         <p class="font-body text-tertiary/60">{{ t('letters.no_letters') }}</p>
-        <NuxtLink to="/letters/write" class="btn-primary mt-4 inline-flex">Write a Letter</NuxtLink>
+        <NuxtLink to="/letters/write" class="btn-primary mt-4 inline-flex">{{ t('letters.write_title') }}</NuxtLink>
       </div>
 
       <div class="space-y-4">
@@ -35,13 +35,13 @@
               <!-- From/To header -->
               <div class="flex items-center gap-2 mb-3">
                 <span class="badge-primary text-xs">
-                  {{ tab === 'received' ? t('letters.from') : 'To' }}:
+                  {{ tab === 'received' ? t('letters.from') : t('letters.to') }}:
                   {{ tab === 'received'
-                    ? (letter.anonymous ? '🎭 Anonymous' : getCamper(letter.fromId)?.name)
+                    ? (letter.anonymous ? t('letters.anonymous_sender') : getCamper(letter.fromId)?.name)
                     : getCamper(letter.toId)?.name
                   }}
                 </span>
-                <span v-if="letter.edited" class="badge-info text-xs">Edited</span>
+                <span v-if="letter.edited" class="badge-info text-xs">{{ t('letters.edited_badge') }}</span>
                 <span class="font-body text-xs text-tertiary/40 ml-auto">{{ formatDate(letter.timestamp) }}</span>
               </div>
 
@@ -64,8 +64,8 @@
               <div v-else class="space-y-2">
                 <textarea v-model="editBody" rows="6" class="input text-sm resize-none w-64"></textarea>
                 <div class="flex gap-2">
-                  <button @click="saveEdit(letter.id)" class="btn-primary btn-sm flex-1 justify-center text-xs">Save</button>
-                  <button @click="editingId = null" class="btn-ghost btn-sm text-xs">Cancel</button>
+                  <button @click="saveEdit(letter.id)" class="btn-primary btn-sm flex-1 justify-center text-xs">{{ t('letters.save') }}</button>
+                  <button @click="editingId = null" class="btn-ghost btn-sm text-xs">{{ t('letters.cancel') }}</button>
                 </div>
               </div>
             </div>

@@ -307,16 +307,6 @@
                 </div>
 
                 <div class="col-span-2">
-                  <label class="block text-xs font-bold text-primary/80 mb-1">Secret Angel Target</label>
-                  <select v-model="editForm.secretAngel" class="input py-2 bg-dark/50">
-                    <option value="">None</option>
-                    <option v-for="user in recordOptions" :key="user.id" :value="user.fullName">
-                      {{ user.fullName }}
-                    </option>
-                  </select>
-                </div>
-
-                <div class="col-span-2">
                   <label class="block text-xs font-bold text-primary/80 mb-1">Riddle Target <span class="text-tertiary/40">(find by riddle)</span></label>
                   <select v-model="editForm.iceBreakingTarget2" class="input py-2 bg-dark/50">
                     <option value="">None</option>
@@ -422,7 +412,6 @@ const records = computed(() =>
       q3               : c.questions?.verse ?? '',
       status           : c.status,
       secret_identity  : c.secret_identity,
-      secretAngel      : c.secret_angel?.id ?? '',
       iceBreakingTarget2: rawTarget2,
       iceBreakingTarget2Name: resolveTargetName(rawTarget2),
       iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
@@ -519,7 +508,6 @@ const editForm = reactive({
   transport        : '',
   preferred_language: '',
   secret_identity  : '',
-  secretAngel      : '',
   iceBreakingTarget2: '',
   iceBreakingRiddle: ''
 });
@@ -532,7 +520,6 @@ function openModal(record) {
   editForm.transport         = record.transport;
   editForm.preferred_language = record.preferred_language || '';
   editForm.secret_identity   = record.secret_identity || '';
-  editForm.secretAngel       = record.secretAngel || '';
   editForm.iceBreakingTarget2 = record.iceBreakingTarget2?.id || '';
   editForm.iceBreakingRiddle = record.iceBreakingRiddle || '';
 }
@@ -570,7 +557,6 @@ async function saveChanges() {
       transport: editForm.transport,
       preferred_language: editForm.preferred_language,
       secret_identity: editForm.secret_identity,
-      secret_angel: editForm.secretAngel,
       ice_breaking: {
         riddle: editForm.iceBreakingRiddle,
         target2: editForm.iceBreakingTarget2,

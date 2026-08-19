@@ -40,10 +40,10 @@
         <div class="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-8">
 
           <!-- ============ 左侧：行程内容 (区块化网格设计) ============ -->
-          <div class="overflow-x-auto custom-scrollbar pb-4">
+          <div class="min-w-0 pb-4">
 
             <!-- ---- 桌面版：多天并排区块化时间轴 (自动合并) (lg 以上显示) ---- -->
-            <div class="hidden lg:block min-w-[700px]">
+            <div class="hidden lg:block">
               
               <!-- 表头 (滚动时贴顶) -->
               <div class="sticky top-20 z-40 bg-dark/95 backdrop-blur-sm flex gap-2 mb-2 py-1">
@@ -62,11 +62,11 @@
                 
                 <!-- 时间轴块 (左侧) -->
                 <div class="w-24 flex-shrink-0 relative">
-                  <div v-for="hour in timelineHours" :key="hour" class="absolute w-full" :style="{ top: `${hourToTop(hour)}px`, height: `${HOUR_HEIGHT_DESKTOP}px` }">
+                  <div v-for="hour in timelineHours" :key="hour" class="absolute w-full" :style="{ top: `${hourToTop(hour)}px`, height: `${SLOT_HEIGHT_DESKTOP}px` }">
                     <div class="w-full h-[calc(100%-6px)] mt-[3px] bg-white/5 rounded-xl flex flex-col items-center justify-center text-white/60 text-xs font-bold font-mono tracking-wider">
                       <span>{{ formatHour(hour) }}</span>
                       <span class="text-[10px] text-white/20 my-0.5">|</span>
-                      <span>{{ formatHour(hour + 1) }}</span>
+                      <span>{{ formatHour(hour + SLOT_HOURS) }}</span>
                     </div>
                   </div>
                 </div>
@@ -91,7 +91,7 @@
                     <!-- 标题 (根据高度智能截断) -->
                     <div class="font-black leading-tight w-full px-1 flex-1 flex items-center justify-center" 
                          :class="item.height < 50 ? 'text-[11px] sm:text-xs' : 'text-xs sm:text-sm'">
-                      <span :class="item.height < 50 ? 'line-clamp-1' : 'line-clamp-2'">{{ item.slot.name }}</span>
+                      <span :class="item.height < 50 ? 'line-clamp-1' : 'line-clamp-2'">{{ scheduleTitle(item.slot, locale) }}</span>
                     </div>
                     
                     <!-- 备注/地点 (只在高度足够时显示，防止撑爆) -->
@@ -125,11 +125,11 @@
                 <!-- 手机端时间轴 -->
                 <div v-else class="flex gap-2 relative" :style="{ height: `${mobileTimelineHeight}px` }">
                   <div class="w-[72px] flex-shrink-0 relative">
-                    <div v-for="hour in mobileTimelineHours" :key="`mh-${hour}`" class="absolute w-full" :style="{ top: `${mobileHourToTop(hour)}px`, height: `${HOUR_HEIGHT_MOBILE}px` }">
+                    <div v-for="hour in mobileTimelineHours" :key="`mh-${hour}`" class="absolute w-full" :style="{ top: `${mobileHourToTop(hour)}px`, height: `${SLOT_HEIGHT_MOBILE}px` }">
                       <div class="w-full h-[calc(100%-4px)] mt-[2px] bg-white/5 rounded-xl flex flex-col items-center justify-center text-white/60 text-[10px] font-bold font-mono">
                         <span>{{ formatHour(hour) }}</span>
                         <span class="text-[8px] text-white/20 my-0.5">|</span>
-                        <span>{{ formatHour(hour + 1) }}</span>
+                        <span>{{ formatHour(hour + SLOT_HOURS) }}</span>
                       </div>
                     </div>
                   </div>
@@ -156,7 +156,7 @@
                       <!-- 紧凑标题 -->
                       <div class="font-black leading-tight w-full px-1 flex-1 flex items-center justify-center" 
                            :class="item.height < 45 ? 'text-[10px]' : 'text-[13px]'">
-                        <span :class="item.height < 45 ? 'line-clamp-1' : 'line-clamp-2'">{{ item.slot.name }}</span>
+                        <span :class="item.height < 45 ? 'line-clamp-1' : 'line-clamp-2'">{{ scheduleTitle(item.slot, locale) }}</span>
                       </div>
                     </div>
                   </div>
@@ -167,7 +167,7 @@
           </div>
 
           <!-- ============ 右侧：日历 / 图例 / 提醒 ============ -->
-          <div class="space-y-4">
+          <div class="space-y-4 xl:sticky xl:top-20 xl:self-start">
 
             <!-- 活动类型图例 -->
             <div :class="sectionContainer">
@@ -227,7 +227,7 @@
               <div class="w-px bg-white/10 my-1"></div>
               <div class="flex-1">
                 <div class="flex items-start justify-between gap-3 mb-1.5">
-                  <h4 class="font-bold text-white text-sm leading-snug">{{ event.name }}</h4>
+                  <h4 class="font-bold text-white text-sm leading-snug">{{ scheduleTitle(event, locale) }}</h4>
                   <span :class="typeStyle(event).badge" class="px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">{{ typeStyle(event).label }}</span>
                 </div>
                 <p v-if="event.location" class="text-[11px] text-white/60 flex items-center gap-1.5 mt-2"><MapPin class="w-3.5 h-3.5 text-primary/70" /> {{ event.location }}</p>
@@ -252,7 +252,7 @@
                 <component :is="typeStyle(selectedEvent).icon" class="w-6 h-6" />
               </div>
               <div>
-                <h3 class="font-black text-lg leading-tight drop-shadow-md">{{ selectedEvent.name }}</h3>
+                <h3 class="font-black text-lg leading-tight drop-shadow-md">{{ scheduleTitle(selectedEvent, locale) }}</h3>
                 <p class="text-xs opacity-90 mt-1 font-bold">{{ typeStyle(selectedEvent).label }}</p>
               </div>
             </div>
@@ -295,7 +295,7 @@ import {
   Clock, CalendarDays, Tags, Tent, Star, X
 } from 'lucide-vue-next'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const auth = useAuthStore()
 const scheduleStore = useScheduleStore()
 
@@ -359,7 +359,7 @@ const TYPE_STYLES = {
 }
 
 function inferType(slot) {
-  const text = `${slot.name || ''} ${slot.notes || ''}`
+  const text = `${slot.name_en || ''} ${slot.name_zh || ''} ${slot.name || ''} ${slot.notes || ''}`
   if (/灵修|devotion/i.test(text)) return 'devotion'
   if (/早餐|午餐|晚餐|用餐|breakfast|lunch|dinner|meal/i.test(text)) return 'meal'
   if (/查经|圣经|工作坊|团队建立|分组|分享|workshop|bible|study|team\s?building|sharing/i.test(text)) return 'learning'
@@ -377,25 +377,56 @@ function typeStyle(slot) {
 const HOUR_START = 7
 const HOUR_END = 23
 
-// 增加了每小时的高度比例，拉开空间防止拥挤
-const HOUR_HEIGHT_DESKTOP = 120
-const HOUR_HEIGHT_MOBILE = 110
+// 时间轴刻度间隔改为 30 分钟一格，格子高度不变，行程区块因此变高一倍
+const SLOT_HOURS = 0.5
+const SLOT_HEIGHT_DESKTOP = 120
+const SLOT_HEIGHT_MOBILE = 110
+
+// 每小时对应的像素高度（用于时长换算），= 每格高度 / 每格代表的小时数
+const HOUR_HEIGHT_DESKTOP = SLOT_HEIGHT_DESKTOP / SLOT_HOURS
+const HOUR_HEIGHT_MOBILE = SLOT_HEIGHT_MOBILE / SLOT_HOURS
 
 function timeToMinutes(timeStr) {
   const [h, m] = (timeStr || '0:0').split(':').map(Number)
   return h * 60 + m
 }
 function formatHour(hour) {
-  return `${String(Math.floor(hour)).padStart(2, '0')}:00`
+  const h = Math.floor(hour)
+  const m = Math.round((hour - h) * 60)
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
+
+// 事件的结束时间（小时），用来把时间轴延长到盖住跨过 HOUR_END 的行程（例如 23:00-23:30 的熄灯）
+function slotEndHour(slot) {
+  const duration = Number(slot.duration) || 30
+  return (timeToMinutes(slot.time) + duration) / 60
+}
+
+// 桌面版从 08:00 开始（更早的时段是空的）
+const DESKTOP_START_HOUR = 8
+
+const desktopStartHour = computed(() => {
+  // 万一有更早的行程（任何一天），就以最早那一场为准，避免被裁掉
+  const earliestMin = days.value
+    .flatMap(day => scheduleStore.getByDay(day))
+    .reduce((min, slot) => Math.min(min, timeToMinutes(slot.time)), Infinity)
+  if (earliestMin === Infinity) return DESKTOP_START_HOUR
+  return Math.max(HOUR_START, Math.min(DESKTOP_START_HOUR, Math.floor(earliestMin / 60)))
+})
+
+// 万一有行程跨过 HOUR_END（例如 23:00-23:30 熄灯），时间轴要延长盖住它，避免区块溢出到下方内容
+const desktopEndHour = computed(() => {
+  const slots = days.value.flatMap(day => scheduleStore.getByDay(day))
+  return slots.reduce((max, slot) => Math.max(max, slotEndHour(slot)), HOUR_END)
+})
 
 const timelineHours = computed(() => {
   const arr = []
-  for (let h = Math.ceil(HOUR_START); h < Math.floor(HOUR_END); h += 1) arr.push(h)
+  for (let h = desktopStartHour.value; h < desktopEndHour.value; h += SLOT_HOURS) arr.push(h)
   return arr
 })
-const timelineHeight = computed(() => (HOUR_END - HOUR_START) * HOUR_HEIGHT_DESKTOP)
-function hourToTop(hour) { return (hour - HOUR_START) * HOUR_HEIGHT_DESKTOP }
+const timelineHeight = computed(() => (desktopEndHour.value - desktopStartHour.value) * HOUR_HEIGHT_DESKTOP)
+function hourToTop(hour) { return (hour - desktopStartHour.value) * HOUR_HEIGHT_DESKTOP }
 
 // 获取动态合并的排版 (Desktop 使用)
 const mergedLayout = computed(() => {
@@ -423,8 +454,8 @@ const mergedLayout = computed(() => {
       if (!currentMerge) {
         currentMerge = { slot, startDayIndex: slot.dayIndex, colSpan: 1 }
       } else {
-        // 如果是连续的一天，且行程名称相同（无视备注的差异）
-        if (slot.dayIndex === currentMerge.startDayIndex + currentMerge.colSpan && slot.name === currentMerge.slot.name) {
+        // 如果是连续的一天，且行程名称相同（无视备注的差异，且不受当前显示语言影响）
+        if (slot.dayIndex === currentMerge.startDayIndex + currentMerge.colSpan && scheduleTitleKey(slot) === scheduleTitleKey(currentMerge.slot)) {
           currentMerge.colSpan += 1
         } else {
           mergedItems.push(currentMerge)
@@ -437,7 +468,7 @@ const mergedLayout = computed(() => {
 
   // 计算 Y 轴的位置与高度
   mergedItems.forEach(item => {
-    const startMin = timeToMinutes(item.slot.time) - HOUR_START * 60
+    const startMin = timeToMinutes(item.slot.time) - desktopStartHour.value * 60
     const duration = Number(item.slot.duration) || 30
     item.top = (startMin / 60) * HOUR_HEIGHT_DESKTOP
     item.height = (duration / 60) * HOUR_HEIGHT_DESKTOP
@@ -482,18 +513,45 @@ function getMergedEventStyle(item, totalDays) {
 
 
 // Mobile 端单列计算
+// Day 1 是报到日，下午才开始，手机端从 14:00 起跳过上午的空白时段
+const MOBILE_DAY_START_HOURS = { 0: 14 }
+
+const mobileStartHour = computed(() => {
+  const dayIndex = days.value.indexOf(activeDay.value)
+  const override = MOBILE_DAY_START_HOURS[dayIndex]
+  if (override === undefined) return HOUR_START
+
+  // 万一当天真的有更早的行程，就以最早那一场为准，避免被裁掉
+  const earliestMin = scheduleByDay(activeDay.value)
+    .reduce((min, slot) => Math.min(min, timeToMinutes(slot.time)), Infinity)
+  if (earliestMin === Infinity) return override
+  return Math.max(HOUR_START, Math.min(override, Math.floor(earliestMin / 60)))
+})
+
+// 同上：手机端也要盖住跨过 HOUR_END 的行程
+// Day 4 是离营日，行程在午餐后就结束，手机端只显示到 13:00，不用拖到 23:00
+const MOBILE_DAY_END_HOURS = { 3: 13 }
+
+const mobileEndHour = computed(() => {
+  const dayIndex = days.value.indexOf(activeDay.value)
+  const baseEnd = MOBILE_DAY_END_HOURS[dayIndex] ?? HOUR_END
+  const slots = scheduleByDay(activeDay.value)
+  // 万一当天真的有更晚的行程，就以最晚那一场为准，避免被裁掉
+  return slots.reduce((max, slot) => Math.max(max, slotEndHour(slot)), baseEnd)
+})
+
 const mobileTimelineHours = computed(() => {
   const arr = []
-  for (let h = Math.ceil(HOUR_START); h < Math.floor(HOUR_END); h += 1) arr.push(h)
+  for (let h = mobileStartHour.value; h < mobileEndHour.value; h += SLOT_HOURS) arr.push(h)
   return arr
 })
-const mobileTimelineHeight = computed(() => (HOUR_END - HOUR_START) * HOUR_HEIGHT_MOBILE)
-function mobileHourToTop(hour) { return (hour - HOUR_START) * HOUR_HEIGHT_MOBILE }
+const mobileTimelineHeight = computed(() => (mobileEndHour.value - mobileStartHour.value) * HOUR_HEIGHT_MOBILE)
+function mobileHourToTop(hour) { return (hour - mobileStartHour.value) * HOUR_HEIGHT_MOBILE }
 
 const mobileLayout = computed(() => {
   const slots = scheduleByDay(activeDay.value)
   const items = slots.map(slot => {
-    const startMin = timeToMinutes(slot.time) - HOUR_START * 60
+    const startMin = timeToMinutes(slot.time) - mobileStartHour.value * 60
     const duration = Number(slot.duration) || 30
     return { slot, top: (startMin / 60) * HOUR_HEIGHT_MOBILE, height: (duration / 60) * HOUR_HEIGHT_MOBILE, indent: 0 }
   })

@@ -24,21 +24,24 @@
 
         <!-- Tagline -->
         <p   class=" text-sm md:text-xl mb-6 animate-fade-in mt-[-25px] md:mt-[-30px] mr-[-24px]  md:mr-[-88px]  font-body" style = "animation-delay:0.2s">
-          <img class = "inline-block w-6 h-6 mr-[-5px]" :src="Firelight" alt="Firelight"/> reconnecting...
+          <img class = "inline-block w-6 h-6 mr-[-5px]" :src="Firelight" alt="Firelight"/> {{ t('home.hero_tagline') }}
         </p>
 
-        <p class = "font-body text-tertiary/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 animate-slide-up" style = "animation-delay:0.4s">
+        <p class = "font-body text-tertiary/80 text-lg md:text-xl max-w-2xl mx-auto mb-4 animate-slide-up" style = "animation-delay:0.4s">
           {{ t('home.hero_subtitle') }}
         </p>
 
-        <div        class = "flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style = "animation-delay:0.6s">
-        <NuxtLink to    = "/register" class                                                       = "btn-primary btn-lg">
-            {{ t('home.hero_cta') }}
-            <ArrowRight class = "w-5 h-5" />
-          </NuxtLink>
-          <NuxtLink to = "/about" class = "btn-ghost btn-lg">
-            {{ t('home.hero_learn') }}
-          </NuxtLink>
+        <p class = "font-heading font-bold text-primary text-xl md:text-2xl mb-8 animate-slide-up" style = "animation-delay:0.5s">
+          {{ t('home.hero_excite') }}
+        </p>
+
+        <div class = "flex flex-wrap justify-center gap-3 md:gap-5 animate-slide-up" style = "animation-delay:0.6s">
+          <div v-for = "(value, unit) in timeLeft" :key = "unit" class = "flex flex-col items-center">
+            <div class = "w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-dark/40 backdrop-blur-md border border-primary/20 rounded-xl md:rounded-2xl shadow-warm">
+              <span class = "text-xl md:text-3xl font-heading font-bold text-primary">{{ value }}</span>
+            </div>
+            <span class = "mt-2 text-[10px] md:text-xs font-body font-semibold uppercase tracking-widest text-tertiary/60">{{ unit }}</span>
+          </div>
         </div>
 
         <!-- Scroll indicator -->
@@ -103,51 +106,10 @@
       </div>
     </section>
 
-    <!-- Countdown Section -->
-    <section class = "py-24 relative overflow-hidden bg-secondary/10">
-      <!-- Decorative background elements -->
-      <div class = "absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(230,177,83,0.05),transparent_70%)] pointer-events-none"></div>
-      
-      <div class = "container-inner relative z-10 text-center">
-      <div class = "mb-12">
-      <h2  class = "section-title mb-4">{{ t('home.sessions_title') }}</h2>
-      <div class = "w-16 h-1 bg-gradient-warm mx-auto rounded-full mb-6"></div>
-      <p   class = "font-body text-tertiary/60 max-w-lg mx-auto">{{ t('home.sessions_subtitle') }}</p>
-        </div>
-
-        <!-- Countdown Timer -->
-        <div  class = "flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
-        <div  v-for = "(value, unit) in timeLeft" :key = "unit"
-              class = "flex flex-col items-center">
-        <div  class = "w-20 h-20 md:w-28 md:h-28 flex items-center justify-center bg-dark/40 backdrop-blur-md border border-primary/20 rounded-2xl shadow-warm">
-        <span class = "text-3xl md:text-5xl font-heading font-bold text-primary">{{ value }}</span>
-            </div>
-            <span class = "mt-3 text-xs md:text-sm font-body font-semibold uppercase tracking-widest text-tertiary/60">{{ unit }}</span>
-          </div>
-        </div>
-
-        <!-- Registration CTA -->
-        <div        class = "flex flex-col items-center space-y-4">
-        <NuxtLink to    = "/register" class = "btn-primary btn-xl group">
-            {{ t('home.cta_btn') }}
-            <ArrowRight class = "w-6 h-6 group-hover:translate-x-1 transition-transform" />
-          </NuxtLink>
-          <p class = "text-sm font-body text-tertiary/40">{{ t('home.cta_subtitle') }}</p>
-        </div>
-      </div>
-    </section>
-
-
-
     <!-- CTA Banner -->
     <section    class = "py-20 bg-dark">
     <div        class = "container-inner text-center">
     <h2         class = "section-title mb-4">{{ t('home.cta_title') }}</h2>
-    <p          class = "section-subtitle mb-8 max-w-xl mx-auto">{{ t('home.cta_subtitle') }}</p>
-    <NuxtLink to    = "/register" class = "btn-primary btn-lg">
-          {{ t('home.cta_btn') }}
-          <ArrowRight class = "w-5 h-5" />
-        </NuxtLink>
       </div>
     </section>
   </div>

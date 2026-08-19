@@ -21,7 +21,7 @@
           <!-- Target data not yet loaded -->
           <div v-if="!iceStore.targetData"
             class="rounded-2xl border border-white/10 bg-dark/60 p-5 text-center">
-            <p class="font-body text-xs text-tertiary/50">{{ iceStore.targetError || 'Loading…' }}</p>
+            <p class="font-body text-xs text-tertiary/50">{{ iceStore.targetError || t('login.loading') }}</p>
           </div>
 
           <template v-else>
@@ -55,8 +55,8 @@
       <!-- ── End Game Panel ── -->
 
       <!-- Demo hint (only when no game panel) -->
-      <div v-if="!gameId" class="card bg-primary/10 border-primary/20 p-3 mb-6 text-center">
-        <p class="font-body text-xs text-primary">💡 {{ t('login.demo_hint') }}</p>
+      <div v-if="!gameId" class="card bg-primary/10 border-primary/20 p-3 mb-6 text-center hidden">
+        <p class="font-body text-xs text-primary ">💡 {{ t('login.demo_hint') }}</p>
       </div>
 
       <!-- Form -->
@@ -91,7 +91,7 @@
         </button>
       </form>
 
-      <p class="text-center font-body text-sm text-tertiary/60 mt-6">
+      <p class="text-center font-body text-sm text-tertiary/60 mt-6 hidden">
         {{ t('login.no_account') }}
         <NuxtLink to="/register" class="text-primary hover:underline ml-1">{{ t('login.register_link') }}</NuxtLink>
       </p>
@@ -102,10 +102,10 @@
       <div v-if="forgotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-dark/80 backdrop-blur-sm" @click="forgotModal = false"></div>
         <div class="relative card p-8 max-w-sm w-full border-primary/20">
-          <h3 class="font-heading font-bold text-xl text-primary mb-3">Reset Password</h3>
-          <p class="font-body text-sm text-tertiary/70 mb-5">Enter your email and we'll send a reset link.</p>
+          <h3 class="font-heading font-bold text-xl text-primary mb-3">{{ t('login.reset_title') }}</h3>
+          <p class="font-body text-sm text-tertiary/70 mb-5">{{ t('login.reset_subtitle') }}</p>
           <input type="email" class="input mb-4" placeholder="your@email.com" />
-          <button class="btn-primary w-full justify-center" @click="forgotModal = false">Send Reset Email</button>
+          <button class="btn-primary w-full justify-center" @click="forgotModal = false">{{ t('login.reset_send') }}</button>
         </div>
       </div>
     </Transition>
@@ -173,7 +173,7 @@ async function handleLogin() {
       : route.query.redirect
     router.push(redirect || '/dashboard')
   } else {
-    error.value = result.error
+    error.value = result.code === 'auth/invalid-credential' ? t('login.invalid_credential') : result.error
   }
 }
 

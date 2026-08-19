@@ -346,8 +346,13 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-primary/80 mb-1.5">Title <span class="text-red-400">*</span></label>
+              <label class="block text-xs font-bold text-primary/80 mb-1.5">Title (English) <span class="text-red-400">*</span></label>
               <input v-model="clueForm.title" type="text" class="input py-2 bg-dark/50" placeholder="e.g. The Torn Letter" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-primary/80 mb-1.5">标题 (中文)</label>
+              <input v-model="clueForm.title_zh" type="text" class="input py-2 bg-dark/50" placeholder="例如：撕破的信" />
             </div>
 
             <div>
@@ -429,8 +434,13 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-primary/80 mb-1.5">Title <span class="text-red-400">*</span></label>
+              <label class="block text-xs font-bold text-primary/80 mb-1.5">Title (English) <span class="text-red-400">*</span></label>
               <input v-model="editClueForm.title" type="text" class="input py-2 bg-dark/50" placeholder="e.g. The Torn Letter" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-primary/80 mb-1.5">标题 (中文)</label>
+              <input v-model="editClueForm.title_zh" type="text" class="input py-2 bg-dark/50" placeholder="例如：撕破的信" />
             </div>
 
             <div>
@@ -748,11 +758,12 @@ async function saveEdit() {
 const showAddClue = ref(false)
 const savingClue = ref(false)
 const clueError = ref('')
-const clueForm = reactive({ stage: 1, title: '', description: '', file: null })
+const clueForm = reactive({ stage: 1, title: '', title_zh: '', description: '', file: null })
 
 function openAddClue() {
   clueForm.stage = 1
   clueForm.title = ''
+  clueForm.title_zh = ''
   clueForm.description = ''
   clueForm.file = null
   clueError.value = ''
@@ -780,6 +791,7 @@ async function saveClue() {
     await store.addClue({
       stage: clueForm.stage,
       title: clueForm.title.trim(),
+      title_zh: clueForm.title_zh.trim(),
       description: clueForm.description.trim(),
       file: clueForm.file,
     })
@@ -802,12 +814,13 @@ async function removeClue(c) {
 const editClueTarget = ref(null)
 const savingEditClue = ref(false)
 const editClueError = ref('')
-const editClueForm = reactive({ stage: 1, title: '', description: '', file: null })
+const editClueForm = reactive({ stage: 1, title: '', title_zh: '', description: '', file: null })
 
 function openEditClue(c) {
   editClueTarget.value = c
   editClueForm.stage = c.stage
   editClueForm.title = c.title
+  editClueForm.title_zh = c.title_zh || ''
   editClueForm.description = c.description || ''
   editClueForm.file = null
   editClueError.value = ''
@@ -834,6 +847,7 @@ async function saveEditClue() {
     await store.updateClue(editClueTarget.value.id, {
       stage: editClueForm.stage,
       title: editClueForm.title.trim(),
+      title_zh: editClueForm.title_zh.trim(),
       description: editClueForm.description.trim(),
       file: editClueForm.file,
     })

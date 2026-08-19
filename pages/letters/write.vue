@@ -4,10 +4,10 @@
       <div class="flex items-center justify-between mb-8">
         <div>
           <h1 class="section-title">{{ t('letters.write_title') }}</h1>
-          <p class="font-body text-sm text-tertiary/50 mt-1">Write something meaningful to a fellow camper 💌</p>
+          <p class="font-body text-sm text-tertiary/50 mt-1">{{ t('letters.write_subtitle') }}</p>
         </div>
         <NuxtLink to="/letters" class="btn-ghost btn-sm">
-          <Mail class="w-4 h-4" /> My Letters
+          <Mail class="w-4 h-4" /> {{ t('letters.my_letters') }}
         </NuxtLink>
       </div>
 
@@ -22,14 +22,14 @@
           <div class="flex items-center gap-4">
             <label class="input-label text-secondary min-w-[60px] mb-0 flex-shrink-0">{{ t('letters.recipient') }}:</label>
             <select v-model="form.toId" class="flex-1 bg-transparent border-b border-secondary/30 text-secondary font-body text-sm focus:outline-none focus:border-primary/60 pb-1">
-              <option value="" disabled>Select a camper...</option>
+              <option value="" disabled>{{ t('letters.select_camper') }}</option>
               <option v-for="c in otherCampers" :key="c.id" :value="c.id">{{ c.avatar }} {{ c.name }}</option>
             </select>
           </div>
 
           <!-- From toggle -->
           <div class="flex items-center gap-4">
-            <label class="input-label text-secondary min-w-[60px] mb-0 flex-shrink-0">From:</label>
+            <label class="input-label text-secondary min-w-[60px] mb-0 flex-shrink-0">{{ t('letters.from_label') }}</label>
             <div class="flex gap-3">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input type="radio" v-model="form.anonymous" :value="false" class="accent-secondary" />
@@ -47,7 +47,7 @@
             <textarea
               v-model="form.body"
               rows="12"
-              placeholder="Dear friend,&#10;&#10;I just wanted to say..."
+              :placeholder="t('letters.body_placeholder')"
               class="w-full bg-transparent text-secondary font-body text-sm leading-8 resize-none focus:outline-none placeholder-secondary/30"
               style="line-height: 32px;"
             ></textarea>
@@ -56,7 +56,7 @@
           <!-- Signature -->
           <div class="flex items-center justify-between pt-4 border-t border-secondary/20">
             <p class="font-script text-secondary/60 text-lg">
-              {{ form.anonymous ? 'Your Secret Friend 🎭' : auth.user?.name }}
+              {{ form.anonymous ? t('letters.secret_friend_signature') : auth.user?.name }}
             </p>
             <button @click="submit" :disabled="!form.toId || !form.body.trim()" class="btn-primary">
               <Send class="w-4 h-4" /> {{ t('letters.submit') }}

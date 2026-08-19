@@ -96,7 +96,7 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
     )
   }
 
-  async function addClue({ stage, title, description, file }) {
+  async function addClue({ stage, title, title_zh, description, file }) {
     const db = await waitForDb()
     const storage = useStorageSafe()
     if (!db || !storage) throw new Error('Firebase not initialized')
@@ -118,6 +118,8 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
     const docRef = await addDoc(collection(db, 'game_detective_clues'), {
       stage,
       title,
+      title_en: title,
+      title_zh: title_zh || '',
       description,
       fileUrl,
       fileName,
@@ -129,11 +131,11 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
     return docRef.id
   }
 
-  async function updateClue(clueId, { stage, title, description, file }) {
+  async function updateClue(clueId, { stage, title, title_zh, description, file }) {
     const db = await waitForDb()
     if (!db) throw new Error('Firebase not initialized')
 
-    const patch = { stage, title, description }
+    const patch = { stage, title, title_en: title, title_zh: title_zh || '', description }
 
     if (file) {
       const storage = useStorageSafe()

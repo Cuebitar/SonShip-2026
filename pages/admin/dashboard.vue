@@ -205,7 +205,7 @@
                   </div>
                   <!-- Details -->
                   <div class="flex-1">
-                    <h4 class="font-bold text-white text-sm">{{ event.name }}</h4>
+                    <h4 class="font-bold text-white text-sm">{{ event.name_en || event.name }}<span v-if="event.name_zh" class="text-white/40 font-normal ml-1">{{ event.name_zh }}</span></h4>
                     <p class="text-[11px] text-white/50 mt-1 flex items-center gap-1"><MapPin class="w-3 h-3" /> {{ event.location || 'TBA' }}</p>
                   </div>
                 </div>
@@ -350,7 +350,10 @@
                   <div class="font-bold text-white">{{ event.day }} <span class="text-xs text-tertiary/70 ml-1">({{ event.date }})</span></div>
                   <div class="text-sm text-primary">{{ event.time }}</div>
                 </td>
-                <td class="p-4 font-bold text-white">{{ event.name }}</td>
+                <td class="p-4">
+                  <div class="font-bold text-white">{{ event.name_en || event.name }}</div>
+                  <div v-if="event.name_zh" class="text-xs text-tertiary/60 mt-0.5">{{ event.name_zh }}</div>
+                </td>
                 <td class="p-4">
                   <div class="text-sm text-tertiary flex items-center gap-1"><MapPin class="w-3 h-3"/> {{ event.location || 'TBA' }}</div>
                   <div class="text-xs text-tertiary/60 mt-1">{{ event.duration }} mins</div>
@@ -382,6 +385,26 @@
           </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-if="unassignedCampers.length > 0" class="card p-5 border border-dashed border-amber-500/40 bg-amber-500/5 flex flex-col justify-between min-h-[220px]">
+            <div>
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-amber-500/20">
+                <h3 class="text-lg font-heading font-bold text-amber-400 truncate flex items-center gap-2">
+                  <AlertCircle class="w-4 h-4 shrink-0" /> Unassigned
+                </h3>
+                <button @click="assignUnassigned" class="px-2.5 py-1.5 bg-white/5 rounded-lg text-tertiary hover:text-amber-400 hover:bg-white/10 transition-all flex items-center gap-1.5 text-xs font-bold"><Users class="w-3.5 h-3.5" /> Assign</button>
+              </div>
+              <div class="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                <div v-for="member in unassignedCampers" :key="member.id" class="flex items-center justify-between bg-dark/40 rounded-lg px-3 py-1.5">
+                  <span class="text-xs font-body text-tertiary truncate">{{ member.fullName }}</span>
+                  <span v-if="member.gender" class="text-[9px] uppercase bg-white/10 px-1.5 py-0.5 rounded text-tertiary/60">{{ member.gender }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-amber-500/10 flex justify-between items-center text-xs text-tertiary/50">
+              <span>Not in any team</span>
+              <strong class="text-amber-400 font-heading font-bold bg-white/5 px-2 py-0.5 rounded">{{ unassignedCampers.length }}</strong>
+            </div>
+          </div>
           <div v-for="team in teamsList" :key="team.name" class="card p-5 border border-white/10 bg-white/5 flex flex-col justify-between min-h-[220px]">
             <div>
               <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
@@ -537,9 +560,13 @@
         <div class="relative card w-full max-w-2xl p-5 shadow-2xl border-primary/30 z-50 bg-[#111218] max-h-[90vh] overflow-y-auto">
           <h3 class="font-bold text-lg text-white mb-4">{{ calForm.id ? 'Edit Event' : 'Add Event' }}</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-bold text-primary mb-1">Event Name</label>
-              <input v-model="calForm.name" type="text" class="input w-full bg-dark/50" />
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1">Event Name (English)</label>
+              <input v-model="calForm.name_en" type="text" class="input w-full bg-dark/50" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-primary mb-1">活动名称 (中文)</label>
+              <input v-model="calForm.name_zh" type="text" class="input w-full bg-dark/50" />
             </div>
             <div>
               <label class="block text-xs font-bold text-primary mb-1">Camp Day</label>
@@ -737,7 +764,7 @@ function toDatetimeLocal(timestamp) {
 const showAnnModal = ref(false)
 const annForm = reactive({ id: null, title: '', description: '', date: '', createdAt: null, publishAt: '' })
 const showCalModal = ref(false)
-const calForm = reactive({ id: null, name: '', day: 'Day 1', date: '2026-08-28', time: '', location: '', duration: 60, notes: '', notifyChange: false })
+const calForm = reactive({ id: null, name_en: '', name_zh: '', day: 'Day 1', date: '2026-08-28', time: '', location: '', duration: 60, notes: '', notifyChange: false })
 
 function openAnnModal(ann = null) {
   if (ann) Object.assign(annForm, ann, { publishAt: toDatetimeLocal(ann.createdAt) })
@@ -775,17 +802,19 @@ async function deleteAnnouncement(id) {
 }
 
 function openCalModal(event = null) {
-  if (event) Object.assign(calForm, event, { notifyChange: false }) 
-  else Object.assign(calForm, { id: null, name: '', day: 'Day 1', date: '2026-08-28', time: '14:00', location: '', duration: 60, notes: '', notifyChange: false })
+  if (event) Object.assign(calForm, { name_en: event.name_en || event.name || '', name_zh: event.name_zh || '' }, event, { notifyChange: false })
+  else Object.assign(calForm, { id: null, name_en: '', name_zh: '', day: 'Day 1', date: '2026-08-28', time: '14:00', location: '', duration: 60, notes: '', notifyChange: false })
   showCalModal.value = true
 }
 
 async function saveCalendar() {
-  if (!calForm.name || !calForm.date || !calForm.time) return alert("Name, Date, and Time are required!")
+  if ((!calForm.name_en && !calForm.name_zh) || !calForm.date || !calForm.time) return alert("Name (in at least one language), Date, and Time are required!")
   const db = useDb()
   if (!db) return
   isSaving.value = true
-  const payload = { name: calForm.name, day: calForm.day, date: calForm.date, time: calForm.time, location: calForm.location, duration: Number(calForm.duration), notes: calForm.notes }
+  // 保留 name 字段以兼容还没切换到 name_en/name_zh 的旧代码
+  const combinedName = calForm.name_zh && calForm.name_en ? `${calForm.name_en} (${calForm.name_zh})` : (calForm.name_en || calForm.name_zh)
+  const payload = { name: combinedName, name_en: calForm.name_en, name_zh: calForm.name_zh, day: calForm.day, date: calForm.date, time: calForm.time, location: calForm.location, duration: Number(calForm.duration), notes: calForm.notes }
   try {
     if (calForm.id) {
       await updateDoc(doc(db, "schedules", calForm.id), payload)
@@ -809,7 +838,7 @@ async function deleteCalendarEvent(id) {
 
 const records = computed(() =>
   campersStore.campers.map((c) => ({
-    id: c.id, fullName: c.name, gender: c.gender, group: c.group || "", status: c.status, room_name: c.room_name, transport: c.transport, preferred_language: c.preferred_language, secret_identity: c.secret_identity, secretAngel: c.secret_angel?.id ?? '', iceBreakingTarget: c.ice_breaking?.target ?? '', iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
+    id: c.id, fullName: c.name, gender: c.gender, group: c.group || "", status: c.status, room_name: c.room_name, transport: c.transport, preferred_language: c.preferred_language, secret_identity: c.secret_identity, iceBreakingTarget: c.ice_breaking?.target ?? '', iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
   }))
 );
 
@@ -832,6 +861,12 @@ const teamsList = computed(() => {
   manualEmptyTeams.value.forEach(tName => { if (!map.has(tName)) map.set(tName, { name: tName, members: [] }); });
   return Array.from(map.values());
 });
+
+const unassignedCampers = computed(() => records.value.filter(r => !r.group));
+
+function assignUnassigned() {
+  isEditingExistingTeam.value = false; originalTeamName.value = ''; modalTeamName.value = ''; teamModalSearch.value = ''; selectedCamperIds.value = unassignedCampers.value.map(c => c.id); showTeamModal.value = true;
+}
 
 const filteredModalCampers = computed(() => {
   if (!teamModalSearch.value.trim()) return records.value;
@@ -874,7 +909,7 @@ async function saveTeamModal() {
 }
 
 async function updateCamperGroupInDB(record, newGroupName) {
-  await campersStore.updateCamper({ status: record.status, group: newGroupName, room_name: record.room_name, transport: record.transport, preferred_language: record.preferred_language, secret_identity: record.secret_identity, secret_angel: record.secretAngel, ice_breaking: { riddle: record.iceBreakingRiddle, target: record.iceBreakingTarget }, id: record.id });
+  await campersStore.updateCamper({ status: record.status, group: newGroupName, room_name: record.room_name, transport: record.transport, preferred_language: record.preferred_language, secret_identity: record.secret_identity, ice_breaking: { riddle: record.iceBreakingRiddle, target: record.iceBreakingTarget }, id: record.id });
 }
 
 function getGameScore(teamName, gameName) {

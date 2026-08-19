@@ -134,7 +134,6 @@ export const useCampersStore = defineStore('campers', () => {
         verse: camper.questions?.verse || '',
       },
       room_name: '',
-      secret_angel: camperRef,
       secret_identity: '',
       status: camper.status || 'Pending',
       transport: camper.transport || '',
@@ -166,10 +165,6 @@ export const useCampersStore = defineStore('campers', () => {
     const camperId = camper.id
     const camperRef = doc(collection(db, 'campers'), camperId)
     const payload = { ...camper }
-
-    if (typeof payload.secret_angel === 'string' && payload.secret_angel) {
-      payload.secret_angel = doc(collection(db, 'campers'), payload.secret_angel)
-    }
 
     if (payload.ice_breaking) {
       const ib = { ...payload.ice_breaking }

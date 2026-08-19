@@ -36,10 +36,10 @@
             class="card-hover p-6 group block">
             <div class="flex items-start justify-between mb-4">
               <span class="text-5xl">{{ act.image }}</span>
-              <span class="badge-primary capitalize text-xs">{{ act.category }}</span>
+              <span class="badge-primary capitalize text-xs">{{ t(`activities.${act.category}`) }}</span>
             </div>
-            <h3 class="font-heading font-bold text-lg text-tertiary group-hover:text-primary transition-colors mb-2">{{ act.name }}</h3>
-            <p class="font-body text-sm text-tertiary/60 leading-relaxed mb-4 line-clamp-2">{{ act.description }}</p>
+            <h3 class="font-heading font-bold text-lg text-tertiary group-hover:text-primary transition-colors mb-2">{{ activityName(act, locale) }}</h3>
+            <p class="font-body text-sm text-tertiary/60 leading-relaxed mb-4 line-clamp-2">{{ activityDescription(act, locale) }}</p>
             <div class="flex flex-wrap gap-3 text-xs font-body text-tertiary/50">
               <span class="flex items-center gap-1"><Clock class="w-3.5 h-3.5" />{{ act.duration }}</span>
               <span class="flex items-center gap-1"><MapPin class="w-3.5 h-3.5" />{{ act.location }}</span>
@@ -53,7 +53,7 @@
 
         <div v-if="filteredActivities.length === 0" class="text-center py-20">
           <p class="text-5xl mb-4">🔍</p>
-          <p class="font-body text-tertiary/60">No activities found. Try a different search.</p>
+          <p class="font-body text-tertiary/60">{{ t('activities.no_results') }}</p>
         </div>
       </div>
     </section>
@@ -66,7 +66,7 @@ import { useI18n } from 'vue-i18n'
 import { useActivitiesStore } from '~/stores/activities'
 import { Search, Clock, MapPin, Users } from 'lucide-vue-next'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const store = useActivitiesStore()
 
 const searchQuery = ref('')
@@ -81,7 +81,10 @@ const filteredActivities = computed(() => {
   if (activeCategory.value !== 'all') list = list.filter(a => a.category === activeCategory.value)
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase()
-    list = list.filter(a => a.name.toLowerCase().includes(q) || a.description.toLowerCase().includes(q))
+    list = list.filter(a =>
+      a.name.toLowerCase().includes(q) || a.description.toLowerCase().includes(q) ||
+      (a.name_zh && a.name_zh.includes(q)) || (a.description_zh && a.description_zh.includes(q))
+    )
   }
   return list
 })

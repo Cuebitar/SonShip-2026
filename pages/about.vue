@@ -21,7 +21,7 @@
           <div class = "grid grid-cols-2 gap-4">
           <div v-for = "stat in stats" :key = "stat.label" class = "card p-6 text-center">
           <div class = "text-4xl font-heading font-black text-primary mb-1">{{ stat.value }}</div>
-          <div class = "text-sm font-body text-tertiary/60">{{ stat.label }}</div>
+          <div class = "text-sm font-body text-tertiary/60">{{ t(stat.label) }}</div>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
     <div     v-for = "member in team" :key = "member.name" class = "card-hover p-6 text-center group">
     <div     class = "text-5xl mb-3 group-hover:animate-bounce inline-block">{{ member.emoji }}</div>
     <h4      class = "font-heading font-bold text-tertiary text-sm mb-1">{{ t(member.name) }}</h4>
-    <p       class = "font-body text-primary text-xs">{{ member.role }}</p>
+    <p       class = "font-body text-primary text-xs">{{ t(member.role) }}</p>
           </div>
         </div>
       </div>
@@ -64,28 +64,28 @@ const { locale, t } = useI18n()
 const config = useRuntimeConfig()
 const siteUrl = normalizeSiteUrl(config.public.siteUrl)
 const campersStore   = ref(null);
-const seoTitle       = ref('About Us');
+const seoTitle       = computed(() => locale.value === 'zh' ? '关于我们' : 'About Us');
 const seoDescription = computed(() => locale.value === 'zh'
   ? '了解 SonShip 2026 的故事、使命与团队。由 CMC Subang 主办的青年营会，2026 年 8 月 28 日至 31 日于彭亨吉兰丹举行，诚邀你同行。'
   : 'Learn about SonShip 2026, the annual youth camp organized by CMC Subang. Discover our mission, story, and the passionate team behind the event.')
 const stats = [
-  { value: '50+', label: 'Our Attendees' },
-  { value: '2019', label: 'Running Since' },
-  { value: '4', label: 'Days of Camp' },
-  { value: '6', label: 'Small Groups' },
+  { value: '50+', label: 'about.stats.attendees' },
+  { value: '2019', label: 'about.stats.running_since' },
+  { value: '4', label: 'about.stats.days' },
+  { value: '6', label: 'about.stats.small_groups' },
 ]
 
 
 const team = ref([
-    { name: 'names.elson', role: 'Camp Consultant', emoji: '💼' },
-    { name: 'names.hao', role: 'Superior Camp Coordinator', emoji: '👨' },
-    { name: 'names.jolin', role: 'Camp Coordinator who assists with every details', emoji: '📄' },
-    { name: 'names.alvin', role: 'Camp Coordinator who does all the physical work', emoji: '🏃' },
-    { name: 'names.ruth', role: 'Worship Lead', emoji: '🎤' },
-    { name: 'names.shawn', role: 'Activities Head', emoji: '🏆' },
-    { name: 'names.jonathan', role: 'Game Head', emoji: '🎮' },
-    { name: 'names.florance', role: 'Tech & Media', emoji: '🎬' },
-    { name: 'names.jack', role: '3M', emoji: '🔉' },
+    { name: 'names.elson', role: 'about.roles.consultant', emoji: '💼' },
+    { name: 'names.hao', role: 'about.roles.superior_coordinator', emoji: '👨' },
+    { name: 'names.jolin', role: 'about.roles.coordinator_details', emoji: '📄' },
+    { name: 'names.alvin', role: 'about.roles.coordinator_physical', emoji: '🏃' },
+    { name: 'names.ruth', role: 'about.roles.worship_lead', emoji: '🎤' },
+    { name: 'names.shawn', role: 'about.roles.activities_head', emoji: '🏆' },
+    { name: 'names.jonathan', role: 'about.roles.game_head', emoji: '🎮' },
+    { name: 'names.florance', role: 'about.roles.tech_media', emoji: '🎬' },
+    { name: 'names.jack', role: 'about.roles.mmm', emoji: '🔉' },
 ]);
 const canonicalUrl = computed(() => buildCanonicalUrl(siteUrl, '/about'));
 

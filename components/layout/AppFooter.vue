@@ -39,7 +39,7 @@
       <div class="divider" />
 
       <div class="flex flex-col items-center justify-between gap-3 text-xs font-body text-tertiary/40">
-        <p>© 2026 SonShip Camp. Made with ❤️ for the Kingdom.</p>
+        <p>{{ t('footer.copyright') }}</p>
         <p>{{ t('home.hero_tagline') }}</p>
       </div>
     </div>

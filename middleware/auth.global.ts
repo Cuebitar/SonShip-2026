@@ -6,6 +6,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const auth = useAuthStore()
   await auth.init()
 
+  // First login uses the temp password an admin issued at registration —
+  // block everything else until they set their own. `!== true` (rather than
+  // `=== false`) also catches older docs where the field is just missing.
+  if (auth.isLoggedIn && (auth.user as any)?.changed_password !== true && to.path !== '/change-password') {
+    return navigateTo({ path: '/change-password', query: { redirect: to.fullPath } })
+  }
+
   if (to.path.startsWith('/admin')) {
     if (!auth.isLoggedIn) {
       return navigateTo({ path: '/login', query: { redirect: to.fullPath } })

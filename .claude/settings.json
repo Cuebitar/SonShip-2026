@@ -7,7 +7,17 @@
       "Bash(qlmanage -t -s 800 -o /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad/E16_LATEST.mp4)",
       "Bash(qlmanage -t -s 800 -o /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad /private/tmp/claude-501/-Users-shawnliuhansheng-Development-SonShip-2026/3f4a37d6-c5a1-4958-b35b-2d8b106ca2fe/scratchpad/E26.mp4)",
       "Bash(python3 -c \"from PIL import Image; im = Image.new\\('RGB',\\(2,2\\)\\); im.save\\('/tmp/test.webp', lossless=True\\); print\\('Pillow webp OK'\\)\")",
-      "mcp__plugin_firebase_firebase__firestore_delete_document"
+      "mcp__plugin_firebase_firebase__firestore_delete_document",
+      "mcp__plugin_firebase_firebase__firestore_update_document",
+      "Read(//private/tmp/**)",
+      "Read(//private/tmp/claude-501/**)",
+      "Read(//Users/shawnliuhansheng/.claude/**)",
+      "Read(//Users/shawnliuhansheng/Library/Caches/**)",
+      "Read(//private/var/folders/**)",
+      "mcp__plugin_firebase_firebase__auth_update_user",
+      "mcp__plugin_firebase_firebase__firestore_query_collection",
+      "mcp__claude_ai_Canva__resolve-shortlink",
+      "mcp__claude_ai_Canva__read-design"
     ]
   }
 }
