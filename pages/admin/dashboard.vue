@@ -380,9 +380,14 @@
             <h2 class="font-heading font-bold text-lg md:text-xl text-white">Manage Teams</h2>
             <p class="text-sm text-tertiary/60 font-body mt-1">Review existing teams or create a new one.</p>
           </div>
-          <button type="button" @click="addNewTeam" class="btn-primary py-2 px-4 text-sm w-auto flex items-center gap-2">
-            <Plus class="w-4 h-4" /> Add Team
-          </button>
+          <div class="flex items-center gap-3">
+            <button type="button" @click="assignRiddleTargets" :disabled="assigningRiddleTargets" class="btn-secondary py-2 px-4 text-sm w-auto flex items-center gap-2 disabled:opacity-50">
+              <Shuffle class="w-4 h-4" /> {{ assigningRiddleTargets ? 'Assigning…' : 'Assign Riddle Targets' }}
+            </button>
+            <button type="button" @click="addNewTeam" class="btn-primary py-2 px-4 text-sm w-auto flex items-center gap-2">
+              <Plus class="w-4 h-4" /> Add Team
+            </button>
+          </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-if="unassignedCampers.length > 0" class="card p-5 border border-dashed border-amber-500/40 bg-amber-500/5 flex flex-col justify-between min-h-[220px]">
@@ -647,9 +652,9 @@ import { useRouter } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useCampersStore } from '~/stores/campers'
 import {
-  Bell, Calendar as CalendarIcon, Plus, Edit, Trash2, AlertCircle, 
+  Bell, Calendar as CalendarIcon, Plus, Edit, Trash2, AlertCircle,
   MapPin, Clock, Users, Edit2, X, Trophy, Gamepad2, Megaphone, LayoutDashboard,
-  Shield, Crown, ChevronRight, Swords, LineChart
+  Shield, Crown, ChevronRight, Swords, LineChart, Shuffle
 } from 'lucide-vue-next'
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase' 
@@ -875,6 +880,63 @@ const filteredModalCampers = computed(() => {
 
 function addNewTeam() {
   isEditingExistingTeam.value = false; originalTeamName.value = ''; modalTeamName.value = ''; teamModalSearch.value = ''; selectedCamperIds.value = []; showTeamModal.value = true;
+}
+
+// Riddle Hunt (ice_breaking.target2): shuffles each team into one circular chain
+// A→B→C→A so no one targets themselves and there are no mutual A↔B pairs.
+// Skips teams with fewer than 2 members (nothing to pair up).
+const assigningRiddleTargets = ref(false)
+
+async function assignRiddleTargets() {
+  const eligibleTeams = teamsList.value.filter(team => team.members.length >= 2)
+  if (eligibleTeams.length === 0) return alert('No team has 2+ members to assign riddle targets.')
+  if (!confirm(`Randomly assign riddle-hunt targets within each team (${eligibleTeams.length} team${eligibleTeams.length === 1 ? '' : 's'})? This clears every existing riddle-target assignment first, then reassigns fresh — no duplicates.`)) return
+
+  assigningRiddleTargets.value = true
+  try {
+    // 1. Wipe target2 for EVERY camper first — not just this run's eligible teams.
+    // Otherwise anyone left out of this reassignment (moved teams, now a singleton,
+    // unassigned) could keep a stale target2 pointing at someone from a previous run.
+    await Promise.all(records.value.map(camper => campersStore.updateCamper({
+      id: camper.id,
+      ice_breaking: {
+        riddle: camper.iceBreakingRiddle,
+        target: camper.iceBreakingTarget, // preserve legacy field so it isn't wiped
+        target2: null,
+      },
+    })))
+
+    // 2. Assign fresh circular chains (A→B→C→A) within each eligible team.
+    const assignments = []
+    for (const team of eligibleTeams) {
+      const members = [...team.members]
+      // Fisher-Yates shuffle for a random cycle order each time this is run
+      for (let i = members.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [members[i], members[j]] = [members[j], members[i]]
+      }
+      for (let i = 0; i < members.length; i++) {
+        const from = members[i]
+        const to = members[(i + 1) % members.length]
+        assignments.push(campersStore.updateCamper({
+          id: from.id,
+          ice_breaking: {
+            riddle: from.iceBreakingRiddle,
+            target: from.iceBreakingTarget,
+            target2: to.id,
+          },
+        }))
+      }
+    }
+    await Promise.all(assignments)
+
+    alert('Riddle-hunt targets assigned!')
+  } catch (error) {
+    console.error('[assignRiddleTargets] failed', error)
+    alert('Something went wrong assigning riddle targets — check the console.')
+  } finally {
+    assigningRiddleTargets.value = false
+  }
 }
 
 function editTeam(team) {

@@ -112,6 +112,7 @@
               <div>
                 <p class="text-xs font-bold uppercase tracking-widest text-blue-400/60 mb-1.5">The Challenge</p>
                 <p class="text-sm text-tertiary leading-relaxed">{{ m.challenge }}</p>
+                <p v-if="m.challenge_zh" class="text-sm text-tertiary/60 leading-relaxed mt-1">{{ m.challenge_zh }}</p>
               </div>
 
               <!-- How to play (variant) -->
@@ -122,12 +123,16 @@
                 <p class="text-sm leading-relaxed" :class="paths[idx] === 'deploy' ? 'text-white' : 'text-tertiary'">
                   {{ m[paths[idx]].how }}
                 </p>
+                <p v-if="m[paths[idx]].how_zh" class="text-sm leading-relaxed mt-1 opacity-60" :class="paths[idx] === 'deploy' ? 'text-white' : 'text-tertiary'">
+                  {{ m[paths[idx]].how_zh }}
+                </p>
               </div>
 
               <!-- Score sheet -->
               <div>
                 <p class="text-xs font-bold uppercase tracking-widest text-blue-400/60 mb-1.5">Score Sheet</p>
                 <p class="text-sm text-white leading-relaxed">{{ m[paths[idx]].scoreSheet }}</p>
+                <p v-if="m[paths[idx]].scoreSheet_zh" class="text-sm text-tertiary/60 leading-relaxed mt-1">{{ m[paths[idx]].scoreSheet_zh }}</p>
               </div>
 
               <!-- Win / lose payout -->

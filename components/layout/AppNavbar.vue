@@ -237,7 +237,7 @@ import firecamp from '~/assets/background/campFire.jpg'
 import {
   ChevronDown, Menu, X, LogOut, LayoutDashboard, User, Users, Gamepad2,
   Search, Bell, Megaphone, Heart, Image, BookOpen, Settings,
-  Calendar, ChevronRight, ShieldAlert
+  Calendar, ChevronRight, ShieldAlert, ClipboardCheck
 } from 'lucide-vue-next'
 
 const { t, locale, setLocale } = useI18n()
@@ -272,6 +272,10 @@ onMounted(() => {
 
 const isAdmin = computed(() => hydrated.value && auth.isLoggedIn && auth.user?.is_admin === true)
 
+// Auditors only get the AI City game's admin pages (dashboard, Phase 1 audit,
+// Phase 2 scoring) — see middleware/auth.global.ts for the matching route gate.
+const isAuditor = computed(() => hydrated.value && auth.isLoggedIn && !isAdmin.value && auth.user?.is_auditor === true)
+
 // Guests get a top nav instead of the sidebar (no persistent app-shell before login).
 const showSidebar = computed(() => hydrated.value && auth.isLoggedIn)
 
@@ -288,8 +292,12 @@ const memberNavLinks = [
 const adminNavLinks = [
   { to: '/admin/dashboard', label: 'nav.adminDashboard', icon: ShieldAlert },
   { to: '/admin/registrations', label: 'nav.registrations', icon: Users },
-  { to: '/admin/games', label: 'nav.manageGames', icon: Gamepad2 },
-  { to: '/admin/settings', label: 'nav.settings', icon: Settings },
+  { to: '/admin/games', label: 'nav.manageGames', icon: Gamepad2 }
+]
+
+// Auditor 只看得到 AI City 游戏的后台页面
+const auditorNavLinks = [
+  { to: '/admin/games/ai-city', label: 'nav.aiCityAudit', icon: ClipboardCheck },
 ]
 
 const sideNavLinks = computed(() => {
@@ -297,6 +305,14 @@ const sideNavLinks = computed(() => {
   if (isAdmin.value) {
     return [
       ...adminNavLinks,
+      { divider: 'member', label: 'nav.memberView' },
+      ...memberNavLinks,
+    ]
+  }
+
+  if (isAuditor.value) {
+    return [
+      ...auditorNavLinks,
       { divider: 'member', label: 'nav.memberView' },
       ...memberNavLinks,
     ]
@@ -314,6 +330,12 @@ const userMenu = computed(() => {
   if (isAdmin.value) {
     return [
       { to: '/admin/dashboard', label: 'nav.adminDashboard', icon: ShieldAlert },
+      { to: '/profile', label: 'nav.profile', icon: User },
+    ]
+  }
+  if (isAuditor.value) {
+    return [
+      { to: '/admin/games/ai-city', label: 'nav.aiCityAudit', icon: ClipboardCheck },
       { to: '/profile', label: 'nav.profile', icon: User },
     ]
   }

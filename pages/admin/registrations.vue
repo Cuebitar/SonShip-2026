@@ -265,6 +265,13 @@
               
               <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
+                  <label class="flex items-center gap-2 cursor-pointer w-fit">
+                    <input type="checkbox" v-model="editForm.is_auditor" class="w-4 h-4 rounded border-white/20 bg-dark/50 text-primary focus:ring-primary focus:ring-offset-dark" />
+                    <span class="text-xs font-bold text-primary/80">Auditor <span class="text-tertiary/40 font-normal">(AI City game admin pages only)</span></span>
+                  </label>
+                </div>
+
+                <div class="col-span-2">
                   <label class="block text-xs font-bold text-primary/80 mb-1">Status</label>
                   <select v-model="editForm.status" class="input py-2 bg-dark/50">
                     <option value="Pending">Pending</option>
@@ -412,6 +419,7 @@ const records = computed(() =>
       q3               : c.questions?.verse ?? '',
       status           : c.status,
       secret_identity  : c.secret_identity,
+      is_auditor       : c.is_auditor ?? false,
       iceBreakingTarget2: rawTarget2,
       iceBreakingTarget2Name: resolveTargetName(rawTarget2),
       iceBreakingRiddle: c.ice_breaking?.riddle ?? '',
@@ -508,6 +516,7 @@ const editForm = reactive({
   transport        : '',
   preferred_language: '',
   secret_identity  : '',
+  is_auditor       : false,
   iceBreakingTarget2: '',
   iceBreakingRiddle: ''
 });
@@ -520,6 +529,7 @@ function openModal(record) {
   editForm.transport         = record.transport;
   editForm.preferred_language = record.preferred_language || '';
   editForm.secret_identity   = record.secret_identity || '';
+  editForm.is_auditor        = record.is_auditor ?? false;
   editForm.iceBreakingTarget2 = record.iceBreakingTarget2?.id || '';
   editForm.iceBreakingRiddle = record.iceBreakingRiddle || '';
 }
@@ -557,6 +567,7 @@ async function saveChanges() {
       transport: editForm.transport,
       preferred_language: editForm.preferred_language,
       secret_identity: editForm.secret_identity,
+      is_auditor: editForm.is_auditor,
       ice_breaking: {
         riddle: editForm.iceBreakingRiddle,
         target2: editForm.iceBreakingTarget2,

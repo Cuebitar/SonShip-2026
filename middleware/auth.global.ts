@@ -17,7 +17,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
     if (!auth.isLoggedIn) {
       return navigateTo({ path: '/login', query: { redirect: to.fullPath } })
     }
-    if (!auth.user?.is_admin) {
+    // Auditors are scoped to the AI City game's admin pages only (dashboard,
+    // Phase 1 audit, Phase 2 scoring — all under this one path prefix).
+    // Everything else under /admin still requires full is_admin.
+    const isAiCityAdminPath = to.path.startsWith('/admin/games/ai-city')
+    const isAuditorAllowed = (auth.user as any)?.is_auditor === true && isAiCityAdminPath
+    if (!auth.user?.is_admin && !isAuditorAllowed) {
       return navigateTo('/dashboard')
     }
   }

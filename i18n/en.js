@@ -17,6 +17,7 @@ export default {
         registrations: 'Registrations',
         games: 'Games',
         manageGames: 'Manage Games',
+        aiCityAudit: 'AI City Audit',
         memberView: 'Member View',
         settings: 'Settings',
         logout: 'Logout',

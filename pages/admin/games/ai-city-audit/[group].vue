@@ -138,7 +138,8 @@
           <h2 class="font-heading font-black text-2xl text-white mb-4">
             {{ currentCard.emoji }} {{ currentCard.title }}
           </h2>
-          <p class="text-tertiary leading-relaxed mb-5">{{ currentCard.narrative }}</p>
+          <p class="text-tertiary leading-relaxed mb-2">{{ currentCard.narrative }}</p>
+          <p v-if="currentCard.narrative_zh" class="text-tertiary/60 text-sm leading-relaxed mb-5">{{ currentCard.narrative_zh }}</p>
 
           <!-- Meter effects (wraps on narrow screens — no sideways scrolling) -->
           <div class="space-y-2 mb-6">

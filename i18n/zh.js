@@ -18,6 +18,7 @@ export default {
         settings: '设置',
         games: '游戏',
         manageGames: '管理游戏',
+        aiCityAudit: 'AI 城市稽核',
         memberView: '会员视图',
         logout: '登出',
     },
