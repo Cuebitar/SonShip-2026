@@ -12,8 +12,8 @@
       </div>
     </section>
 
-    <!-- Phase Control -->
-    <section class="container-inner mt-8">
+    <!-- Phase Control (admins only — Auditors get read-only score/audit access) -->
+    <section v-if="isAdmin" class="container-inner mt-8">
       <div class="card p-5 border border-blue-500/30 bg-blue-500/5 mb-6">
         <div class="flex items-center gap-2 mb-4">
           <span class="w-2 h-2 rounded-full" :class="store.gameState.active ? 'bg-green-400 animate-pulse' : 'bg-white/20'"></span>
@@ -43,20 +43,35 @@
           Phase 1: teams choose an AI (0–65 pts) · Phase 2: scorekeeper records per-station scores (0–20 pts × 6)
         </p>
       </div>
+
+      <NuxtLink
+        to="/admin/immune-system"
+        class="card p-4 border border-blue-500/30 hover:border-blue-500/70 hover:bg-blue-500/5 transition-all flex items-center justify-between gap-3 mb-6"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-xl shrink-0">🧬</div>
+          <div>
+            <p class="font-heading font-bold text-white text-sm">Immune System Briefing</p>
+            <p class="text-xs text-tertiary/50">Reveal the article on screen for a timed 4-minute read</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold uppercase tracking-widest text-blue-400/60 shrink-0">Open →</span>
+      </NuxtLink>
     </section>
 
     <!-- Tabs -->
     <section class="container-inner">
-      <div class="flex flex-wrap gap-2 mb-6">
+      <div class="flex flex-wrap gap-2 mb-6 mt-6">
+        <template v-for="tab in TABS" :key="tab">
         <button
-          v-for="tab in TABS"
-          :key="tab"
+          v-if="tab === 'Overview' ? isAdmin : true"
           @click="activeTab = tab"
           :class="[
             'px-4 py-2 rounded-full font-heading text-sm font-bold transition-all',
             activeTab === tab ? 'bg-blue-500 text-white' : 'bg-white/5 text-tertiary hover:bg-white/10'
-          ]"
-        >{{ tab }}</button>
+            ]"
+          >{{ tab }}</button>
+        </template>
       </div>
 
       <!-- ── OVERVIEW TAB ── -->
@@ -136,7 +151,7 @@
                   Score
                   <span class="block text-blue-400/40 font-normal text-xs">/{{ store.PHASE1_MAX }}</span>
                 </th>
-                <th class="p-4 font-heading text-blue-400 font-bold text-sm text-right">Edit</th>
+                <th class="p-4 font-heading text-blue-400 font-bold text-sm text-right">Audit</th>
               </tr>
             </thead>
             <tbody>
@@ -163,17 +178,12 @@
                   <span :class="scoreColorClass(entry.phase1_score, store.PHASE1_MAX)">{{ entry.phase1_score }}</span>
                 </td>
                 <td class="p-4 text-right">
-                  <div class="inline-flex gap-2">
-                    <NuxtLink
-                      :to="`/admin/games/ai-city-audit/${encodeURIComponent(entry.name)}`"
-                      class="bg-blue-500/15 text-blue-400 border border-blue-500/40 hover:bg-blue-500/30 py-1.5 px-3 text-xs font-bold rounded-xl transition-all"
-                    >
-                      🃏 Audit
-                    </NuxtLink>
-                    <button @click="openEdit(entry)" class="bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-3 text-xs font-bold rounded-xl transition-all">
-                      Edit
-                    </button>
-                  </div>
+                  <NuxtLink
+                    :to="`/admin/games/ai-city-audit/${encodeURIComponent(entry.name)}`"
+                    class="bg-blue-500/15 text-blue-400 border border-blue-500/40 hover:bg-blue-500/30 py-1.5 px-3 text-xs font-bold rounded-xl transition-all inline-block"
+                  >
+                    🃏 Audit
+                  </NuxtLink>
                 </td>
               </tr>
             </tbody>
@@ -243,71 +253,22 @@
       </div>
     </section>
 
-    <!-- Edit Modal -->
-    <Transition name="modal">
-      <div v-if="editTarget" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-dark/80 backdrop-blur-sm" @click="closeEdit"></div>
-        <div class="relative card max-w-sm w-full p-0 shadow-2xl border-blue-500/30 max-h-[90vh] overflow-y-auto">
-
-          <div class="p-6 border-b border-white/10 flex justify-between items-center sticky top-0 bg-dark/95 backdrop-blur z-10">
-            <div>
-              <h3 class="font-heading font-black text-xl text-blue-400">{{ editTarget.name }}</h3>
-              <p class="text-xs text-tertiary mt-0.5">Phase 1 — AI Deploy &amp; Score</p>
-            </div>
-            <button @click="closeEdit" class="text-tertiary hover:text-white text-2xl leading-none p-1">&times;</button>
-          </div>
-
-          <div class="p-6 space-y-4">
-
-            <!-- Phase 1 Fields -->
-            <div>
-              <label class="block text-xs font-bold text-blue-400/80 mb-1.5">AI Deployed</label>
-              <select v-model="editForm.phase1_ai" class="input py-2 bg-dark/50">
-                <option value="">— Not set —</option>
-                <option v-for="ai in store.AI_OPTIONS" :key="ai" :value="ai">{{ ai }}</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-blue-400/80 mb-1.5">
-                Phase 1 Score
-                <span class="text-tertiary/40 font-normal ml-1">(0–{{ store.PHASE1_MAX }})</span>
-              </label>
-              <input
-                v-model.number="editForm.phase1_score"
-                type="number" :min="0" :max="store.PHASE1_MAX"
-                class="input py-2 bg-dark/50"
-                :placeholder="`0–${store.PHASE1_MAX}`"
-              />
-            </div>
-
-          </div>
-
-          <div class="p-6 border-t border-white/10 flex justify-end gap-3 sticky bottom-0 bg-dark/95 backdrop-blur">
-            <button @click="closeEdit" class="px-4 py-2 font-bold text-tertiary hover:text-white transition-colors text-sm">
-              Cancel
-            </button>
-            <button @click="saveEdit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl font-bold text-sm transition-all">
-              Save Scores
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </Transition>
-
   </div>
 </template>
 
 <script setup>
 definePageMeta({ requiresAuth: true })
 
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAiCityGameStore } from '~/stores/aiCityGame'
+import { useAuthStore } from '~/stores/auth'
 
 const TABS = ['Overview', 'Phase 1', 'Phase 2']
 
 const store = useAiCityGameStore()
-const activeTab = ref('Overview')
+const auth = useAuthStore()
+const isAdmin = computed(() => auth.user?.is_admin === true)
+const activeTab = ref('Phase 1')
 
 onMounted(() => store.subscribe())
 
@@ -338,43 +299,4 @@ function scoreColorClass(score, max) {
   return 'text-white font-medium'
 }
 
-const editTarget = ref(null)
-const editForm = reactive({
-  phase1_ai: '',
-  phase1_score: 0,
-})
-
-function openEdit(entry) {
-  editTarget.value = entry
-  editForm.phase1_ai = (entry.phase1_ai === '—') ? '' : (entry.phase1_ai || '')
-  editForm.phase1_score = entry.phase1_score ?? 0
-}
-
-function closeEdit() {
-  editTarget.value = null
-}
-
-async function saveEdit() {
-  if (!editTarget.value) return
-  await store.upsertTeam(editTarget.value.name, {
-    phase1_ai: editForm.phase1_ai,
-    phase1_score: Number(editForm.phase1_score) || 0,
-  })
-  closeEdit()
-}
 </script>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.3s ease;
-}
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-.modal-enter-from .relative.card,
-.modal-leave-to .relative.card {
-  transform: scale(0.95) translateY(16px);
-}
-</style>

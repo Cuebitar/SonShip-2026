@@ -128,6 +128,27 @@
                 </p>
               </div>
 
+              <!-- Auditor's special hint (Deploy path only — currently Mission 4) -->
+              <div
+                v-if="paths[idx] === 'deploy' && m.auditorHint"
+                class="rounded-xl px-4 py-3 bg-purple-500/10 border border-purple-500/30"
+              >
+                <p class="text-xs font-bold uppercase tracking-widest text-purple-400 mb-1.5">🗣 Auditor's Special Hint</p>
+                <p class="text-xs text-tertiary mb-1.5">{{ m.auditorHint.intro }}</p>
+                <p class="text-sm text-white leading-relaxed italic">{{ m.auditorHint.text }}</p>
+              </div>
+
+              <!-- Mega Data Center bonus (Deploy path only, Missions 2/4/5/6) -->
+              <div
+                v-if="paths[idx] === 'deploy' && m.megaDataCenterBonus"
+                class="rounded-xl px-4 py-3 bg-gradient-to-r from-yellow-500/15 to-amber-500/5 border border-yellow-500/40"
+              >
+                <p class="text-xs font-bold uppercase tracking-widest text-yellow-400 mb-1.5">⚡ Mega Data Center Bonus</p>
+                <p class="text-sm text-white leading-relaxed">{{ m.megaDataCenterBonus }}</p>
+                <p v-if="m.megaDataCenterBonus_zh" class="text-sm text-yellow-100/60 leading-relaxed mt-1">{{ m.megaDataCenterBonus_zh }}</p>
+                <p class="text-[11px] text-yellow-400/60 mt-2">Only applies if this team built the Mega Data Center at Mission 3 (Balance the Grid).</p>
+              </div>
+
               <!-- Score sheet -->
               <div>
                 <p class="text-xs font-bold uppercase tracking-widest text-blue-400/60 mb-1.5">Score Sheet</p>
@@ -152,6 +173,69 @@
                 </div>
                 <p class="text-xs text-tertiary/40 mt-2 leading-relaxed">⚠ {{ UNIVERSAL_RULES }}</p>
               </div>
+
+              <!-- Auditor checklist -->
+              <div v-if="m.auditorSteps?.length" class="rounded-xl px-4 py-3 bg-amber-500/5 border border-amber-500/20">
+                <p class="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-2">🎤 Auditor — Run of Show</p>
+                <ol class="space-y-2 list-decimal list-inside">
+                  <li v-for="(step, i) in m.auditorSteps" :key="i" class="text-sm text-white leading-relaxed">
+                    {{ step }}
+                    <span v-if="m.auditorSteps_zh?.[i]" class="block text-tertiary/60 text-xs mt-0.5 ml-0.5">{{ m.auditorSteps_zh[i] }}</span>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- Answer key -->
+              <details v-if="m.answerKey" class="rounded-xl px-4 py-3 bg-green-500/5 border border-green-500/20 group">
+                <summary class="text-xs font-bold uppercase tracking-widest text-green-400 cursor-pointer select-none">
+                  ✅ Answer Key <span class="text-green-400/50 font-normal normal-case">(tap to show/hide)</span>
+                </summary>
+                <div class="mt-3 space-y-3">
+                  <p v-if="m.answerKey.intro" class="text-xs text-tertiary/70">{{ m.answerKey.intro }}</p>
+
+                  <!-- Case-based (Mission 1) -->
+                  <template v-if="m.answerKey.items?.[0]?.case !== undefined">
+                    <div class="space-y-1">
+                      <div v-for="row in m.answerKey.items" :key="row.case" class="flex items-center justify-between gap-3 text-sm bg-white/5 rounded-lg px-3 py-1.5">
+                        <span class="text-tertiary">Case {{ row.case }} — {{ row.name }}</span>
+                        <span class="font-bold text-green-400 whitespace-nowrap">{{ row.answer }}</span>
+                      </div>
+                    </div>
+                    <template v-if="m.answerKey.bonusItems?.length">
+                      <p class="text-xs text-tertiary/70 mt-2">{{ m.answerKey.bonusIntro }}</p>
+                      <div class="space-y-1">
+                        <div v-for="row in m.answerKey.bonusItems" :key="row.case" class="flex items-center justify-between gap-3 text-sm bg-white/5 rounded-lg px-3 py-1.5">
+                          <span class="text-tertiary">Case {{ row.case }} — {{ row.name }}</span>
+                          <span class="font-bold text-green-400 whitespace-nowrap">{{ row.answer }}</span>
+                        </div>
+                      </div>
+                    </template>
+                  </template>
+
+                  <!-- Q&A-based (Mission 2) -->
+                  <template v-else-if="m.answerKey.items?.[0]?.q !== undefined">
+                    <ol class="space-y-1.5 list-decimal list-inside">
+                      <li v-for="(row, i) in m.answerKey.items" :key="i" class="text-sm">
+                        <span class="text-tertiary">{{ row.q }}</span>
+                        <span class="font-bold text-green-400 ml-1">— {{ row.a }}</span>
+                      </li>
+                    </ol>
+                  </template>
+
+                  <!-- Ordered strip list (Mission 5) -->
+                  <template v-else-if="Array.isArray(m.answerKey.items)">
+                    <ol class="space-y-1 list-decimal list-inside">
+                      <li v-for="(row, i) in m.answerKey.items" :key="i" class="text-sm text-white">{{ row }}</li>
+                    </ol>
+                    <template v-if="m.answerKey.wrongItems?.length">
+                      <p class="text-xs text-tertiary/70 mt-2">{{ m.answerKey.wrongIntro }}</p>
+                      <ul class="space-y-1 list-disc list-inside">
+                        <li v-for="(row, i) in m.answerKey.wrongItems" :key="i" class="text-sm text-red-400">{{ row }}</li>
+                      </ul>
+                    </template>
+                  </template>
+                </div>
+              </details>
 
             </div>
           </div>

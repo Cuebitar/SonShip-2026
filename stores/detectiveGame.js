@@ -256,14 +256,14 @@ export const useDetectiveGameStore = defineStore('detectiveGame', () => {
 
   // Final Night's written report: two free-text answers submitted by a team,
   // stored alongside its stage scores on the same game_scores/{groupName} doc.
-  async function submitReport(groupName, { q1, q2, submittedBy }) {
+  async function submitReport(groupName, { q1, suspects, submittedBy }) {
     const db = await waitForDb()
     if (!db) return
     await setDoc(doc(db, 'game_scores', groupName), {
       teamName: groupName,
       detectiveReport: {
         q1: q1 || '',
-        q2: q2 || '',
+        suspects: suspects || {},
         submittedBy: submittedBy || null,
         submittedAt: serverTimestamp(),
       },

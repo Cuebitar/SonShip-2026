@@ -17,7 +17,7 @@ async function waitForDb(maxMs = 3000) {
 
 export const AI_OPTIONS = ['ChatGPT', 'Gemini', 'Claude', 'Copilot', 'DeepSeek']
 export const STATION_COUNT = 6
-// Phase 1 (The Council): meters total (≤~43 realistic) + balance bonus (≤40) + decision quality (≤25)
+// Phase 1 (The Council): meters total (baseline 28, optimal ~29-32) + balance bonus (≤40) + decision quality (≤25)
 export const PHASE1_MAX = 105
 export const STATION_MAX = 20
 

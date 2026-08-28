@@ -107,14 +107,29 @@
 
     <!-- ═══ Reports Tab ═════════════════════════════════════════════ -->
     <section v-if="activeTab === 'reports'" class="container-inner mt-8">
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h2 class="font-heading font-bold text-white text-lg">
           Final Reports
           <span class="ml-2 text-sm font-normal text-tertiary/50">
             {{ submittedReports.length }} / {{ reportsList.length }} submitted
           </span>
         </h2>
+        <button
+          @click="toggleReportsOpen"
+          :class="[
+            'px-3 py-1.5 rounded-full text-xs font-bold transition-all border whitespace-nowrap',
+            reportsOpen
+              ? 'bg-green-500/20 text-green-400 border-green-500/40'
+              : 'bg-white/5 text-tertiary/50 border-white/10 hover:bg-white/10'
+          ]"
+        >
+          📝 Report Submission: {{ reportsOpen ? 'Open' : 'Closed' }}
+        </button>
       </div>
+      <p class="text-xs text-tertiary/40 mb-4">
+        <template v-if="reportsOpen">Teams can currently open the report page and submit/edit their final report.</template>
+        <template v-else>Teams see a "closed" screen instead of the report form. Toggle this on when you're ready for them to write it.</template>
+      </p>
 
       <div v-if="!store.loaded" class="card p-8 text-center text-tertiary">Loading…</div>
       <div v-else-if="reportsList.length === 0" class="card p-8 text-center text-tertiary">No groups yet.</div>
@@ -139,8 +154,13 @@
               <p class="text-sm text-white whitespace-pre-line">{{ entry.q1 || '—' }}</p>
             </div>
             <div>
-              <p class="text-xs font-bold text-primary/80 mb-1">2. Other information about the suspects?</p>
-              <p class="text-sm text-white whitespace-pre-line">{{ entry.q2 || '—' }}</p>
+              <p class="text-xs font-bold text-primary/80 mb-2">2. What they know about the suspects</p>
+              <div class="space-y-2 pl-2 border-l border-white/10">
+                <div v-for="(suspect, index) in SUSPECTS" :key="suspect.id">
+                  <p class="text-xs font-bold text-tertiary">{{ String.fromCharCode(97 + index) }}. {{ suspect.name }}</p>
+                  <p class="text-sm text-white whitespace-pre-line">{{ entry.suspects?.[suspect.id] || '—' }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -613,6 +633,7 @@ definePageMeta({ requiresAuth: true })
 
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useDetectiveGameStore } from '~/stores/detectiveGame'
+import { SUSPECTS } from '~/lib/detectiveSuspects'
 
 const store = useDetectiveGameStore()
 
@@ -691,6 +712,13 @@ async function toggleMiniGames() {
   await store.setGameState({ miniGamesEnabled: !miniGamesEnabled.value })
 }
 
+// Gate for the camper-facing report form (open unless explicitly closed)
+const reportsOpen = computed(() => store.gameState.reportsOpen !== false)
+
+async function toggleReportsOpen() {
+  await store.setGameState({ reportsOpen: !reportsOpen.value })
+}
+
 function rankColorClass(i) {
   if (i === 0) return 'text-yellow-400'
   if (i === 1) return 'text-slate-400'
@@ -705,7 +733,7 @@ const reportsList = computed(() =>
     .map(([name, d]) => ({
       name,
       q1: d.report?.q1 || '',
-      q2: d.report?.q2 || '',
+      suspects: d.report?.suspects || {},
       submittedBy: d.report?.submittedBy || null,
       submittedAt: d.report?.submittedAt || null,
     }))

@@ -17,7 +17,8 @@
       "mcp__plugin_firebase_firebase__auth_update_user",
       "mcp__plugin_firebase_firebase__firestore_query_collection",
       "mcp__claude_ai_Canva__resolve-shortlink",
-      "mcp__claude_ai_Canva__read-design"
+      "mcp__claude_ai_Canva__read-design",
+      "mcp__claude_ai_Notion__notion-fetch"
     ]
   }
 }

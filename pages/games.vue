@@ -15,7 +15,25 @@
         <p class="text-white/60 font-medium">{{ t('games.page_subtitle') }}</p>
       </div>
 
-      <!-- 2. 团队积分榜 -->
+      <!-- 2. 侦探报告入口 (由 admin/games/detective.vue 的 Report Submission 开关控制) -->
+      <NuxtLink
+        v-if="detectiveReportsOpen"
+        to="/detective-report"
+        class="group flex items-center justify-between gap-4 bg-gradient-to-r from-red-950/40 to-[#111218]/80 backdrop-blur-xl rounded-2xl border border-red-500/20 p-5 md:p-6 mb-10 shadow-xl hover:border-red-500/40 transition-all"
+      >
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-red-500/10 border border-red-500/30 text-2xl shrink-0">🔍</div>
+          <div>
+            <h3 class="font-black text-lg text-white">{{ t('games.detective_entry_title') }}</h3>
+            <p class="text-xs text-white/50">{{ t('games.detective_entry_hint') }}</p>
+          </div>
+        </div>
+        <span class="shrink-0 px-4 py-2 rounded-full text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/30 group-hover:bg-red-500/30 transition-all">
+          {{ t('games.detective_entry_button') }} →
+        </span>
+      </NuxtLink>
+
+      <!-- 3. 团队积分榜 -->
       <div class="bg-[#111218]/80 backdrop-blur-xl rounded-3xl border border-white/5 p-6 md:p-10 mb-16 shadow-2xl relative overflow-hidden">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-yellow-500/10 blur-[100px] pointer-events-none"></div>
         
@@ -103,19 +121,24 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { collection, onSnapshot } from 'firebase/firestore'
+import { collection, doc, onSnapshot } from 'firebase/firestore'
 import { useDb } from '~/composable/firebase'
 import { Trophy, Shield, Crown } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const firebaseScores = ref([])
+const detectiveReportsOpen = ref(true)
 let unsubscribeScores = null
+let unsubscribeDetectiveState = null
 
 onMounted(() => {
   const db = useDb()
   if (db) {
     unsubscribeScores = onSnapshot(collection(db, "game_scores"), (snap) => {
       firebaseScores.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    })
+    unsubscribeDetectiveState = onSnapshot(doc(db, 'game_state', 'detective'), (snap) => {
+      detectiveReportsOpen.value = snap.exists() ? snap.data().reportsOpen !== false : true
     })
   }
 })
@@ -126,7 +149,10 @@ const sortedTeams = computed(() => {
     .sort((a, b) => b.totalScore - a.totalScore)
 })
 
-onUnmounted(() => { if (unsubscribeScores) unsubscribeScores() })
+onUnmounted(() => {
+  if (unsubscribeScores) unsubscribeScores()
+  if (unsubscribeDetectiveState) unsubscribeDetectiveState()
+})
 </script>
 
 <style scoped>

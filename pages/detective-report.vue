@@ -8,7 +8,7 @@
           <p class="font-heading font-black text-primary text-base sm:text-lg leading-tight">🔍 终极密室 The Final Night</p>
           <p class="text-[11px] text-primary/50">{{ t('detective_report.final_report') }}</p>
         </div>
-        <NuxtLink to="/dashboard" class="text-xs text-primary/60 hover:text-primary transition-colors shrink-0">
+        <NuxtLink to="/games" class="text-xs text-primary/60 hover:text-primary transition-colors shrink-0">
           {{ t('detective_report.back_to_dashboard') }}
         </NuxtLink>
       </div>
@@ -21,6 +21,14 @@
         <p class="text-5xl mb-4">🚫</p>
         <h1 class="font-heading font-black text-xl sm:text-2xl text-white mb-2">{{ t('detective_report.no_team_title') }}</h1>
         <p class="text-tertiary mb-8 text-sm sm:text-base">{{ t('detective_report.no_team_msg') }}</p>
+        <NuxtLink to="/dashboard" class="btn-primary w-auto min-w-0 px-8 inline-block">{{ t('detective_report.back_to_dashboard') }}</NuxtLink>
+      </div>
+
+      <!-- Reports closed by admin -->
+      <div v-else-if="!reportsOpen" class="text-center py-16 sm:py-24 px-4">
+        <p class="text-5xl mb-4">🔒</p>
+        <h1 class="font-heading font-black text-xl sm:text-2xl text-white mb-2">{{ t('detective_report.closed_title') }}</h1>
+        <p class="text-tertiary mb-8 text-sm sm:text-base">{{ t('detective_report.closed_msg') }}</p>
         <NuxtLink to="/dashboard" class="btn-primary w-auto min-w-0 px-8 inline-block">{{ t('detective_report.back_to_dashboard') }}</NuxtLink>
       </div>
 
@@ -50,12 +58,19 @@
               {{ t('detective_report.q2_label') }}
               <span class="text-tertiary/50 font-normal block mt-0.5">{{ t('detective_report.q2_hint') }}</span>
             </label>
-            <textarea
-              v-model="q2"
-              rows="6"
-              class="input py-2.5 bg-dark/50 resize-none"
-              :placeholder="t('detective_report.q2_placeholder')"
-            ></textarea>
+            <div class="space-y-4">
+              <div v-for="(suspect, index) in SUSPECTS" :key="suspect.id">
+                <label class="block text-xs font-bold text-tertiary mb-1.5">
+                  {{ String.fromCharCode(97 + index) }}. {{ suspect.name }}
+                </label>
+                <textarea
+                  v-model="suspects[suspect.id]"
+                  rows="3"
+                  class="input py-2.5 bg-dark/50 resize-none"
+                  :placeholder="t('detective_report.q2_placeholder')"
+                ></textarea>
+              </div>
+            </div>
           </div>
 
           <p v-if="error" class="text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
@@ -87,19 +102,21 @@
 <script setup>
 definePageMeta({ requiresAuth: true, layout: false, ssr: false })
 
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDetectiveGameStore } from '~/stores/detectiveGame'
 import { useAuthStore } from '~/stores/auth'
+import { SUSPECTS } from '~/lib/detectiveSuspects'
 
 const { t } = useI18n()
 const store = useDetectiveGameStore()
 const auth = useAuthStore()
 
 const groupName = computed(() => auth.user?.group || '')
+const reportsOpen = computed(() => store.gameState.reportsOpen !== false)
 
 const q1 = ref('')
-const q2 = ref('')
+const suspects = reactive(Object.fromEntries(SUSPECTS.map(s => [s.id, ''])))
 const saving = ref(false)
 const saved = ref(false)
 const error = ref('')
@@ -117,16 +134,17 @@ watch(() => store.scores[groupName.value], (team) => {
   if (prefilled || !team) return
   prefilled = true
   q1.value = team.report?.q1 || ''
-  q2.value = team.report?.q2 || ''
+  SUSPECTS.forEach(s => { suspects[s.id] = team.report?.suspects?.[s.id] || '' })
 }, { immediate: true })
 
 onMounted(() => store.subscribe())
 onUnmounted(() => store.unsubscribe())
 
 async function submit() {
-  if (!groupName.value || saving.value) return
+  if (!groupName.value || !reportsOpen.value || saving.value) return
   error.value = ''
-  if (!q1.value.trim() && !q2.value.trim()) {
+  const hasAnySuspectAnswer = SUSPECTS.some(s => suspects[s.id].trim())
+  if (!q1.value.trim() && !hasAnySuspectAnswer) {
     error.value = t('detective_report.validation_required')
     return
   }
@@ -135,7 +153,7 @@ async function submit() {
   try {
     await store.submitReport(groupName.value, {
       q1: q1.value.trim(),
-      q2: q2.value.trim(),
+      suspects: Object.fromEntries(SUSPECTS.map(s => [s.id, suspects[s.id].trim()])),
       submittedBy: { name: auth.user?.name || '', email: auth.user?.email || '' },
     })
     saved.value = true
